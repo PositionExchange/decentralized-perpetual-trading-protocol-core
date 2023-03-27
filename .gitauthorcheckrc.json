@@ -1,0 +1,6 @@
+{
+  "allowedDomains": ["position.exchange"],
+  "hooks": {
+    "pre-commit": "git-author-check"
+  }
+}

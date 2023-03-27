@@ -1,0 +1,240 @@
+    # case01
+- S1: OpenLimit
+  Input:
+    Quantity: 10
+    Price: 4900
+    Leverage: 10
+    Trader: 1
+    Side: 0
+    Deposit: 5000
+  Expect:
+    PendingOrder:
+      Orders: 3
+      Price: 4900,5000,5100
+      Id: 0,1,2
+      Quantity: 10,15,20
+      PartialFilled: 0,3,10
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -5000
+    ClaimableAmount: 0
+- S2: OpenMarket
+  Input:
+    Quantity: 10
+    Leverage: 10
+    Trader: 2
+    Side: 1
+    Deposit: 6000
+  Expect:
+    Position:
+      Quantity: -10
+      MarginDeposit: 6000
+      MarginAbsolute: 4900
+      Notional: 49000
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -6000
+    ClaimableAmount: 6000
+- S3: CloseLimit
+  Input:
+    Quantity: 10
+    Price: 5100
+    Trader: 1
+  Expect:
+    PendingOrder:
+      Orders: 1
+      Price: 5100
+      Id: 0
+      PartialFilled: 0
+    Position:
+      Quantity: 10
+      MarginDeposit: 5000
+      MarginAbsolute: 4900
+      Notional: 49000
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: 0
+    ClaimableAmount: 0
+- S4: CloseMarket
+  Input:
+    Quantity: 10
+    Trader: 2
+  Expect:
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginBalance: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail: 0
+    BalanceChanged: 0
+    ClaimableAmount: 0
+- S5: CancelLimit
+  Input:
+    Price: 5000
+    Trader: 2
+    Id: 1 # Thứ tự của order này ở giá 5000
+  Expect:
+    PendingOrder:
+      Orders: 1 # (số lượng order đang pending)
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -5000
+    ClaimableAmount: 0
+- S6: AddMargin
+  Input:
+    Margin: 500
+    Trader: 2
+  Expect:
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -500
+    ClaimableAmount: 0
+- S7: RemoveMargin
+  Input:
+    Margin: 500
+    Trader: 2
+  Expect:
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -500
+    ClaimableAmount: 0
+- S8: ClaimFund
+  Input:
+    Trader: 1
+  Expect:
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -500
+    ClaimableAmount: 0
+- S9: Liquidate
+  Input:
+    Trader: 1
+    Liquidator: 2
+  Expect:
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -500
+    ClaimableAmount: 0
+- S10: ExpectData
+  Input:
+    Trader: 1
+  Expect:
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -500
+    ClaimedProfit: 1000
+    ClaimableAmount: 0
+- S11: InstantlyClose
+  Input:
+    Quantity: 10
+    Trader: 2
+  Expect:
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -500
+    ClaimableAmount: 0
+- S12: ChangePrice
+  Input:
+    Price: 7000
+- S13: OpenMarket # vi du cho 1 function bi revert, co the ap dung cho moi function khac
+  Input:
+    Quantity: 10
+    Leverage: 10
+    Trader: 2
+    Side: 1
+    Deposit: 6000
+  Expect:
+    Revert: 23 # revert id
+

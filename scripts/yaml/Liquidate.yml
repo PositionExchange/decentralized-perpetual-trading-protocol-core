@@ -1,0 +1,223 @@
+# case01
+- S1: OpenLimit
+  Input:
+    Quantity: 5
+    Price: 4900
+    Leverage: 10
+    Trader: 2
+    Side: 1
+    Deposit: 2500
+- S2: OpenMarket
+  Input:
+    Quantity: 5
+    Leverage: 10
+    Trader: 1
+    Side: 0
+    Deposit: 2500
+  Expect:
+    Position:
+      Quantity: 5
+      MarginDeposit: 2500
+      MarginAbsolute: 2450
+      Notional: 24500
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 73.5
+      MarginBalance: 2500
+      MarginRatio: 2
+      LiquidationPrice: 4414.700
+    ClaimedProfit: 0
+    BalanceChanged: -2500
+    ClaimableAmount: 2500
+- S3: OpenLimit
+  Input:
+    Quantity: 5
+    Price: 5000
+    Leverage: 10
+    Trader: 1
+    Side: 0
+    Deposit: 2500
+- S4: OpenMarket
+  Input:
+    Quantity: 5
+    Leverage: 10
+    Trader: 2
+    Side: 1
+    Deposit: 2500
+- S5: ExpectData
+  Input:
+    Trader: 1
+  Expect:
+    PendingOrder:
+      Orders: 0
+    Position:
+      Quantity: 10
+      MarginDeposit: 5000.00
+      MarginAbsolute: 4950.00
+      Notional: 49500.00
+      Pnl: 500
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 148.500
+      MarginBalance: 5500.000
+      MarginRatio: 2
+      LiquidationPrice: 4464.850
+    ClaimedProfit: 0
+    BalanceChanged: 0
+    ClaimableAmount: 5000.00
+- S6: ChangePrice
+  Input:
+    Price: 4468.500
+- S7: ExpectData
+  Input:
+    Trader: 1
+  Expect:
+    Position:
+      Quantity: 10
+      MarginDeposit: 5000.000
+      MarginAbsolute: 4950
+      Notional: 49500.000
+      Pnl: -4815.000
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 148.500
+      MarginBalance: 185.000
+      MarginRatio: 80
+      LiquidationPrice: 4464.850
+    ClaimedProfit: 0
+    BalanceChanged: 0
+    ClaimableAmount: 5000
+- S8: Liquidate
+  Input:
+    Trader: 1
+    Liquidator: 2
+  Expect:
+    Position:
+      Quantity: 8
+      MarginDeposit: 4850
+      MarginAbsolute: 4801.50
+      Notional: 39600.00
+      Pnl: -3852.000
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 144.045
+      MarginBalance: 998.00
+      MarginRatio: 14
+      LiquidationPrice: 4361.756
+    ClaimedProfit: 0
+    BalanceChanged: 75
+    ClaimableAmount: 4850
+- S9: CloseLimit
+  Input:
+    Quantity: 3
+    Price: 5150
+    Leverage: 10
+    Trader: 1
+    Side: 1
+- S10: OpenMarket
+  Input:
+    Quantity: 3
+    Leverage: 10
+    Trader: 3
+    Side: 0
+    Deposit: 1500
+- S11: ExpectData
+  Input:
+    Trader: 1
+  Expect:
+    PendingOrder:
+      Orders: 0
+    Position:
+      Quantity: 5
+      MarginDeposit: 3031.25
+      MarginAbsolute: 3000.937500
+      Notional: 24750.00
+      Pnl: 1000.000
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 90.028
+      MarginBalance: 4031.250
+      MarginRatio: 2
+      LiquidationPrice: 4361.756
+    ClaimedProfit: 0
+    BalanceChanged: 0
+    ClaimableAmount: 5450
+- S12: OpenLimit
+  Input:
+    Quantity: 5
+    Price: 4950
+    Leverage: 10
+    Trader: 1
+    Side: 0
+    Deposit: 2500
+- S13: OpenMarket
+  Input:
+    Quantity: 5
+    Leverage: 10
+    Trader: 2
+    Side: 1
+    Deposit: 2500
+- S14: ExpectData
+  Input:
+    Trader: 1
+  Expect:
+    PendingOrder:
+      Orders: 0
+    Position:
+      Quantity: 10
+      MarginDeposit: 5531.250
+      MarginAbsolute: 5475.9375
+      Notional: 49500.000
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 164.278
+      MarginBalance: 5531.250
+      MarginRatio: 2
+      LiquidationPrice: 4413.303
+    ClaimedProfit: 0
+    BalanceChanged: 0
+    ClaimableAmount: 7950
+- S15: ChangePrice
+  Input:
+    Price: 4413
+- S16: ExpectData
+  Input:
+    Trader: 1
+  Expect:
+    Position:
+      Quantity: 10
+      MarginDeposit: 5531.250
+      MarginAbsolute: 5475.9375
+      Notional: 49500.000
+      Pnl: -5370.000
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 164.278
+      MarginBalance: 161.250
+      MarginRatio: 100
+      LiquidationPrice: 4413.303
+    ClaimedProfit: 0
+    BalanceChanged: 0
+    ClaimableAmount: 7950
+- S17: Liquidate
+  Input:
+    Trader: 1
+    Liquidator: 2
+  Expect:
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 0
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPrice: 0
+    ClaimedProfit: 2418.75 (tổng quantity từ đầu là 15 quantity, tổng margin deposit = 7500, pnl close = 600)
+    BalanceChanged: 0
+    ClaimableAmount: 0

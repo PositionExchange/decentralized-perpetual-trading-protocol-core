@@ -1,0 +1,28 @@
+- S1: OpenLimit
+  Input:
+    Quantity: 10
+    Price: 4900
+    Leverage: 10
+    Trader: 1
+    Side: 0
+    Deposit: 5000
+  Expect:
+    PendingOrder:
+      Orders: 1
+      Price: 4900,5000,6000
+      Id: 0
+      PartialFilled: 0,1,1
+    Position:
+      Quantity: 0
+      MarginDeposit: 0
+      MarginAbsolute: 0
+      Notional: 0
+      Pnl: 0
+      Leverage: 10
+    MaintenanceDetail:
+      MaintenanceMargin: 0
+      MarginBalance: 0
+      MarginRatio: 0
+      LiquidationPip: 0
+    BalanceChanged: -5000
+    ClaimableAmount: 0
