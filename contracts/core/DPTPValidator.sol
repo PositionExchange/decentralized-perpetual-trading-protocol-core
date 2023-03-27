@@ -10,6 +10,7 @@ import "../adapter/interfaces/IDPTPValidator.sol";
 import "../adapter/PositionManagerAdapter.sol";
 import "../library/positions/Position.sol";
 import "../library/types/PositionHouseStorage.sol";
+import "../library/helpers/Quantity.sol";
 import {Int256Math} from "../library/helpers/Int256Math.sol";
 import {Errors} from "../library/helpers/Errors.sol";
 
@@ -20,6 +21,7 @@ contract DPTPValidator is
     ReentrancyGuardUpgradeable
 {
     using Int256Math for int256;
+    using Quantity for int256;
     using PositionManagerAdapter for DPTPValidator;
     using Position for Position.Data;
     IPositionHouse public positionHouse;
@@ -51,7 +53,7 @@ contract DPTPValidator is
         if (_amount != 0) {
             Position.Data memory  _positionData = positionHouse.getPosition(_pmAddress, _trader);
             _positionData.margin = _positionData.margin.absInt() + positionHouse.getAddedMargin(_pmAddress, _trader);
-            if (uint256(_positionData.margin)+ _amount > _positionData.openNotional) {
+            if (_positionData.margin.abs()+ _amount > _positionData.openNotional) {
                 revert("Invalid added margin amount");
             }
         }
