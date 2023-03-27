@@ -14,6 +14,7 @@ import "../library/types/PositionStrategyOrderStorage.sol";
 import "../library/positions/HouseBaseParam.sol";
 import {Quantity} from "../library/helpers/Quantity.sol";
 import {Errors} from "../library/helpers/Errors.sol";
+import "../adapter/interfaces/IDPTPValidator.sol";
 
 contract CrossChainGateway is
     PausableUpgradeable,
@@ -297,6 +298,13 @@ contract CrossChainGateway is
             (address, uint8, uint256, uint16, address, uint256, uint256)
         );
 
+        dptpValidator.validateChainIDAndAddedMargin(
+            param.trader,
+            _pmAddress,
+            _sourceBcId,
+            0
+        );
+
         param.positionManager = IPositionManager(_pmAddress);
         param.side = Position.Side(_side);
         uint256 _busdBonusBalanceBeforeFunction = insuranceFundInterface
@@ -349,6 +357,13 @@ contract CrossChainGateway is
             )
         );
 
+        dptpValidator.validateChainIDAndAddedMargin(
+            param.trader,
+            _pmAddress,
+            _sourceBcId,
+            0
+        );
+
         {
             param.positionManager = IPositionManager(_pmAddress);
             param.side = Position.Side(_side);
@@ -396,6 +411,10 @@ contract CrossChainGateway is
                 _isReduce,
                 _trader
             );
+        dptpValidator.updateTraderData(
+            _trader,
+            _pmAddress
+        );
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -418,6 +437,14 @@ contract CrossChainGateway is
             _functionCall,
             (address, uint256, uint256, address)
         );
+
+        dptpValidator.validateChainIDAndAddedMargin(
+            _trader,
+            _pmAddress,
+            _sourceBcId,
+            _amount
+        );
+
         uint256 _busdBonusBalanceBeforeFunction = insuranceFundInterface
             .getBusdBonusBalances(_pmAddress, _trader);
 
@@ -496,6 +523,10 @@ contract CrossChainGateway is
                 _quantity,
                 _trader
             );
+        dptpValidator.updateTraderData(
+            _trader,
+            _pmAddress
+        );
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -530,6 +561,10 @@ contract CrossChainGateway is
                 _quantity,
                 _trader
             );
+        dptpValidator.updateTraderData(
+            _trader,
+            _pmAddress
+        );
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -565,6 +600,10 @@ contract CrossChainGateway is
                 _quantity,
                 _trader
             );
+        dptpValidator.updateTraderData(
+            _trader,
+            _pmAddress
+        );
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -590,6 +629,10 @@ contract CrossChainGateway is
             uint256 _fee,
             uint256 _withdrawAmount
         ) = positionHouse.claimFund(IPositionManager(_pmAddress), _trader);
+        dptpValidator.updateTraderData(
+            _trader,
+            _pmAddress
+        );
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -765,6 +808,10 @@ contract CrossChainGateway is
         insuranceFundInterface = IInsuranceFund(_address);
     }
 
+    function setDPTPValidator(address _address) external onlyOwner {
+        dptpValidator = IDPTPValidator(_address);
+    }
+
     function setDestinationChainID(uint256 _chainID) external onlyOwner {
         destinationChainID = _chainID;
     }
@@ -805,4 +852,5 @@ contract CrossChainGateway is
     mapping(address => bool) internal whitelistRelayers;
     mapping(uint256 => address) public destChainFuturesGateways;
     IInsuranceFund public insuranceFundInterface;
+    IDPTPValidator dptpValidator;
 }

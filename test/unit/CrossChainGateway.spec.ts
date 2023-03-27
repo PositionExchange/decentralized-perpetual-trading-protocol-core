@@ -1,7 +1,7 @@
 import {ethers} from 'hardhat'
 import {
     BEP20Mintable,
-    CrossChainGateway,
+    CrossChainGateway, DPTPValidator,
     InsuranceFund,
     PositionHouse, PositionHouseConfigurationProxy,
     PositionManager,
@@ -19,6 +19,7 @@ describe("CrossChainGateway", () => {
 
     let deployer: any;
     let trader: any;
+    let trader2: any;
     let tradercp: any;
     let tradercp2: any;
 
@@ -31,9 +32,10 @@ describe("CrossChainGateway", () => {
     let userGateway: UserGatewayTest
     let crossChainGateway: CrossChainGateway;
     let _;
+    let dptpValidator: DPTPValidator;
 
     beforeEach(async () => {
-        [deployer, trader, tradercp, tradercp2] = await ethers.getSigners();
+        [deployer, trader, trader2, tradercp, tradercp2] = await ethers.getSigners();
         [
             positionHouse,
             positionManager,
@@ -44,7 +46,12 @@ describe("CrossChainGateway", () => {
             insuranceFund,
             userGateway,
             crossChainGateway,
-            _
+            _,
+            _,
+            _,
+            _,
+            _,
+            dptpValidator,
         ] = await deployPositionHouse() as any
 
         await bep20Mintable.connect(trader).increaseAllowance(insuranceFund.address, BigNumber.from('100000000000000000000000000'))
@@ -176,6 +183,133 @@ describe("CrossChainGateway", () => {
             expect(position.quantity.toString()).eq(toWei(-3));
             expect(position.margin.toString()).eq(toWei(1410));
         })
+
+        it("when already having positions, should not open market on another chain", async () => {
+            await phTT.openLimitPositionAndExpect({
+                limitPrice: 4700,
+                side: SIDE.LONG,
+                leverage: 10,
+                quantity: toWei('3'),
+                _trader: tradercp,
+                _positionManager: positionManager
+            })
+
+            const destFunctionCall = web3.eth.abi.encodeParameters([{
+                type: 'address',
+                name: '_positionManager'
+            }, {
+                type: 'uint8',
+                name: '_side'
+            }, {
+                type: 'uint256',
+                name: '_quantity'
+            }, {
+                type: 'uint16',
+                name: '_leverage'
+            }, {
+                type: 'address',
+                name: '_trader'
+            }, {
+                type: 'uint256',
+                name: '_initialMargin'
+            }, {
+                type: 'uint256',
+                name: '_busdBonusAmount'
+            }], [positionManager.address, '1', '3000000000000000000', '10', trader.address, toWei('1410'), toWei('0')]);
+
+            const inputs = encodeCrossCallHandlerParams('0', destFunctionCall)
+
+            await crossChainGateway.crossCallHandler(
+                BigNumber.from("97"),
+                crossChainGateway.address,
+                inputs,
+                inputs,
+                "0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8"
+            )
+
+            const currentPip = await positionManager.getCurrentPip()
+            expect(currentPip.toString()).eq(BigNumber.from('470000'));
+
+            const position = await userGateway.getPosition(positionManager.address, trader.address)
+            expect(position.quantity.toString()).eq(toWei(-3));
+            expect(position.margin.toString()).eq(toWei(1410));
+
+            const chainID = await dptpValidator.traderData(trader.address,positionManager.address)
+            expect(chainID.toString()).eq('97')
+
+            const anotherInputs = encodeCrossCallHandlerParams('0', destFunctionCall,"0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8")
+            expect(crossChainGateway.crossCallHandler(
+                BigNumber.from("56"),
+                crossChainGateway.address,
+                anotherInputs,
+                anotherInputs,
+                "0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8"
+            )).to.be.revertedWith("Cannot have positions on different chains")
+        })
+
+        it("when already having positions, should open market on same chain", async () => {
+            await phTT.openLimitPositionAndExpect({
+                limitPrice: 4700,
+                side: SIDE.LONG,
+                leverage: 10,
+                quantity: toWei('3'),
+                _trader: tradercp,
+                _positionManager: positionManager
+            })
+
+            const destFunctionCall = web3.eth.abi.encodeParameters([{
+                type: 'address',
+                name: '_positionManager'
+            }, {
+                type: 'uint8',
+                name: '_side'
+            }, {
+                type: 'uint256',
+                name: '_quantity'
+            }, {
+                type: 'uint16',
+                name: '_leverage'
+            }, {
+                type: 'address',
+                name: '_trader'
+            }, {
+                type: 'uint256',
+                name: '_initialMargin'
+            }, {
+                type: 'uint256',
+                name: '_busdBonusAmount'
+            }], [positionManager.address, '1', '1000000000000000000', '10', trader.address, toWei('470'), toWei('0')]);
+
+            const inputs = encodeCrossCallHandlerParams('0', destFunctionCall)
+
+            await crossChainGateway.crossCallHandler(
+                BigNumber.from("97"),
+                crossChainGateway.address,
+                inputs,
+                inputs,
+                "0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8"
+            )
+
+            const positionBefore = await userGateway.getPosition(positionManager.address, trader.address)
+            expect(positionBefore.quantity.toString()).eq(toWei(-1));
+            expect(positionBefore.margin.toString()).eq(toWei(470));
+
+            const chainID = await dptpValidator.traderData(trader.address,positionManager.address)
+            expect(chainID.toString()).eq('97')
+
+            const anotherInputs = encodeCrossCallHandlerParams('0', destFunctionCall, "0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8")
+            await crossChainGateway.crossCallHandler(
+                BigNumber.from("97"),
+                crossChainGateway.address,
+                anotherInputs,
+                anotherInputs,
+                "0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8"
+            )
+
+            const positionAfter = await userGateway.getPosition(positionManager.address, trader.address)
+            expect(positionAfter.quantity.toString()).eq(toWei(-2));
+            expect(positionAfter.margin.toString()).eq(toWei(940));
+        })
     })
 
     describe("Open limit", async () => {
@@ -225,6 +359,56 @@ describe("CrossChainGateway", () => {
             expect(orders[0].pip).eq(BigNumber.from('330000'))
             expect(orders[0].isBuy).eq(1)
             expect(orders[0].leverage).eq(10)
+        })
+
+        it("when already having orders, should not open limit on another chain", async () => {
+            const destFunctionCall = web3.eth.abi.encodeParameters([{
+                type: 'address',
+                name: '_positionManager'
+            }, {
+                type: 'uint8',
+                name: '_side'
+            }, {
+                type: 'uint256',
+                name: '_uQuantity'
+            }, {
+                type: 'uint128',
+                name: '_pip'
+            }, {
+                type: 'uint16',
+                name: '_leverage'
+            }, {
+                type: 'address',
+                name: '_trader'
+            }, {
+                type: 'uint256',
+                name: '_initialMargin'
+            }, {
+                type: 'uint256',
+                name: '_busdBonusAmount'
+            }], [positionManager.address, '0', '4500000000000000000', '330000', '10', trader2.address, toWei('1485'), toWei(0)]);
+
+            const inputs = encodeCrossCallHandlerParams('1', destFunctionCall)
+
+            await crossChainGateway.crossCallHandler(
+                BigNumber.from("97"),
+                crossChainGateway.address,
+                inputs,
+                inputs,
+                "0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8"
+            )
+
+            const chainID = await dptpValidator.traderData(trader2.address,positionManager.address)
+            expect(chainID.toString()).eq('97')
+
+            const anotherInputs = encodeCrossCallHandlerParams('0', destFunctionCall,"0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8")
+            expect(crossChainGateway.crossCallHandler(
+                BigNumber.from("56"),
+                crossChainGateway.address,
+                anotherInputs,
+                anotherInputs,
+                "0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8"
+            )).to.be.revertedWith("Cannot have positions on different chains")
         })
     })
 
@@ -277,6 +461,58 @@ describe("CrossChainGateway", () => {
     })
 
     describe("Add margin", async () => {
+        it("should add margin successful", async () => {
+
+            await phTT.openLimitPositionAndExpect({
+                quantity: toWei(10),
+                leverage: 10,
+                side: SIDE.LONG,
+                limitPrice: 5000,
+                _trader: tradercp,
+                _positionManager: positionManager
+            })
+            await phTT.openMarketPosition({
+                    quantity: toWei(10),
+                    leverage: 10,
+                    side: SIDE.SHORT,
+                    trader: trader.address,
+                    instanceTrader: trader,
+                    _positionManager: positionManager,
+                }
+            );
+            const position = await userGateway.getPosition(positionManager.address, trader.address)
+            expect(position.margin.toString()).eq(toWei(5000))
+            expect(position.quantity.toString()).eq(toWei(-10))
+            expect(position.leverage).eq(10)
+            expect((await userGateway.getAddedMargin(positionManager.address, trader.address)).toString()).eq('0')
+
+            const destFunctionCall = web3.eth.abi.encodeParameters([{
+                type: 'address',
+                name: '_positionManager'
+            }, {
+                type: 'uint256',
+                name: '_amount'
+            }, {
+                type: 'uint256',
+                name: '_busdBonusAmount'
+            }, {
+                type: 'address',
+                name: '_trader'
+            }], [positionManager.address, toWei(3000), toWei(0), trader.address]);
+
+            const inputs = encodeCrossCallHandlerParams('3', destFunctionCall)
+
+            await crossChainGateway.crossCallHandler(
+                BigNumber.from("97"),
+                crossChainGateway.address,
+                inputs,
+                inputs,
+                "0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8"
+            )
+
+            expect((await userGateway.getAddedMargin(positionManager.address, trader.address)).toString()).eq('3000000000000000000000')
+        })
+
         it("should add margin successful", async () => {
 
             await phTT.openLimitPositionAndExpect({
@@ -442,6 +678,8 @@ describe("CrossChainGateway", () => {
             const newPosition = await userGateway.getPosition(positionManager.address, trader.address)
             expect(newPosition.quantity.toString()).eq(toWei(0))
             expect(newPosition.margin.toString()).eq(toWei(0))
+            const chainID = await dptpValidator.traderData(trader.address,positionManager.address)
+            expect(chainID.toString()).eq('0')
         })
     })
 
@@ -503,6 +741,8 @@ describe("CrossChainGateway", () => {
             const newPosition = await userGateway.getPosition(positionManager.address, trader.address)
             expect(newPosition.quantity.toString()).eq(toWei(1.5))
             expect(newPosition.margin.toString()).eq(toWei(465))
+            const chainID = await dptpValidator.traderData(trader.address,positionManager.address)
+            expect(chainID.toString()).eq('0')
         })
     })
 
@@ -628,6 +868,8 @@ describe("CrossChainGateway", () => {
             expect(newPosition.quantity.toString()).eq(toWei(0))
             expect(newPosition.margin.toString()).eq(toWei(0))
             expect((await userGateway.getClaimAmount(positionManager.address, trader.address)), toWei(0))
+            const chainID = await dptpValidator.traderData(trader.address,positionManager.address)
+            expect(chainID.toString()).eq('0')
         })
 
         it("decode", async () => {
