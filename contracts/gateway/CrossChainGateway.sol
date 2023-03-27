@@ -298,7 +298,7 @@ contract CrossChainGateway is
             (address, uint8, uint256, uint16, address, uint256, uint256)
         );
 
-        dptpValidator.validateChainIDAndAddedMargin(
+        dptpValidator.validateChainIDAndManualMargin(
             param.trader,
             _pmAddress,
             _sourceBcId,
@@ -357,7 +357,7 @@ contract CrossChainGateway is
             )
         );
 
-        dptpValidator.validateChainIDAndAddedMargin(
+        dptpValidator.validateChainIDAndManualMargin(
             param.trader,
             _pmAddress,
             _sourceBcId,
@@ -438,7 +438,7 @@ contract CrossChainGateway is
             (address, uint256, uint256, address)
         );
 
-        dptpValidator.validateChainIDAndAddedMargin(
+        dptpValidator.validateChainIDAndManualMargin(
             _trader,
             _pmAddress,
             _sourceBcId,

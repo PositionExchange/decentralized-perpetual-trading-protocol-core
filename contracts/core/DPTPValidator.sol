@@ -38,27 +38,21 @@ contract DPTPValidator is
         positionHouse = IPositionHouse(_positionHouseAddress);
     }
 
-    function validateChainIDAndAddedMargin(
+    function validateChainIDAndManualMargin(
         address _trader,
         address _pmAddress,
         uint256 _chainID,
-        uint256 _addedMargin
+        uint256 _amount
     ) external {
         uint256 _currentChainID = traderData[_trader][_pmAddress];
         if (_currentChainID != 0 && _currentChainID != _chainID) {
             revert("Cannot have positions on different chains");
         }
-        if (_addedMargin != 0) {
+        if (_amount != 0) {
             Position.Data memory  _positionData = positionHouse.getPosition(_pmAddress, _trader);
             _positionData.margin = _positionData.margin.absInt() + positionHouse.getAddedMargin(_pmAddress, _trader);
-            (uint256 _positionNotional,int256 _unrealizedPnl) = PositionManagerAdapter.getPositionNotionalAndUnrealizedPnl(
-                _pmAddress,
-                _trader,
-                PositionHouseStorage.PnlCalcOption.TWAP,
-                _positionData
-            );
-            if (_addedMargin > _positionNotional) {
-                revert("Invalid margin");
+            if (uint256(_positionData.margin)+ _amount > _positionData.openNotional) {
+                revert("Invalid added margin amount");
             }
         }
         traderData[_trader][_pmAddress]=_chainID;

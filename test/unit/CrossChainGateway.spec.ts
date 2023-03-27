@@ -513,7 +513,7 @@ describe("CrossChainGateway", () => {
             expect((await userGateway.getAddedMargin(positionManager.address, trader.address)).toString()).eq('3000000000000000000000')
         })
 
-        it("should add margin successful", async () => {
+        it("should not add margin successful", async () => {
 
             await phTT.openLimitPositionAndExpect({
                 quantity: toWei(10),
@@ -550,19 +550,17 @@ describe("CrossChainGateway", () => {
             }, {
                 type: 'address',
                 name: '_trader'
-            }], [positionManager.address, toWei(3000), toWei(0), trader.address]);
+            }], [positionManager.address, toWei(100000), toWei(0), trader.address]);
 
             const inputs = encodeCrossCallHandlerParams('3', destFunctionCall)
 
-            await crossChainGateway.crossCallHandler(
+            expect(crossChainGateway.crossCallHandler(
                 BigNumber.from("97"),
                 crossChainGateway.address,
                 inputs,
                 inputs,
                 "0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8"
-            )
-
-            expect((await userGateway.getAddedMargin(positionManager.address, trader.address)).toString()).eq('3000000000000000000000')
+            )).to.be.revertedWith("Invalid added margin amount")
         })
     })
 

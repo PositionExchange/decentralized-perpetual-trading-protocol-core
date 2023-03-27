@@ -2,11 +2,11 @@
 pragma solidity ^0.8.8;
 
 interface IDPTPValidator {
-    function validateChainIDAndAddedMargin(
+    function validateChainIDAndManualMargin(
         address _trader,
         address _pmAddress,
         uint256 _chainID,
-        uint256 _addedMargin
+        uint256 _amount
     ) external;
 
     function updateTraderData(
