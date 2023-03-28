@@ -12,7 +12,7 @@ import {
     UserGateway,
     MarketMakerGateway,
     AccessController, LiquidatorGateway,
-    CrossChainGateway, UserGatewayTest, OrderTracker
+    CrossChainGateway, UserGatewayTest, OrderTracker, DPTPValidator
 } from "../../typeChain";
 import {BigNumber} from "ethers";
 import PositionManagerTestingTool from "./positionManagerTestingTool";
@@ -178,6 +178,16 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
     await insuranceFund.connect(trader).initialize(accessController.address)
     await insuranceFund.connect(trader).setCounterParty(positionHouse.address);
 
+    // Deploy dptp validator contract
+    let dptpValidatorFactory = await ethers.getContractFactory("DPTPValidator", {
+            libraries: {
+                PositionManagerAdapter: positionManagerAdapter.address,
+                AccessControllerAdapter: accessControllerAdapter.address
+            }
+    })
+    let dptpValidator = (await dptpValidatorFactory.deploy()) as unknown as DPTPValidator
+    await dptpValidator.initialize(positionHouse.address, accessController.address);
+
     await bep20Mintable.mint(insuranceFund.address, BigNumber.from('10000000000000000000000000000000'));
 
     (await ethers.getSigners()).forEach(element => {
@@ -200,8 +210,11 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
     await crossChainGateway.initialize(positionHouse.address, positionStrategyOrder.address, 920000, 97, 86400)
     await orderTracker.initialize()
     await crossChainGateway.setInsuranceFund(insuranceFund.address)
+    await crossChainGateway.setDPTPValidator(dptpValidator.address)
+    await liquidatorGateway.setDPTPValidator(dptpValidator.address)
 
     await crossChainGateway.updateDestChainFuturesGateway(97, crossChainGateway.address)
+    await crossChainGateway.updateDestChainFuturesGateway(56, crossChainGateway.address)
     // await positionManager.updateInsuranceFundInterface(insuranceFund.address)
     await positionManager.updateAccessControllerInterface(accessController.address)
     await positionManager.updateTollsRatio(10000, 0,10000,0)
@@ -254,7 +267,8 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
         positionStrategyOrder,
         marketMakerGateway,
         liquidatorGateway,
-        accessController
+        accessController,
+        dptpValidator
     ]
 
 }

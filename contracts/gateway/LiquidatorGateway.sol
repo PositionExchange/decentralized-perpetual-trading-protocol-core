@@ -9,6 +9,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../adapter/interfaces/IPositionHouse.sol";
 import "../adapter/interfaces/IPositionStrategyOrder.sol";
 import "../adapter/interfaces/IPositionManager.sol";
+import "../adapter/interfaces/IDPTPValidator.sol";
 import "../adapter/interfaces/IPositionHouseConfigurationProxy.sol";
 import "../adapter/PositionManagerAdapter.sol";
 import "../adapter/PositionHouseAdapter.sol";
@@ -34,6 +35,7 @@ contract LiquidatorGateway is
     IInsuranceFund insuranceFundInterface;
     IPositionHouseConfigurationProxy
         public positionHouseConfigurationProxyInterface;
+    IDPTPValidator dptpValidator;
     // TODO upgrade for multi chain
     uint256 destinationChainID;
     address destinationFuturesGateway;
@@ -153,6 +155,10 @@ contract LiquidatorGateway is
 
     function setDestinationFuturesGateway(address _address) external onlyOwner {
         destinationFuturesGateway = _address;
+    }
+
+    function setDPTPValidator(address _address) external onlyOwner {
+        dptpValidator = IDPTPValidator(_address);
     }
 
     function liquidate(
@@ -275,6 +281,7 @@ contract LiquidatorGateway is
                 liquidationPenalty,
                 feeToLiquidator
             );
+            dptpValidator.updateTraderData(_trader,_pmAddress);
             insuranceFundInterface.withdraw(
                 _pmAddress,
                 _liquidator,
