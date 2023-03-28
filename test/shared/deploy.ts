@@ -181,11 +181,12 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
     // Deploy dptp validator contract
     let dptpValidatorFactory = await ethers.getContractFactory("DPTPValidator", {
             libraries: {
-                PositionManagerAdapter: positionManagerAdapter.address
+                PositionManagerAdapter: positionManagerAdapter.address,
+                AccessControllerAdapter: accessControllerAdapter.address
             }
     })
     let dptpValidator = (await dptpValidatorFactory.deploy()) as unknown as DPTPValidator
-    await dptpValidator.initialize(positionHouse.address);
+    await dptpValidator.initialize(positionHouse.address, accessController.address);
 
     await bep20Mintable.mint(insuranceFund.address, BigNumber.from('10000000000000000000000000000000'));
 
@@ -210,6 +211,7 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
     await orderTracker.initialize()
     await crossChainGateway.setInsuranceFund(insuranceFund.address)
     await crossChainGateway.setDPTPValidator(dptpValidator.address)
+    await liquidatorGateway.setDPTPValidator(dptpValidator.address)
 
     await crossChainGateway.updateDestChainFuturesGateway(97, crossChainGateway.address)
     await crossChainGateway.updateDestChainFuturesGateway(56, crossChainGateway.address)

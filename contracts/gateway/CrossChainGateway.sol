@@ -120,6 +120,7 @@ contract CrossChainGateway is
             uint256 _fee,
             uint256 _withdrawAmount
         ) = positionStrategyOrderInterface.triggerTPSL(_pmAddress, _trader);
+        dptpValidator.updateTraderData(_trader,_pmAddress);
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,

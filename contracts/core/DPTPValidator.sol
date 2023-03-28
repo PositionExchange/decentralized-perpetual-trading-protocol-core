@@ -7,7 +7,9 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../adapter/interfaces/IPositionHouse.sol";
 import "../adapter/interfaces/IDPTPValidator.sol";
+import "../adapter/interfaces/IAccessController.sol";
 import "../adapter/PositionManagerAdapter.sol";
+import "../adapter/AccessControllerAdapter.sol";
 import "../library/positions/Position.sol";
 import "../library/types/PositionHouseStorage.sol";
 import "../library/helpers/Quantity.sol";
@@ -23,21 +25,44 @@ contract DPTPValidator is
     using Int256Math for int256;
     using Quantity for int256;
     using PositionManagerAdapter for DPTPValidator;
+    using AccessControllerAdapter for DPTPValidator;
     using Position for Position.Data;
     IPositionHouse public positionHouse;
+    IAccessController public accessController;
     // mapping trader address with a map of position manager and chain id
     mapping(address => mapping(address => uint256)) public traderData;
 
-    function initialize(address _positionHouseAddress) public initializer {
-        require(_positionHouseAddress != address(0), Errors.VL_INVALID_INPUT);
+    function initialize(
+        address _positionHouseAddress,
+        address _accessControllerAddress
+    ) public initializer {
+        require(
+            _positionHouseAddress != address(0) &&
+            _accessControllerAddress != address(0)
+        , Errors.VL_INVALID_INPUT);
         __ReentrancyGuard_init();
         __Ownable_init();
         __Pausable_init();
         positionHouse = IPositionHouse(_positionHouseAddress);
+        accessController = IAccessController(_accessControllerAddress);
+    }
+
+    function onlyCounterParty() internal {
+        require(
+            AccessControllerAdapter.isGatewayOrCoreContract(
+                accessController,
+                msg.sender
+            ),
+            Errors.VL_NOT_COUNTERPARTY
+        );
     }
 
     function setPositionHouse(address _positionHouseAddress) public onlyOwner {
         positionHouse = IPositionHouse(_positionHouseAddress);
+    }
+
+    function setAccessController(address _accessControllerAddress) public onlyOwner {
+        accessController = IAccessController(_accessControllerAddress);
     }
 
     function validateChainIDAndManualMargin(
@@ -46,6 +71,7 @@ contract DPTPValidator is
         uint256 _chainID,
         uint256 _amount
     ) external {
+        onlyCounterParty();
         uint256 _currentChainID = traderData[_trader][_pmAddress];
         if (_currentChainID != 0 && _currentChainID != _chainID) {
             revert("Cannot have positions on different chains");
@@ -61,6 +87,7 @@ contract DPTPValidator is
     }
 
     function updateTraderData(address _trader,address _pmAddress) external {
+        onlyCounterParty();
         int256 _claimAmount = PositionManagerAdapter.getClaimAmount(
             _pmAddress,
             positionHouse.getAddedMargin(_pmAddress, _trader),
