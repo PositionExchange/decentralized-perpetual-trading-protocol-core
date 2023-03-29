@@ -1,5 +1,5 @@
 import {ethers} from 'hardhat';
-import {BigNumber} from 'ethers'
+import {BigNumber, utils} from 'ethers'
 import {expect} from 'chai';
 import {PositionManager} from "../../typeChain/PositionManager"
 import {AccessController, BEP20Mintable, OrderTracker} from "../../typeChain";
@@ -45,7 +45,6 @@ describe('Position Manager', async function () {
         const PositionManagerFactory = await ethers.getContractFactory("PositionManagerTest", {
             libraries: {
                 PositionMath: positionMath.address,
-                InsuranceFundAdapter: insuranceFundAdapter.address,
                 AccessControllerAdapter: accessControllerAdapter.address
             }
         })
@@ -60,6 +59,8 @@ describe('Position Manager', async function () {
 
         await accessController.initialize()
         await accessController.updateValidatedContractStatus(deployer.address, true)
+        await accessController.updateValidatedContractStatus(orderTracker.address, true)
+        await accessController.updateValidatedContractStatus(positionManager.address, true)
     })
 
     async function createLimitOrder(trader: string, pip: number, size: number | string, isBuy: boolean) {
@@ -88,12 +89,15 @@ describe('Position Manager', async function () {
     const shouldBuyMarketAndVerify = async function (size: number, expectOut: number, isBuy: boolean = true) {
         const [caller] = await ethers.getSigners()
         await accessController.updateValidatedContractStatus(caller.address, true)
-        const tx = await marketBuy('0x0000000000000000000000000000000000000000', size, isBuy)
+        const tx = await marketBuy('0x0000000000000000000000000000000000000001', size, isBuy)
         const receipt = await ethers.provider.getTransactionReceipt(tx.hash)
         const interfaceEvent = new ethers.utils.Interface(["event MarketFilled(bool isBuy, uint256 amount, uint128 toPip, uint256 passedPipCount, uint128 remainingLiquidity)"]);
         if (expectOut != 0) {
-            const data = receipt.logs[0].data
-            const topics = receipt.logs[0].topics
+            const eventSignature = ethers.utils.keccak256(utils.toUtf8Bytes("MarketFilled(bool,uint256,uint128,uint256,uint128)"))
+            const log = receipt.logs.find(({topics}) => topics[0].toString() === eventSignature.toString())
+            const logIndex = receipt.logs.indexOf(log)
+            const data = receipt.logs[logIndex].data
+            const topics = receipt.logs[logIndex].topics
             const event = interfaceEvent.decodeEventLog("MarketFilled", data, topics)
             expect(event.isBuy).to.equal(isBuy)
             expect(event.amount).to.equal(expectOut)
@@ -114,9 +118,12 @@ describe('Position Manager', async function () {
         // expect(limitOrderCreatedEvent.size).to.equal(size)
 
         const interfaceEvent = new ethers.utils.Interface(["event MarketFilled(bool isBuy, uint256 amount, uint128 toPip, uint256 passedPipCount, uint128 remainingLiquidity)"]);
-        const data = receipt.logs[0].data
-        const topics = receipt.logs[0].topics
         if (expectOut != 0) {
+            const eventSignature = ethers.utils.keccak256(utils.toUtf8Bytes("MarketFilled(bool,uint256,uint128,uint256,uint128)"))
+            const log = receipt.logs.find(({topics}) => topics[0].toString() === eventSignature.toString())
+            const logIndex = receipt.logs.indexOf(log)
+            const data = receipt.logs[logIndex].data
+            const topics = receipt.logs[logIndex].topics
             const event = interfaceEvent.decodeEventLog("MarketFilled", data, topics)
             expect(event.isBuy).to.equal(isBuy)
             expect(event.amount).to.equal(expectOut)

@@ -66,7 +66,10 @@ interface IPositionManager {
 
     function getPremiumFraction() external view returns (int256, uint256);
 
-    function getTickPositionIndexes(uint128 _pip) external view returns (uint64 filledIndex, uint64 currentIndex);
+    function getTickPositionIndexes(uint128 _pip)
+        external
+        view
+        returns (uint64 filledIndex, uint64 currentIndex);
 
     function calcMakerFee(uint256 _positionNotional, bool _isOpen)
         external
@@ -106,15 +109,15 @@ interface IPositionManager {
         );
 
     function getPendingOrderDetailFull(uint128 pip, uint64 orderId)
-    external
-    view
-    returns (
-        bool isFilled,
-        bool isBuy,
-        uint256 size,
-        uint256 partialFilled,
-        address trader
-    );
+        external
+        view
+        returns (
+            bool isFilled,
+            bool isBuy,
+            uint256 size,
+            uint256 partialFilled,
+            address trader
+        );
 
     function getNotionalMarginAndFee(
         uint256 _pQuantity,

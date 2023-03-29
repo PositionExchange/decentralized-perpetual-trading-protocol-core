@@ -584,7 +584,7 @@ describe("CrossChainGateway", () => {
                     _positionManager: positionManager,
                 }
             );
-            await positionHouse.connect(deployer).addMargin(positionManager.address, BigNumber.from('5000'), BigNumber.from('100'), trader.address)
+            await positionHouse.connect(deployer).addMargin(positionManager.address, BigNumber.from('5000'), BigNumber.from('0'), trader.address)
 
             // get position without manual margin, access directly to positionHouse
             const position = await positionHouse.getPosition(positionManager.address, trader.address)

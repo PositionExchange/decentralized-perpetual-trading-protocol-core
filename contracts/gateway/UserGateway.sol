@@ -290,6 +290,7 @@ contract UserGateway is
             positionHouseInterface.getAddedMargin(_pmAddress, _trader);
     }
 
+    // only for client use, return margin is unsigned
     function getPositionWithoutManualMargin(address _pmAddress, address _trader)
         public
         view

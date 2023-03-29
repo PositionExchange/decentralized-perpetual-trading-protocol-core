@@ -372,35 +372,6 @@ contract PositionManager is
         }
     }
 
-    //        function deposit(
-    //            address _trader,
-    //            uint256 _amount,
-    //            uint256 _fee
-    //        ) external {
-    //            onlyCounterParty();
-    //            if (isRFIToken == true) {
-    //                // TODO update RFI percentage might be different from 1%
-    //                _amount = (_amount * 100) / 99;
-    //            }
-    //            InsuranceFundAdapter.deposit(
-    //                insuranceFundInterface,
-    //                address(this),
-    //                _trader,
-    //                _amount,
-    //                _fee
-    //            );
-    //        }
-
-    function withdraw(address _trader, uint256 _amount) external {
-        //            onlyCounterParty();
-        InsuranceFundAdapter.withdraw(
-            insuranceFundInterface,
-            address(this),
-            _trader,
-            _amount
-        );
-    }
-
     function openLimitPosition(
         address _trader,
         uint128 _pip,
@@ -447,6 +418,11 @@ contract PositionManager is
                     _isBuy,
                     _singleSlot.pip,
                     underlyingPip
+                );
+                orderTrackerInterface.accumulateMarketOrder(
+                    _isBuy,
+                    uint128(sizeOut),
+                    uint128(openNotional)
                 );
                 hasLiquidity = liquidityBitmap.hasLiquidity(_pip);
             }
@@ -509,17 +485,23 @@ contract PositionManager is
         uint256 underlyingPip = getUnderlyingPriceInPip();
         requestId++;
         (sizeOut, openNotional) = _internalOpenMarketOrder(_size, _isBuy, 0);
+        orderTrackerInterface.accumulateMarketOrder(
+            _isBuy,
+            uint128(sizeOut),
+            uint128(openNotional)
+        );
         emit MarketOrderCreated(_trader, _isBuy, sizeOut, requestId);
         uint128 _afterPip = singleSlot.pip;
 
-        bool pass = _isBuy
-            ? _afterPip <= (underlyingPip + maxWordRangeForMarketOrder * 250)
-            : int128(_afterPip) >=
-                (int256(underlyingPip) -
-                    int128(maxWordRangeForMarketOrder * 250));
-        if (!pass) {
-            revert(Errors.VL_MARKET_ORDER_MUST_CLOSE_TO_INDEX_PRICE);
-        }
+        _requireLastPipCloseToIndex(_isBuy, _afterPip, underlyingPip);
+        //        bool pass = _isBuy
+        //            ? _afterPip <= (underlyingPip + maxWordRangeForMarketOrder * 250)
+        //            : int128(_afterPip) >=
+        //                (int256(underlyingPip) -
+        //                    int128(maxWordRangeForMarketOrder * 250));
+        //        if (!pass) {
+        //            revert(Errors.VL_MARKET_ORDER_MUST_CLOSE_TO_INDEX_PRICE);
+        //        }
         fee = calcTakerFee(openNotional, true);
         // need to calculate entryPrice in pip
         entryPrice = PositionMath.calculateEntryPrice(
@@ -646,8 +628,15 @@ contract PositionManager is
         return nextFundingTime;
     }
 
-    function getTickPositionIndexes(uint128 _pip) public view returns (uint64 filledIndex, uint64 currentIndex) {
-        return (tickPosition[_pip].filledIndex, tickPosition[_pip].currentIndex);
+    function getTickPositionIndexes(uint128 _pip)
+        public
+        view
+        returns (uint64 filledIndex, uint64 currentIndex)
+    {
+        return (
+            tickPosition[_pip].filledIndex,
+            tickPosition[_pip].currentIndex
+        );
     }
 
     function pipToPrice(uint128 _pip) public view returns (uint256) {
@@ -945,7 +934,10 @@ contract PositionManager is
         accessControllerInterface = IAccessController(_accessControllerAddress);
     }
 
-    function updateOrderTrackerInterface(address _orderTrackerAddress) public onlyOwner {
+    function updateOrderTrackerInterface(address _orderTrackerAddress)
+        public
+        onlyOwner
+    {
         orderTrackerInterface = IOrderTracker(_orderTrackerAddress);
     }
 
@@ -1140,7 +1132,11 @@ contract PositionManager is
                             state.remainingSize,
                             BASE_BASIC_POINT
                         );
-                        orderTrackerInterface.accumulatePartialFilledOrder(step.pipNext, state.remainingSize, orderNotional);
+                        orderTrackerInterface.accumulatePartialFilledOrder(
+                            step.pipNext,
+                            state.remainingSize,
+                            orderNotional
+                        );
                         tickPosition[step.pipNext].partiallyFill(
                             state.remainingSize
                         );
@@ -1163,7 +1159,11 @@ contract PositionManager is
                             liquidity,
                             BASE_BASIC_POINT
                         );
-                        orderTrackerInterface.accumulateFulfilledOrder(step.pipNext, liquidity, orderNotional);
+                        orderTrackerInterface.accumulateFulfilledOrder(
+                            step.pipNext,
+                            liquidity,
+                            orderNotional
+                        );
                         state.remainingSize -= liquidity;
                         openNotional += orderNotional;
                         state.pip = state.remainingSize > 0
@@ -1178,7 +1178,11 @@ contract PositionManager is
                             liquidity,
                             BASE_BASIC_POINT
                         );
-                        orderTrackerInterface.accumulateFulfilledOrder(step.pipNext, liquidity, orderNotional);
+                        orderTrackerInterface.accumulateFulfilledOrder(
+                            step.pipNext,
+                            liquidity,
+                            orderNotional
+                        );
                         liquidityBitmap.toggleSingleBit(step.pipNext, false);
                         openNotional += orderNotional;
                         state.remainingSize = 0;
@@ -1291,21 +1295,29 @@ contract PositionManager is
         uint256 _underlyingPip
     ) internal {
         uint128 _maxWordRangeForMarketOrder = maxWordRangeForMarketOrder;
+        bool pass;
         if (_isBuy) {
             // higher pip when long must lower than max word range for market order short
-            require(
-                _lastPip <= _underlyingPip + _maxWordRangeForMarketOrder * 250,
-                Errors.VL_MARKET_ORDER_MUST_CLOSE_TO_INDEX_PRICE
-            );
+            pass =
+                _lastPip <= _underlyingPip + _maxWordRangeForMarketOrder * 250;
+            //            require(
+            //                _lastPip <= _underlyingPip + _maxWordRangeForMarketOrder * 250,
+            //                Errors.VL_MARKET_ORDER_MUST_CLOSE_TO_INDEX_PRICE
+            //            );
         } else {
             // lower pip when short must higher than max word range for market order long
-            require(
+            pass =
                 int128(_lastPip) >=
-                    (int256(_underlyingPip) -
-                        int128(_maxWordRangeForMarketOrder * 250)),
-                Errors.VL_MARKET_ORDER_MUST_CLOSE_TO_INDEX_PRICE
-            );
+                (int256(_underlyingPip) -
+                    int128(_maxWordRangeForMarketOrder * 250));
+            //            require(
+            //                int128(_lastPip) >=
+            //                    (int256(_underlyingPip) -
+            //                        int128(_maxWordRangeForMarketOrder * 250)),
+            //                Errors.VL_MARKET_ORDER_MUST_CLOSE_TO_INDEX_PRICE
+            //            );
         }
+        require(pass, Errors.VL_MARKET_ORDER_MUST_CLOSE_TO_INDEX_PRICE);
     }
 
     function _getPriceWithSpecificSnapshot(TwapPriceCalcParams memory _params)

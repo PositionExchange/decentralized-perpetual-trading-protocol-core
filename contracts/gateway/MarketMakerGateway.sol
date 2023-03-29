@@ -58,7 +58,6 @@ contract MarketMakerGateway is
             _positionManagerInterface.marketMakerRemove(currentWallOrders);
             delete wallOrders;
         }
-        // TODO implement function fillToPip
         _positionManagerInterface.marketMakerFillToPip(tx.origin, _targetPip);
         MarketMaker.MMCancelOrder[]
             memory newWallOrders = _positionManagerInterface.marketMakerSupply(
