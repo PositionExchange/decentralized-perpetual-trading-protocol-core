@@ -43,7 +43,6 @@ describe('Insurance Fund', async function () {
         const positionManagerFactory = await ethers.getContractFactory("PositionManagerTest", {
             libraries: {
                 PositionMath: positionMath.address,
-                InsuranceFundAdapter: insuranceFundAdapter.address,
                 AccessControllerAdapter: accessControllerAdapter.address
             }
         })
@@ -545,18 +544,6 @@ describe('Insurance Fund', async function () {
             expect(traderBUSDBalanceAfterWithdraw).eq("0");
             expect(traderBonusBalanceAfterWithdraw).eq("50");
             expect(traderBonusBalanceInInsuranceFund).eq("40");
-        })
-    })
-
-    describe("should validate busd bonus amount correctly", async () => {
-        it("should validate amount correctly", async () => {
-            await insuranceFund.connect(deployer).setBonusBalance(positionManager.address, trader.getAddress(), BigNumber.from('0'))
-
-            console.log((await insuranceFund.busdBonusBalances(positionManager.address, trader.address)).toString())
-            await insuranceFund.validateOrderBusdBonusAmount(positionManager.address, trader.address, toWei(100), 20, toWei(40))
-
-            await expect(insuranceFund.validateOrderBusdBonusAmount(positionManager.address, trader.address, toWei(30), 20, toWei(40))).to.be.revertedWith('34')
-
         })
     })
 });

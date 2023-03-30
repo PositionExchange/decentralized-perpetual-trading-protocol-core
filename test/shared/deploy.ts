@@ -96,7 +96,6 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
     let positionManagerFactory = await ethers.getContractFactory("PositionManagerTest", {
         libraries: {
             PositionMath: positionMath.address,
-            InsuranceFundAdapter: insuranceFundAdapter.address,
             AccessControllerAdapter: accessControllerAdapter.address
         }
     })
@@ -106,7 +105,6 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
     let fundingRateTestFactory = await ethers.getContractFactory("FundingRateTest", {
         libraries: {
             PositionMath: positionMath.address,
-            InsuranceFundAdapter: insuranceFundAdapter.address,
             AccessControllerAdapter: accessControllerAdapter.address
         }
     })
@@ -219,10 +217,12 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
     await positionManager.updateAccessControllerInterface(accessController.address)
     await positionManager.updateTollsRatio(10000, 0,10000,0)
     await positionManager.updateOrderTrackerInterface(orderTracker.address)
+    await positionManager.updateStepBaseSize(toWei(1))
     // await fundingRateTest.updateInsuranceFundInterface(insuranceFund.address)
     await fundingRateTest.updateAccessControllerInterface(accessController.address)
     await fundingRateTest.updateTollsRatio(10000, 0,10000,0)
     await fundingRateTest.updateOrderTrackerInterface(orderTracker.address)
+    await fundingRateTest.updateStepBaseSize(toWei(1))
 
     await orderTracker.updateAccessControllerInterface(accessController.address)
 
@@ -268,7 +268,8 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
         marketMakerGateway,
         liquidatorGateway,
         accessController,
-        dptpValidator
+        dptpValidator,
+        orderTracker
     ]
 
 }

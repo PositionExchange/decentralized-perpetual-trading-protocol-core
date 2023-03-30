@@ -398,6 +398,7 @@ describe('Test Margin Intergration', function () {
         });
 
         it("should be partial liquidated when losing almost added margin + position margin", async () => {
+            await fundingRateTest.updateStepBaseSize(0)
             await phTT.openLimitPositionAndExpect({
                 limitPrice: 5000,
                 side: SIDE.LONG,
