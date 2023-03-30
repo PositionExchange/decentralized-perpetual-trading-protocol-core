@@ -401,8 +401,32 @@ describe("CrossChainGateway", () => {
             const chainID = await dptpValidator.traderData(trader2.address,positionManager.address)
             expect(chainID.toString()).eq('97')
 
-            const anotherInputs = encodeCrossCallHandlerParams('0', destFunctionCall,"0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8")
-            expect(crossChainGateway.crossCallHandler(
+            const destFunctionMarketCall = web3.eth.abi.encodeParameters([{
+                type: 'address',
+                name: '_positionManager'
+            }, {
+                type: 'uint8',
+                name: '_side'
+            }, {
+                type: 'uint256',
+                name: '_uQuantity'
+            }, {
+                type: 'uint16',
+                name: '_leverage'
+            }, {
+                type: 'address',
+                name: '_trader'
+            }, {
+                type: 'uint256',
+                name: '_initialMargin'
+            }, {
+                type: 'uint256',
+                name: '_busdBonusAmount'
+            }], [positionManager.address, '0', '4500000000000000000', '10', trader2.address, toWei('1485'), toWei(0)]);
+
+
+            const anotherInputs = encodeCrossCallHandlerParams('0', destFunctionMarketCall,"0x47dc760a25a8fe88fca9b11fe604d79fc1484b164e7e62b3d550a6c679a407a8")
+            await expect(crossChainGateway.crossCallHandler(
                 BigNumber.from("56"),
                 crossChainGateway.address,
                 anotherInputs,

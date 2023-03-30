@@ -1,5 +1,5 @@
 import {
-    CreateChainLinkPriceFeed, CreateCrossChainGateway,
+    CreateChainLinkPriceFeed, CreateCrossChainGateway, CreateDptpValidator,
     CreateInsuranceFund, CreateLiquidatorGateway, CreateMarketMakerGateway,
     CreatePositionHouseConfigurationProxyInput,
     CreatePositionHouseFunction,
@@ -614,6 +614,80 @@ export class ContractWrapperFactory {
         }
         // Update isValidatedContract in AccessController
         await this.updateValidatedStatusInAccessController(validatorGatewayAddress)
+    }
+
+    async createDptpValidator(args: CreateDptpValidator){
+        const positionManagerAdapterContractAddress = await this.db.findAddressByKey(`PositionManagerAdapter`);
+        console.log(`positionManagerAdapterContractAddress ${positionManagerAdapterContractAddress}`);
+
+        const accessControllerAdapterContractAddress = await this.db.findAddressByKey(`AccessControllerAdapter`);
+        console.log(`accessControllerAdapterContractAddress ${accessControllerAdapterContractAddress}`);
+
+        let dptpValidatorAddress = await this.db.findAddressByKey("DptpValidator")
+
+        let dptpValidatorFactory = await this.hre.ethers.getContractFactory("DPTPValidator", {
+            libraries: {
+                PositionManagerAdapter: positionManagerAdapterContractAddress,
+                AccessControllerAdapter: accessControllerAdapterContractAddress
+            }
+        })
+
+        if (dptpValidatorAddress) {
+            const upgraded = await this.hre.upgrades.upgradeProxy(dptpValidatorAddress, dptpValidatorFactory, {unsafeAllowLinkedLibraries: true})
+            console.log(`Starting verify upgrade Dptp Validator`)
+            await this.verifyImplContract(upgraded.deployTransaction)
+            console.log(`Upgrade Dptp Validator`)
+        } else {
+            const contractArgs = [
+                args.positionHouse,
+                args.accessController
+            ];
+
+            const instance = await this.hre.upgrades.deployProxy(dptpValidatorFactory, contractArgs, {unsafeAllowLinkedLibraries: true})
+            console.log("wait for deploy")
+            await instance.deployed()
+
+            const address = instance.address.toString().toLowerCase()
+            console.log(`Dptp Validator : ${address}`)
+            dptpValidatorAddress = address
+            await this.db.saveAddressByKey('DptpValidator', address)
+            await this.verifyProxy(address)
+        }
+        await this.updateValidatedStatusInAccessController(dptpValidatorAddress)
+    }
+
+    async createOrderTracker() {
+        const accessControllerAdapterContractAddress = await this.db.findAddressByKey(`AccessControllerAdapter`);
+        console.log(`accessControllerAdapterContractAddress ${accessControllerAdapterContractAddress}`);
+
+        let orderTrackerAddress = await this.db.findAddressByKey("OrderTracker")
+
+        let orderTrackerFactory = await this.hre.ethers.getContractFactory("OrderTracker", {
+            libraries: {
+                AccessControllerAdapter: accessControllerAdapterContractAddress
+            }
+        })
+
+        if (orderTrackerAddress) {
+            const upgraded = await this.hre.upgrades.upgradeProxy(orderTrackerAddress, orderTrackerFactory, {unsafeAllowLinkedLibraries: true})
+            console.log(`Starting verify upgrade order tracker`)
+            await this.verifyImplContract(upgraded.deployTransaction)
+            console.log(`Upgrade Order Tracker`)
+        } else {
+            const contractArgs = [];
+
+            const instance = await this.hre.upgrades.deployProxy(orderTrackerFactory, contractArgs, {unsafeAllowLinkedLibraries: true})
+            console.log("wait for deploy")
+            await instance.deployed()
+
+            const address = instance.address.toString().toLowerCase()
+            console.log(`Order Tracker : ${address}`)
+            orderTrackerAddress = address
+            await this.db.saveAddressByKey('OrderTracker', address)
+            await this.verifyProxy(address)
+        }
+        await this.updateValidatedStatusInAccessController(orderTrackerAddress)
+
     }
 
     async createChainlinkPriceFeed( args: CreateChainLinkPriceFeed){

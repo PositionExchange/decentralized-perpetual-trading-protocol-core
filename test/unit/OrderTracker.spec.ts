@@ -66,6 +66,7 @@ describe("OrderTracker", () => {
             marketMakerGateway,
             _,
             _,
+            _,
             orderTracker
         ] = await deployPositionHouse() as any
 

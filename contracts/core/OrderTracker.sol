@@ -97,7 +97,6 @@ contract OrderTracker is
         onlyCounterParty();
         address pmAddress = msg.sender;
         IPositionManager positionManagerInterface = IPositionManager(pmAddress);
-        console.log("accumulateMarketOrder", _size, _orderNotional);
         _updatePositionInfo(pmAddress, _isBuy, _size, _orderNotional);
     }
 
@@ -137,7 +136,6 @@ contract OrderTracker is
                 // input leverage = 1 cause we don't use it
                 (uint256 orderNotional, , ) = positionManagerInterface
                     .getNotionalMarginAndFee(filledSize, _pip, 1);
-                console.log("fulfill order", filledSize, orderNotional);
                 _updatePositionInfo(
                     pmAddress,
                     pendingOrderDetail.isBuy,
@@ -182,7 +180,6 @@ contract OrderTracker is
         );
         address mmAddress = positionManagerInterface.getMarketMakerAddress();
         if (pendingOrderDetail.trader != mmAddress) {
-            console.log("partial filled order", _size, _orderNotional);
             _updatePositionInfo(
                 pmAddress,
                 pendingOrderDetail.isBuy,
@@ -240,7 +237,6 @@ contract OrderTracker is
         // input leverage = 1 cause we don't use it
         (uint256 totalPositionLongNotional, , ) = positionManagerInterface.getNotionalMarginAndFee(memPositionInfo.totalLongBaseSize, currentPip, 1);
         (uint256 totalPositionShortNotional, ,) = positionManagerInterface.getNotionalMarginAndFee(memPositionInfo.totalShortBaseSize, currentPip, 1);
-        console.log("get total pnl", currentPip, totalPositionLongNotional, totalPositionShortNotional);
         // totalPnl = totalPnlLong + totalPnlShort
         // = totalPositionLongNotional - totalLongQuoteSize + totalShortQuoteSize - totalPositionShortNotional
         int256 totalPnl = int256(totalPositionLongNotional) - int128(memPositionInfo.totalLongQuoteSize) + int128(memPositionInfo.totalShortQuoteSize) - int256(totalPositionShortNotional);

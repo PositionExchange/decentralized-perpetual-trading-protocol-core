@@ -143,3 +143,10 @@ export interface CreateCrossChainGateway {
     timeHorizon: number,
     destBlockchainId: number
 }
+
+export interface CreateDptpValidator {
+    positionHouse: string,
+    accessController: string
+}
+
+
