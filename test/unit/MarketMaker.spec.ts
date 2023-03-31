@@ -11,7 +11,7 @@ import {ethers, waffle} from "hardhat";
 import {deployPositionHouse} from "../shared/deploy";
 import {use, expect} from "chai";
 import {OrderSide, POSITION_SIDE, PositionData, toWei, toWeiBN} from "../shared/utilities";
-import {BigNumber} from "ethers";
+import {BigNumber, utils} from "ethers";
 const {solidity} = waffle
 use(solidity)
 
@@ -349,6 +349,17 @@ describe('Market Maker', function () {
             console.log("second fill to pip order")
             await marketMakerGateway.fillToPip(positionManager.address, 504000, [{pip: 506000, quantity: toWeiBN('-1')}, {pip: 500000, quantity: toWeiBN('1')}], [])
 
+        })
+
+        it("should emit event cancel limit order", async () => {
+            await marketMakerGateway.fillToPip(positionManager.address, 505000, [{pip: 505000, quantity: toWeiBN('-1')}, {pip: 500000, quantity: toWeiBN('1')}], [])
+
+            const fillToPipTx1 = await marketMakerGateway.fillToPip(positionManager.address, 510000, [{pip: 525000, quantity: toWeiBN('-1')}, {pip: 505000, quantity: toWeiBN('1')}], [])
+            const receipt1 = await ethers.provider.getTransactionReceipt(fillToPipTx1.hash)
+            const eventSignature = ethers.utils.keccak256(utils.toUtf8Bytes("LimitOrderCancelled(bool,uint64,uint128,uint256,uint256,address)"))
+            const log = receipt1.logs.find(({topics}) => topics[0].toString() === eventSignature.toString())
+            const logIndex = receipt1.logs.indexOf(log)
+            await expect(logIndex).not.eq(undefined)
         })
     })
 
