@@ -57,6 +57,7 @@
 {"address":"0xe727a7e1f6bdcd9470a3577e264b9eb4e377f990","key":"PositionManager:BTC_BUSD","_id":"lJAFa8KgZ4bES1Ow"}
 {"address":"yes","key":"0x24E02879E864482F26D3Beb7311bB56eDc3cB2c8:verified","_id":"lwSXs2j0WmHBFgRR"}
 {"address":"yes","key":"0x9aa5A29128bff32ed5A7DE02e08e639a9640bD00:verified","_id":"m2lGDHVCqlkMsXXF"}
+{"address":"yes","key":"0x717A25913604d2416B104D22b11F3a2AcD5D45C8:verified","_id":"m34qHWVpjYtlMZwf"}
 {"address":"0xaeb2abf30e28e3c3130e3abe1d5ecc75ba969804","key":"MarketMakerGateway","_id":"mn3owfLcDjCdMJGr"}
 {"address":"0x521653892096b1905257b87f0a9e4f9bea7dc9bb","key":"AccessController","_id":"ojO2kqI4KQlBooDa"}
 {"address":"yes","key":"0x6c8550386Ed3E49c418333e3A3600EAef73Db8B9:verified","_id":"pYB3ZBfuvDBg3BCl"}
@@ -70,4 +71,3 @@
 {"address":"yes","key":"0x1e597c3947AA269ed3062f0E6fB331494bF15BB1:verified","_id":"ulQp7xeGes7MgUor"}
 {"address":"yes","key":"0x656CecBbB04aB782dD6Aa95Fcbfa1d78258cF6b9:verified","_id":"vWQiQC64j9HZf99l"}
 {"address":"yes","key":"0xEb4A06960edC5BD5FBdF99d4615f0073D9A476c9:verified","_id":"xdCQCuY7RJfltHhy"}
-{"address":"yes","key":"0x717A25913604d2416B104D22b11F3a2AcD5D45C8:verified","_id":"m34qHWVpjYtlMZwf"}

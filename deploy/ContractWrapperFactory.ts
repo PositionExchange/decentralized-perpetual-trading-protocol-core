@@ -1,5 +1,5 @@
 import {
-    CreateChainLinkPriceFeed, CreateCrossChainGateway, CreateDptpValidator,
+    CreateChainLinkPriceFeed, CreateCrossChainGateway, CreateDptpCrossChainGateway, CreateDptpValidator,
     CreateInsuranceFund, CreateLiquidatorGateway, CreateMarketMakerGateway,
     CreatePositionHouseConfigurationProxyInput,
     CreatePositionHouseFunction,
@@ -17,13 +17,14 @@ import {HardhatDefenderUpgrades} from "@openzeppelin/hardhat-defender";
 // @ts-ignore
 import {
     AccessController, ChainLinkPriceFeed,
-    CrossChainGateway,
+    CrossChainGateway, DptpCrossChainGateway, DPTPValidator,
     InsuranceFund, LiquidatorGateway,
     PositionHouse,
     PositionManager,
     ValidatorGateway
 } from "../typeChain";
 import {BigNumber} from "ethers";
+import {applyWorkaround} from "hardhat/internal/util/antlr-prototype-pollution-workaround";
 
 
 export class ContractWrapperFactory {
@@ -753,5 +754,44 @@ export class ContractWrapperFactory {
             await this.verifyProxy(address)
         }
         await this.updateValidatedStatusInAccessController(crosschainGatewayContractAddress)
+    }
+
+    async createDptpCrossChainGateway(args : CreateDptpCrossChainGateway) {
+        const contractName = 'DptpCrossChainGateway';
+        const contractFactory = await this.hre.ethers.getContractFactory(contractName);
+        const contractAddress = await this.db.findAddressByKey(contractName);
+        if (contractAddress) {
+            const proposal = await this.hre.upgrades.upgradeProxy(contractAddress, contractFactory, {unsafeAllowLinkedLibraries: true});
+            await this.verifyImplContract(proposal.deployTransaction)
+        } else {
+            const contractArgs = [
+                args.myBlockchainId,
+                args.timeHorizon,
+                args.positionHouse,
+                args.positionHouse,
+                args.positionStrategyOrder,
+            ];
+            const instance = (await this.hre.upgrades.deployProxy(contractFactory, contractArgs)) as DptpCrossChainGateway;
+            console.log(`wait for deploy ${contractName}`);
+            await instance.deployed();
+            const address = instance.address.toString();
+            console.log(`${contractName} address : ${address}`)
+            await this.db.saveAddressByKey(`${contractName}`, address);
+            await this.verifyProxy(address)
+
+            await this.updateValidatedStatusInAccessController(contractAddress)
+
+            if (args.whitelistRelayers && args.whitelistRelayers.length > 0) {
+                for (let i = 0; i < args.whitelistRelayers.length; i++) {
+                    await instance.setRelayer(args.whitelistRelayers[i].chainId, args.whitelistRelayers[i].address, true);
+                }
+            }
+
+            if (args.destChainFuturesGateways && args.destChainFuturesGateways.length > 0) {
+                for (let i = 0; i < args.destChainFuturesGateways.length; i++) {
+                    await instance.addDestChainFuturesGateway(args.destChainFuturesGateways[i].chainId, args.destChainFuturesGateways[i].address);
+                }
+            }
+        }
     }
 }
