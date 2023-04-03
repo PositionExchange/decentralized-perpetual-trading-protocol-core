@@ -243,6 +243,14 @@ contract OrderTracker is
         return totalPnl;
     }
 
+    function getTotalPnlBatch(address[] memory _pmAddress) public view returns (int256[] memory){
+        int256[] memory pnls = new int256[](_pmAddress.length);
+        for (uint i = 0; i < _pmAddress.length; i++){
+            pnls[i] = getTotalPnl(_pmAddress[i]);
+        }
+        return pnls;
+    }
+
     //    function crossBlockchainCall(
     //        uint256 _destBcId,
     //        address _destContract,
