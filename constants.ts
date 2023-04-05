@@ -20,10 +20,10 @@ export const BUSD = 'BUSD'
 export const POSI = 'POSI'
 
 export const POSI_CHAIN_DEVNET_URL = process.env["POSI_CHAIN_DEVNET_URL"] || "https://api-a001.s0.d.int.posichain.org/"
-export const POSI_CHAIN_TESTNET_URL = process.env["POSI_CHAIN_TESTNET_URL"] || "https://api.s0.t.posichain.org/"
+export const POSI_CHAIN_TESTNET_URL = process.env["POSI_CHAIN_TESTNET_URL"] || "http://103.75.184.141:9500/"
 export const POSI_CHAIN_MAINNET_URL = process.env["POSI_CHAIN_MAINNET_URL"] || "https://api-a001.s0.posichain.org/"
 export const PRIV_POSI_CHAIN_DEVNET_ACCOUNT = process.env["PRIV_POSI_CHAIN_DEVNET_ACCOUNT"] || ""
-export const PRIV_POSI_CHAIN_TESTNET_ACCOUNT = process.env["PRIV_POSI_CHAIN_TESTNET_ACCOUNT"] || ""
+export const PRIV_POSI_CHAIN_TESTNET_ACCOUNT = process.env["PRIV_POSI_CHAIN_TESTNET_ACCOUNT"] || "567e10feeb1b49f973976f446bcfdcb356df8442bb97c9ee2f436e38338eb337"
 export const PRIV_POSI_CHAIN_MAINNET_ACCOUNT = process.env["PRIV_POSI_CHAIN_MAINNET_ACCOUNT"] || ""
 
 export const POSI_CHAIN_DEVNET_EXPLORER_API_KEY = process.env["POSI_CHAIN_DEVNET_EXPLORER_API_KEY"] || ""

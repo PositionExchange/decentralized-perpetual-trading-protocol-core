@@ -49,9 +49,27 @@ contract DptpCrossChainGateway is
     bytes4 private constant EXECUTE_INCREASE_POSITION_METHOD_ID =
         bytes4(keccak256("executeIncreasePosition(bytes32,uint256,bool)"));
 
+    bytes4 private constant EXECUTE_DECREASE_POSITION_METHOD_ID =
+        bytes4(
+            keccak256(
+                "executeDecreasePosition(bytes32,uint256,uint256,uint256,bool)"
+            )
+        );
+
     enum Method {
         OPEN_MARKET,
-        OPEN_LIMIT
+        OPEN_LIMIT,
+        CANCEL_LIMIT,
+        ADD_MARGIN,
+        REMOVE_MARGIN,
+        CLOSE_POSITION,
+        INSTANTLY_CLOSE_POSITION,
+        CLOSE_LIMIT_POSITION,
+        CLAIM_FUND,
+        SET_TPSL,
+        UNSET_TP_AND_SL,
+        UNSET_TP_OR_SL,
+        OPEN_MARKET_BY_QUOTE
     }
 
     event Deposit(
@@ -167,6 +185,16 @@ contract DptpCrossChainGateway is
         if (Method(decodedEventData.functionMethodID) == Method.OPEN_MARKET) {
             openMarketPosition(_sourceBcId, functionCall);
             return;
+        } else if (
+            Method(decodedEventData.functionMethodID) == Method.OPEN_LIMIT
+        ) {
+            openLimitOrder(_sourceBcId, functionCall);
+            return;
+        } else if (
+            Method(decodedEventData.functionMethodIDh) == Method.CLOSE_POSITION
+        ) {
+            closePosition(_sourceBcId, functionCall);
+            return;
         }
 
         revert("CGW-01");
@@ -206,6 +234,92 @@ contract DptpCrossChainGateway is
                 EXECUTE_INCREASE_POSITION_METHOD_ID,
                 requestKey,
                 param.quantity,
+                isLong
+            )
+        );
+    }
+
+    function openLimitOrder(uint256 _sourceBcId, bytes memory _functionCall)
+        internal
+    {
+        bytes32 requestKey;
+        address pmAddress;
+        bool isLong;
+        HouseBaseParam.OpenLimitOrderParams memory param;
+
+        (
+            requestKey,
+            pmAddress,
+            isLong,
+            param.quantity,
+            param.pip,
+            param.leverage,
+            param.trader,
+            param.initialMargin
+        ) = abi.decode(
+            _functionCall,
+            (bytes32, address, bool, uint256, uint128, uint16, address, uint256)
+        );
+        param.positionManager = IPositionManager(pmAddress);
+        param.side = isLong ? Position.Side.LONG : Position.Side.SHORT;
+
+        validateChainIDAndManualMargin(_sourceBcId, pmAddress, param.trader, 0);
+
+        IPositionHouse(positionHouse).openLimitOrder(param);
+
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_INCREASE_POSITION_METHOD_ID,
+                requestKey,
+                param.quantity,
+                isLong
+            )
+        );
+    }
+
+    function closePosition(uint256 _sourceBcId, bytes memory _functionCall)
+        internal
+    {
+        bytes32 requestKey;
+        address pmAddress;
+        uint256 quantity;
+        address trader;
+        (requestKey, pmAddress, quantity, trader) = abi.decode(
+            _functionCall,
+            (bytes32, address, uint256, address)
+        );
+
+        Position.Data memory positionData = IPositionHouse(positionHouse)
+            .getPosition(pmAddress, trader);
+        bool isLong = positionData.quantity > 0 ? true : false;
+
+        (
+            uint256 depositAmount,
+            uint256 fee,
+            uint256 withdrawAmount
+        ) = IPositionHouse(positionHouse).closePosition(
+                IPositionManager(pmAddress),
+                quantity,
+                trader
+            );
+
+        IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
+
+        if (withdrawAmount == 0) {
+            return;
+        }
+
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_DECREASE_POSITION_METHOD_ID,
+                requestKey,
+                withdrawAmount,
+                fee,
+                quantity,
                 isLong
             )
         );

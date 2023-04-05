@@ -759,7 +759,7 @@ export class ContractWrapperFactory {
     async createDptpCrossChainGateway(args : CreateDptpCrossChainGateway) {
         const contractName = 'DptpCrossChainGateway';
         const contractFactory = await this.hre.ethers.getContractFactory(contractName);
-        const contractAddress = await this.db.findAddressByKey(contractName);
+        let contractAddress = await this.db.findAddressByKey(contractName);
         if (contractAddress) {
             const proposal = await this.hre.upgrades.upgradeProxy(contractAddress, contractFactory, {unsafeAllowLinkedLibraries: true});
             await this.verifyImplContract(proposal.deployTransaction)
@@ -771,25 +771,25 @@ export class ContractWrapperFactory {
                 args.positionHouse,
                 args.positionStrategyOrder,
             ];
-            const instance = (await this.hre.upgrades.deployProxy(contractFactory, contractArgs)) as DptpCrossChainGateway;
+            const instance = await this.hre.upgrades.deployProxy(contractFactory, contractArgs);
             console.log(`wait for deploy ${contractName}`);
             await instance.deployed();
-            const address = instance.address.toString();
-            console.log(`${contractName} address : ${address}`)
-            await this.db.saveAddressByKey(`${contractName}`, address);
-            await this.verifyProxy(address)
-
+            contractAddress = instance.address.toString();
+            console.log(`${contractName} address : ${contractAddress}`)
+            await this.db.saveAddressByKey(`${contractName}`, contractAddress);
+            await this.verifyProxy(contractAddress)
             await this.updateValidatedStatusInAccessController(contractAddress)
+            const contract = await this.hre.ethers.getContractAt(contractName, contractAddress) as DptpCrossChainGateway
 
             if (args.whitelistRelayers && args.whitelistRelayers.length > 0) {
                 for (let i = 0; i < args.whitelistRelayers.length; i++) {
-                    await instance.setRelayer(args.whitelistRelayers[i].chainId, args.whitelistRelayers[i].address, true);
+                    await contract.setRelayer(args.whitelistRelayers[i].chainId, args.whitelistRelayers[i].address, true);
                 }
             }
 
             if (args.destChainFuturesGateways && args.destChainFuturesGateways.length > 0) {
                 for (let i = 0; i < args.destChainFuturesGateways.length; i++) {
-                    await instance.addDestChainFuturesGateway(args.destChainFuturesGateways[i].chainId, args.destChainFuturesGateways[i].address);
+                    await contract.addDestChainFuturesGateway(args.destChainFuturesGateways[i].chainId, args.destChainFuturesGateways[i].address);
                 }
             }
         }
