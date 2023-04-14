@@ -227,6 +227,21 @@ contract DptpCrossChainGateway is
         ) {
             closePosition(_sourceBcId, functionCall);
             return;
+        } else if (
+            Method(decodedEventData.functionMethodID) == Method.SET_TPSL
+        ) {
+            setTPSL(_sourceBcId, functionCall);
+            return;
+        } else if (
+            Method(decodedEventData.functionMethodID) == Method.UNSET_TP_AND_SL
+        ) {
+            unsetTPAndSL(_sourceBcId, functionCall);
+            return;
+        } else if (
+            Method(decodedEventData.functionMethodID) == Method.UNSET_TP_OR_SL
+        ) {
+            unsetTPOrSL(_sourceBcId, functionCall);
+            return;
         }
 
         revert("CGW-01");
@@ -449,6 +464,55 @@ contract DptpCrossChainGateway is
                 quantity,
                 isLong
             )
+        );
+    }
+
+    function setTPSL(uint256 _sourceBcId, bytes memory _functionCall) internal {
+        address _pmAddress;
+        address _trader;
+        uint128 _higherPip;
+        uint128 _lowerPip;
+        uint8 _option;
+        (_pmAddress, _trader, _higherPip, _lowerPip, _option) = abi.decode(
+            _functionCall,
+            (address, address, uint128, uint128, uint8)
+        );
+
+        IPositionStrategyOrder(positionStrategyOrder).setTPSL(
+            _pmAddress,
+            _trader,
+            _higherPip,
+            _lowerPip,
+            PositionStrategyOrderStorage.SetTPSLOption(_option),
+            _sourceBcId
+        );
+    }
+
+    function unsetTPAndSL(uint256 _sourceBcId, bytes memory _functionCall)
+    internal
+    {
+        address _pmAddress;
+        address _trader;
+        (_pmAddress, _trader) = abi.decode(_functionCall, (address, address));
+
+        IPositionStrategyOrder(positionStrategyOrder).unsetTPAndSL(_pmAddress, _trader);
+    }
+
+    function unsetTPOrSL(uint256 _sourceBcId, bytes memory _functionCall)
+    internal
+    {
+        address _pmAddress;
+        address _trader;
+        bool _isHigherPrice;
+        (_pmAddress, _trader, _isHigherPrice) = abi.decode(
+            _functionCall,
+            (address, address, bool)
+        );
+
+        IPositionStrategyOrder(positionStrategyOrder).unsetTPOrSL(
+            _pmAddress,
+            _trader,
+            _isHigherPrice
         );
     }
 
