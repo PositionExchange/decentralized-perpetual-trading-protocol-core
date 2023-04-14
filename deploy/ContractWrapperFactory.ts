@@ -94,7 +94,7 @@ export class ContractWrapperFactory {
 
         const PositionManagerFactory = await this.hre.ethers.getContractFactory("PositionManager", {
             libraries: {
-                InsuranceFundAdapter: insuranceFundAdapterContractAddress,
+                // InsuranceFundAdapter: insuranceFundAdapterContractAddress,
                 AccessControllerAdapter: accessControllerAdapterContractAddress,
                 PositionMath: positionMathContractAddress
             }

@@ -46,15 +46,32 @@ contract DptpCrossChainGateway is
     uint256 txIndex;
     mapping(bytes32 => uint256) public replayPrevention;
 
-    bytes4 private constant EXECUTE_INCREASE_POSITION_METHOD_ID =
+    bytes4 private constant EXECUTE_INCREASE_POSITION_METHOD =
         bytes4(keccak256("executeIncreasePosition(bytes32,uint256,bool)"));
 
-    bytes4 private constant EXECUTE_DECREASE_POSITION_METHOD_ID =
+    bytes4 private constant EXECUTE_DECREASE_POSITION_METHOD =
         bytes4(
             keccak256(
                 "executeDecreasePosition(bytes32,uint256,uint256,uint256,bool)"
             )
         );
+
+    bytes4 private constant EXECUTE_ADD_COLLATERAL_METHOD =
+        bytes4(
+            keccak256(
+                "executeAddCollateral(address,address,address,bool,uint256)"
+            )
+        );
+
+    bytes4 private constant EXECUTE_REMOVE_COLLATERAL_METHOD =
+        bytes4(
+            keccak256(
+                "executeRemoveCollateral(address,address,address,bool,uint256)"
+            )
+        );
+
+    bytes4 private constant EXECUTE_CANCEL_INCREASE_ORDER_METHOD =
+        bytes4(keccak256("executeCancelIncreaseOrder(bytes32,bool)"));
 
     enum Method {
         OPEN_MARKET,
@@ -124,7 +141,7 @@ contract DptpCrossChainGateway is
         bytes32 _sourceTxHash
     ) public nonReentrant {
         address relayer = msg.sender;
-        require(whitelistRelayers[_sourceBcId][relayer], "invalid relayer");
+        //        require(whitelistRelayers[_sourceBcId][relayer], "invalid relayer");
 
         // Decode _eventData
         // Recall that the cross call event is:
@@ -191,7 +208,22 @@ contract DptpCrossChainGateway is
             openLimitOrder(_sourceBcId, functionCall);
             return;
         } else if (
-            Method(decodedEventData.functionMethodIDh) == Method.CLOSE_POSITION
+            Method(decodedEventData.functionMethodID) == Method.CANCEL_LIMIT
+        ) {
+            cancelLimitOrder(_sourceBcId, functionCall);
+            return;
+        } else if (
+            Method(decodedEventData.functionMethodID) == Method.ADD_MARGIN
+        ) {
+            updateMargin(_sourceBcId, functionCall, false);
+            return;
+        } else if (
+            Method(decodedEventData.functionMethodID) == Method.REMOVE_MARGIN
+        ) {
+            updateMargin(_sourceBcId, functionCall, true);
+            return;
+        } else if (
+            Method(decodedEventData.functionMethodID) == Method.CLOSE_POSITION
         ) {
             closePosition(_sourceBcId, functionCall);
             return;
@@ -231,7 +263,7 @@ contract DptpCrossChainGateway is
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
-                EXECUTE_INCREASE_POSITION_METHOD_ID,
+                EXECUTE_INCREASE_POSITION_METHOD,
                 requestKey,
                 param.quantity,
                 isLong
@@ -271,11 +303,117 @@ contract DptpCrossChainGateway is
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
-                EXECUTE_INCREASE_POSITION_METHOD_ID,
+                EXECUTE_INCREASE_POSITION_METHOD,
                 requestKey,
                 param.quantity,
                 isLong
             )
+        );
+    }
+
+    function cancelLimitOrder(uint256 _sourceBcId, bytes memory _functionCall)
+        internal
+    {
+        (
+            bytes32 requestKey,
+            address pmAddress,
+            uint64 orderIdx,
+            uint8 isReduce,
+            address account
+        ) = abi.decode(
+                _functionCall,
+                (bytes32, address, uint64, uint8, address)
+            );
+
+        IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
+            account,
+            pmAddress,
+            _sourceBcId,
+            0
+        );
+
+        IPositionHouse(positionHouse).cancelLimitOrder(
+            IPositionManager(pmAddress),
+            orderIdx,
+            isReduce,
+            account
+        );
+
+        IDPTPValidator(dptpValidator).updateTraderData(account, pmAddress);
+
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_CANCEL_INCREASE_ORDER_METHOD,
+                requestKey,
+                isReduce
+            )
+        );
+    }
+
+    function updateMargin(
+        uint256 _sourceBcId,
+        bytes memory _functionCall,
+        bool _isRemove
+    ) internal {
+        (
+            address collateralToken,
+            address indexToken,
+            address pmAddress,
+            uint256 amountInUsd,
+            uint256 amountInToken,
+            address trader
+        ) = abi.decode(
+                _functionCall,
+                (address, address, address, uint256, uint256, address)
+            );
+
+        IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
+            trader,
+            pmAddress,
+            _sourceBcId,
+            amountInUsd
+        );
+
+        Position.Data memory positionData = IPositionHouse(positionHouse)
+            .getPosition(pmAddress, trader);
+        bool isLong = positionData.quantity > 0 ? true : false;
+
+        bytes memory destFunctionCall;
+
+        if (_isRemove) {
+            (, , uint256 withdrawAmountUsd) = IPositionHouse(positionHouse)
+                .removeMargin(IPositionManager(pmAddress), amountInUsd, trader);
+            destFunctionCall = abi.encodeWithSelector(
+                EXECUTE_REMOVE_COLLATERAL_METHOD,
+                trader,
+                collateralToken,
+                indexToken,
+                isLong,
+                withdrawAmountUsd
+            );
+        } else {
+            IPositionHouse(positionHouse).addMargin(
+                IPositionManager(pmAddress),
+                amountInUsd,
+                0,
+                trader
+            );
+            destFunctionCall = abi.encodeWithSelector(
+                EXECUTE_ADD_COLLATERAL_METHOD,
+                trader,
+                collateralToken,
+                indexToken,
+                isLong,
+                amountInToken
+            );
+        }
+
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            destFunctionCall
         );
     }
 
@@ -295,27 +433,16 @@ contract DptpCrossChainGateway is
             .getPosition(pmAddress, trader);
         bool isLong = positionData.quantity > 0 ? true : false;
 
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount
-        ) = IPositionHouse(positionHouse).closePosition(
-                IPositionManager(pmAddress),
-                quantity,
-                trader
-            );
+        (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
+            .closePosition(IPositionManager(pmAddress), quantity, trader);
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
-
-        if (withdrawAmount == 0) {
-            return;
-        }
 
         _crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
-                EXECUTE_DECREASE_POSITION_METHOD_ID,
+                EXECUTE_DECREASE_POSITION_METHOD,
                 requestKey,
                 withdrawAmount,
                 fee,
