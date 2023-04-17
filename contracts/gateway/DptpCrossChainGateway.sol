@@ -73,6 +73,13 @@ contract DptpCrossChainGateway is
     bytes4 private constant EXECUTE_CANCEL_INCREASE_ORDER_METHOD =
         bytes4(keccak256("executeCancelIncreaseOrder(bytes32,bool)"));
 
+    bytes4 private constant TRIGGER_TPSL_METHOD =
+    bytes4(
+        keccak256(
+            "triggerTPSL(address,address,uint256,uint256,uint256,bool,bool)"
+        )
+    );
+
     enum Method {
         OPEN_MARKET,
         OPEN_LIMIT,
@@ -513,6 +520,30 @@ contract DptpCrossChainGateway is
             _pmAddress,
             _trader,
             _isHigherPrice
+        );
+    }
+
+    function triggerTPSL(uint256 _sourceBcId, address _pmAddress, address _trader) external{
+        Position.Data memory positionData = IPositionHouse(positionHouse)
+        .getPosition(_pmAddress, _trader);
+        bool isLong = positionData.quantity > 0 ? true : false;
+
+        (, uint256 fee, uint256 withdrawAmount, bool isHigherPip) = IPositionStrategyOrder(positionHouse)
+        .triggerTPSL(_pmAddress, _trader);
+
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                TRIGGER_TPSL_METHOD,
+                _trader,
+                _pmAddress,
+                withdrawAmount,
+                fee,
+                positionData.quantity,
+                isHigherPip,
+                isLong
+            )
         );
     }
 

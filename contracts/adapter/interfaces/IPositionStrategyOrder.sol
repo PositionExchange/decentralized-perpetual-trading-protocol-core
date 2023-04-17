@@ -9,7 +9,8 @@ interface IPositionStrategyOrder {
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            bool
         );
 
     function setTPSL(
