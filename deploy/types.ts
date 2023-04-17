@@ -1,8 +1,8 @@
-import {ContractWrapperFactory} from './ContractWrapperFactory'
-import {DeployDataStore} from "./DataStore";
-import {HardhatRuntimeEnvironment} from "hardhat/types";
+import { ContractWrapperFactory } from "./ContractWrapperFactory";
+import { DeployDataStore } from "./DataStore";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-export type MigrationTask = () => Promise<void>
+export type MigrationTask = () => Promise<void>;
 
 export interface MigrationDefinition {
     configPath?: string
@@ -142,6 +142,20 @@ export interface CreateCrossChainGateway {
     myBlockchainId: number,
     timeHorizon: number,
     destBlockchainId: number
+}
+
+export interface CreateDptpCrossChainGateway {
+  myBlockchainId: number;
+  timeHorizon: number;
+  positionHouse: string;
+  positionStrategyOrder: string;
+  whitelistRelayers?: ChainIdAndAddress[];
+  destChainFuturesGateways?: ChainIdAndAddress[];
+}
+
+export interface ChainIdAndAddress {
+  chainId: number;
+  address: string;
 }
 
 export interface CreateDptpValidator {

@@ -247,7 +247,7 @@ contract ValidatorCore is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
         ) = positionStrategyOrderInterface.triggerTPSL(_pmAddress, _trader);
         revert(Errors.VL_PASS_ALL);
     }
