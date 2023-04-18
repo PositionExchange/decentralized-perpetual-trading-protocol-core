@@ -528,7 +528,7 @@ contract DptpCrossChainGateway is
         .getPosition(_pmAddress, _trader);
         bool isLong = positionData.quantity > 0 ? true : false;
 
-        (, uint256 fee, uint256 withdrawAmount, bool isHigherPip) = IPositionStrategyOrder(positionHouse)
+        (, uint256 fee, uint256 withdrawAmount, bool isHigherPip) = IPositionStrategyOrder(positionStrategyOrder)
         .triggerTPSL(_pmAddress, _trader);
 
         _crossBlockchainCall(
