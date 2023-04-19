@@ -386,9 +386,10 @@ contract DptpCrossChainGateway is
             uint256 amountInUsd,
             uint256 amountInToken,
             address trader
+            bool isNeedExecute
         ) = abi.decode(
                 _functionCall,
-                (address, address, address, uint256, uint256, address)
+                (address, address, address, uint256, uint256, address, bool)
             );
 
         IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
@@ -407,14 +408,16 @@ contract DptpCrossChainGateway is
         if (_isRemove) {
             (, , uint256 withdrawAmountUsd) = IPositionHouse(positionHouse)
                 .removeMargin(IPositionManager(pmAddress), amountInUsd, trader);
-            destFunctionCall = abi.encodeWithSelector(
-                EXECUTE_REMOVE_COLLATERAL_METHOD,
-                trader,
-                collateralToken,
-                indexToken,
-                isLong,
-                withdrawAmountUsd
-            );
+            if (isNeedExecute){
+                destFunctionCall = abi.encodeWithSelector(
+                    EXECUTE_REMOVE_COLLATERAL_METHOD,
+                    trader,
+                    collateralToken,
+                    indexToken,
+                    isLong,
+                    withdrawAmountUsd
+                );
+            }
         } else {
             IPositionHouse(positionHouse).addMargin(
                 IPositionManager(pmAddress),
