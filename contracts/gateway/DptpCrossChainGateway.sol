@@ -386,7 +386,7 @@ contract DptpCrossChainGateway is
             uint256 amountInUsd,
             uint256 amountInToken,
             address trader
-            bool isNeedExecute
+            bool shouldExecute
         ) = abi.decode(
                 _functionCall,
                 (address, address, address, uint256, uint256, address, bool)
@@ -408,7 +408,7 @@ contract DptpCrossChainGateway is
         if (_isRemove) {
             (, , uint256 withdrawAmountUsd) = IPositionHouse(positionHouse)
                 .removeMargin(IPositionManager(pmAddress), amountInUsd, trader);
-            if (isNeedExecute){
+            if (shouldExecute){
                 destFunctionCall = abi.encodeWithSelector(
                     EXECUTE_REMOVE_COLLATERAL_METHOD,
                     trader,
