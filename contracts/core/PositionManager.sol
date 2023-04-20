@@ -1152,6 +1152,7 @@ contract PositionManager is
                                 ? CurrentLiquiditySide.Buy
                                 : CurrentLiquiditySide.Sell
                         );
+
                     } else if (state.remainingSize > liquidity) {
                         // order in that pip will be fulfilled
                         orderNotional = PositionMath.calculateNotional(
@@ -1195,6 +1196,7 @@ contract PositionManager is
                 }
             }
         }
+
         if (state.remainingSize != _size) {
             // if limit order with max pip filled other order, update isFullBuy
             singleSlot.isFullBuy = state.isFullBuy;
