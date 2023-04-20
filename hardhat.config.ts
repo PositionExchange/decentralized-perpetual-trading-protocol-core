@@ -49,26 +49,6 @@ module.exports = {
         hardhat: {
             allowUnlimitedContractSize: true,
         },
-        // bsc_testnet: {
-        //     url: BSC_TESTNET_URL,
-        //     chainId: 97,
-        //     accounts: PRIV_TESTNET_ACCOUNT ? [PRIV_TESTNET_ACCOUNT] : [],
-        // },
-        bsc: {
-            url: BSC_MAINNET_URL,
-            chainId: 56,
-            accounts: PRIV_MAINNET_ACCOUNT ? [PRIV_MAINNET_ACCOUNT] : [],
-        },
-        // qc: {
-        //     url: GANACHE_QC_URL,
-        //     chainId: 1337,
-        //     accounts: PRIV_GANACHE_ACCOUNT ? [PRIV_GANACHE_ACCOUNT] : [],
-        // },
-        posi_devnet: {
-            url: POSI_CHAIN_DEVNET_URL,
-            chainId: 920000,
-            accounts: PRIV_POSI_CHAIN_DEVNET_ACCOUNT ? [PRIV_POSI_CHAIN_DEVNET_ACCOUNT] : [],
-        },
         posi_testnet: {
             url: POSI_CHAIN_TESTNET_URL,
             chainId: 910000,
@@ -124,26 +104,16 @@ module.exports = {
     },
     etherscan: {
         apiKey: {
-            posi_devnet: 'UXFZRYWHB141CX97CPECWH9V7E9QSPHUF6',
             posi_testnet: 'UXFZRYWHB141CX97CPECWH9V7E9QSPHUF6',
             posi_mainnet: 'UXFZRYWHB141CX97CPECWH9V7E9QSPHUF6',
-            bsc: 'UXFZRYWHB141CX97CPECWH9V7E9QSPHUF6'
         },
         customChains: [
-            {
-                network: "posi_devnet",
-                chainId: 920000,
-                urls: {
-                    apiURL: "https://blockscout-devnet.int.posichain.org/api",
-                    browserURL: "https://blockscout-devnet.int.posichain.org"
-                }
-            },
             {
                 network: "posi_testnet",
                 chainId: 910000,
                 urls: {
-                    apiURL: "https://blockscout-testnet.int.posichain.org/api",
-                    browserURL: "https://blockscout-testnet.int.posichain.org"
+                    apiURL: "https://explorer-testnet.posichain.org/api",
+                    browserURL: "https://explorer-testnet.posichain.org"
                 }
             },
             {

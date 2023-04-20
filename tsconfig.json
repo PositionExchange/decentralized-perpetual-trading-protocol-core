@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es2020",
     "module": "commonjs",
-    "strict": false,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "skipLibCheck": true,
     "resolveJsonModule": true,
     "outDir": "dist",
     "typeRoots": ["./typechain", "./node_modules/@types"],
     "types": ["@nomiclabs/hardhat-ethers", "@nomiclabs/hardhat-waffle"]
   },
-  "include": ["./test"],
+  "exclude": ["dist", "node_modules"],
+  "include": ["./test", "./src", "./scripts"],
   "files": [
     "./hardhat.config.ts",
     "node_modules/@typechain/truffle-v5/static/types.d.ts"

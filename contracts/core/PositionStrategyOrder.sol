@@ -53,7 +53,8 @@ contract PositionStrategyOrder is
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            bool
         )
     {
         IPositionManager positionManager = IPositionManager(_pmAddress);
@@ -70,12 +71,18 @@ contract PositionStrategyOrder is
         emit TPSLTriggered(_pmAddress, _trader, triggeredHigherPip);
         TPSLMap[_pmAddress][_trader].lowerPip = 0;
         TPSLMap[_pmAddress][_trader].higherPip = 0;
-        return
+        (uint256 depositAmount, uint256 fee, uint256 withdrawAmount) =
             PositionHouseAdapter.triggerClosePosition(
                 positionHouse,
                 positionManager,
                 _trader
             );
+        return (
+        depositAmount,
+            fee,
+            withdrawAmount,
+            triggeredHigherPip
+        );
     }
 
     function setTPSL(
