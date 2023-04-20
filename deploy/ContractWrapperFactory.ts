@@ -13,7 +13,6 @@ import {DeployDataStore} from "./DataStore";
 import {verifyContract} from "../scripts/utils";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
 import {HardhatRuntimeEnvironment} from "hardhat/types";
-// @ts-ignore
 import {HardhatDefenderUpgrades} from "@openzeppelin/hardhat-defender";
 // @ts-ignore
 import {
@@ -668,7 +667,6 @@ export class ContractWrapperFactory {
                 AccessControllerAdapter: accessControllerAdapterContractAddress
             }
         })
-        console.log("linked orderTrackerAddress: ", orderTrackerAddress);
 
         if (orderTrackerAddress) {
             const upgraded = await this.hre.upgrades.upgradeProxy(orderTrackerAddress, orderTrackerFactory, {unsafeAllowLinkedLibraries: true})
@@ -676,10 +674,9 @@ export class ContractWrapperFactory {
             await this.verifyImplContract(upgraded.deployTransaction)
             console.log(`Upgrade Order Tracker`)
         } else {
-            console.log("start deploy order tracker");
             const contractArgs = [];
 
-            const instance = await this.hre.upgrades.deployProxy(orderTrackerFactory, contractArgs,{unsafeAllowLinkedLibraries: true} )
+            const instance = await this.hre.upgrades.deployProxy(orderTrackerFactory, contractArgs, {unsafeAllowLinkedLibraries: true})
             console.log("wait for deploy")
             await instance.deployed()
 
