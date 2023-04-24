@@ -222,12 +222,12 @@ contract DptpCrossChainGateway is
         } else if (
             Method(decodedEventData.functionMethodID) == Method.ADD_MARGIN
         ) {
-            updateMargin(_sourceBcId, functionCall, false);
+            updateMargin(UpdateMargin(_sourceBcId, functionCall, false));
             return;
         } else if (
             Method(decodedEventData.functionMethodID) == Method.REMOVE_MARGIN
         ) {
-            updateMargin(_sourceBcId, functionCall, true);
+            updateMargin(UpdateMargin(_sourceBcId, functionCall, true));
             return;
         } else if (
             Method(decodedEventData.functionMethodID) == Method.CLOSE_POSITION
@@ -374,10 +374,13 @@ contract DptpCrossChainGateway is
         );
     }
 
+    struct UpdateMargin {
+        uint256 sourceBcId;
+        bytes functionCall;
+        bool isRemove;
+    }
     function updateMargin(
-        uint256 _sourceBcId,
-        bytes memory _functionCall,
-        bool _isRemove
+        UpdateMargin memory _param
     ) internal {
         (
             address collateralToken,
@@ -385,17 +388,17 @@ contract DptpCrossChainGateway is
             address pmAddress,
             uint256 amountInUsd,
             uint256 amountInToken,
-            address trader
+            address trader,
             bool shouldExecute
         ) = abi.decode(
-                _functionCall,
+                _param.functionCall,
                 (address, address, address, uint256, uint256, address, bool)
             );
 
         IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
             trader,
             pmAddress,
-            _sourceBcId,
+            _param.sourceBcId,
             amountInUsd
         );
 
@@ -405,7 +408,7 @@ contract DptpCrossChainGateway is
 
         bytes memory destFunctionCall;
 
-        if (_isRemove) {
+        if (_param.isRemove) {
             (, , uint256 withdrawAmountUsd) = IPositionHouse(positionHouse)
                 .removeMargin(IPositionManager(pmAddress), amountInUsd, trader);
             if (shouldExecute){
@@ -436,8 +439,8 @@ contract DptpCrossChainGateway is
         }
 
         _crossBlockchainCall(
-            _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
+            _param.sourceBcId,
+            destChainFuturesGateways[_param.sourceBcId],
             destFunctionCall
         );
     }
