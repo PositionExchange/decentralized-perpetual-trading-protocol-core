@@ -59,7 +59,7 @@ contract DptpCrossChainGateway is
     bytes4 private constant EXECUTE_ADD_COLLATERAL_METHOD =
         bytes4(
             keccak256(
-                "executeAddCollateral(address,address,address,bool,uint256)"
+                "executeAddCollateral(bytes32)"
             )
         );
 
@@ -222,12 +222,12 @@ contract DptpCrossChainGateway is
         } else if (
             Method(decodedEventData.functionMethodID) == Method.ADD_MARGIN
         ) {
-            updateMargin(UpdateMargin(_sourceBcId, functionCall, false));
+            addMargin(_sourceBcId, functionCall);
             return;
         } else if (
             Method(decodedEventData.functionMethodID) == Method.REMOVE_MARGIN
         ) {
-            updateMargin(UpdateMargin(_sourceBcId, functionCall, true));
+            removeMargin(_sourceBcId, functionCall);
             return;
         } else if (
             Method(decodedEventData.functionMethodID) == Method.CLOSE_POSITION
@@ -374,13 +374,9 @@ contract DptpCrossChainGateway is
         );
     }
 
-    struct UpdateMargin {
-        uint256 sourceBcId;
-        bytes functionCall;
-        bool isRemove;
-    }
-    function updateMargin(
-        UpdateMargin memory _param
+    function removeMargin(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
     ) internal {
         (
             address collateralToken,
@@ -391,14 +387,14 @@ contract DptpCrossChainGateway is
             address trader,
             bool shouldExecute
         ) = abi.decode(
-                _param.functionCall,
+                _functionCall,
                 (address, address, address, uint256, uint256, address, bool)
             );
 
         IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
             trader,
             pmAddress,
-            _param.sourceBcId,
+            _sourceBcId,
             amountInUsd
         );
 
@@ -406,41 +402,68 @@ contract DptpCrossChainGateway is
             .getPosition(pmAddress, trader);
         bool isLong = positionData.quantity > 0 ? true : false;
 
-        bytes memory destFunctionCall;
-
-        if (_param.isRemove) {
-            (, , uint256 withdrawAmountUsd) = IPositionHouse(positionHouse)
-                .removeMargin(IPositionManager(pmAddress), amountInUsd, trader);
-            if (shouldExecute){
-                destFunctionCall = abi.encodeWithSelector(
-                    EXECUTE_REMOVE_COLLATERAL_METHOD,
-                    trader,
-                    collateralToken,
-                    indexToken,
-                    isLong,
-                    withdrawAmountUsd
-                );
-            }
-        } else {
-            IPositionHouse(positionHouse).addMargin(
-                IPositionManager(pmAddress),
-                amountInUsd,
-                0,
-                trader
-            );
-            destFunctionCall = abi.encodeWithSelector(
-                EXECUTE_ADD_COLLATERAL_METHOD,
+        (, , uint256 withdrawAmountUsd) = IPositionHouse(positionHouse)
+            .removeMargin(IPositionManager(pmAddress), amountInUsd, trader);
+        if (shouldExecute){
+            bytes memory destFunctionCall = abi.encodeWithSelector(
+                EXECUTE_REMOVE_COLLATERAL_METHOD,
                 trader,
                 collateralToken,
                 indexToken,
                 isLong,
-                amountInToken
+                withdrawAmountUsd
             );
+
+            {
+                uint256 sourceBcId = _sourceBcId;
+                _crossBlockchainCall(
+                    sourceBcId,
+                    destChainFuturesGateways[sourceBcId],
+                    destFunctionCall
+                );
+            }
         }
+    }
+
+    function addMargin(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
+        (
+        bytes32 key,
+        address pmAddress,
+        uint256 amountInUsd,
+        address trader
+        ) = abi.decode(
+            _functionCall,
+            (bytes32, address, uint256, address)
+        );
+
+        IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
+            trader,
+            pmAddress,
+            _sourceBcId,
+            amountInUsd
+        );
+
+        Position.Data memory positionData = IPositionHouse(positionHouse)
+        .getPosition(pmAddress, trader);
+        bool isLong = positionData.quantity > 0 ? true : false;
+
+        IPositionHouse(positionHouse).addMargin(
+            IPositionManager(pmAddress),
+            amountInUsd,
+            0,
+            trader
+        );
+        bytes memory destFunctionCall = abi.encodeWithSelector(
+            EXECUTE_ADD_COLLATERAL_METHOD,
+            key
+        );
 
         _crossBlockchainCall(
-            _param.sourceBcId,
-            destChainFuturesGateways[_param.sourceBcId],
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
             destFunctionCall
         );
     }
