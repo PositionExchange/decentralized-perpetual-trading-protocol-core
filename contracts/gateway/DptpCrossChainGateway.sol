@@ -566,12 +566,10 @@ contract DptpCrossChainGateway is
             address indexToken,
             address pmAddress,
             uint256 amountInUsd,
-            uint256 amountInToken,
-            address trader,
-            bool shouldExecute
+            address trader
         ) = abi.decode(
                 _functionCall,
-                (address, address, address, uint256, uint256, address, bool)
+                (address, address, address, uint256, address)
             );
 
         IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
