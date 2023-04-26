@@ -5,6 +5,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../adapter/interfaces/IPositionHouse.sol";
 import "../adapter/interfaces/IPositionManager.sol";
@@ -23,6 +24,7 @@ contract DptpCrossChainGateway is
     ReentrancyGuardUpgradeable
 {
     using Quantity for int256;
+    using SafeMathUpgradeable for uint256;
 
     struct DecodedEventData {
         bytes32 txId;
@@ -47,7 +49,9 @@ contract DptpCrossChainGateway is
     mapping(bytes32 => uint256) public replayPrevention;
 
     bytes4 private constant EXECUTE_INCREASE_POSITION_METHOD =
-        bytes4(keccak256("executeIncreasePosition(bytes32,uint256,bool)"));
+        bytes4(
+            keccak256("executeIncreasePosition(bytes32,uint256,uint256,bool)")
+        );
 
     bytes4 private constant EXECUTE_DECREASE_POSITION_METHOD =
         bytes4(
@@ -74,11 +78,13 @@ contract DptpCrossChainGateway is
         bytes4(keccak256("executeCancelIncreaseOrder(bytes32,bool)"));
 
     bytes4 private constant TRIGGER_TPSL_METHOD =
-    bytes4(
-        keccak256(
-            "triggerTPSL(address,address,uint256,uint256,uint256,bool,bool)"
-        )
-    );
+        bytes4(
+            keccak256(
+                "triggerTPSL(address,address,uint256,uint256,uint256,bool,bool)"
+            )
+        );
+
+    uint256 private constant WEI_DECIMAL = 10 ** 18;
 
     enum Method {
         OPEN_MARKET,
@@ -235,6 +241,12 @@ contract DptpCrossChainGateway is
             closePosition(_sourceBcId, functionCall);
             return;
         } else if (
+            Method(decodedEventData.functionMethodID) ==
+            Method.CLOSE_LIMIT_POSITION
+        ) {
+            closeLimitPosition(_sourceBcId, functionCall);
+            return;
+        } else if (
             Method(decodedEventData.functionMethodID) == Method.SET_TPSL
         ) {
             setTPSL(_sourceBcId, functionCall);
@@ -253,6 +265,14 @@ contract DptpCrossChainGateway is
 
         revert("CGW-01");
     }
+
+    event EntryPrice(
+        uint256 _openNotionalBefore,
+        uint256 _openNotionalAfter,
+        uint256 _notionalDelta,
+        uint256 _quantity,
+        uint256 _entryPrice
+    );
 
     function openMarketPosition(uint256 _sourceBcId, bytes memory _functionCall)
         internal
@@ -279,7 +299,29 @@ contract DptpCrossChainGateway is
 
         validateChainIDAndManualMargin(_sourceBcId, pmAddress, param.trader, 0);
 
+        uint256 openNotionalBefore = IPositionHouse(positionHouse)
+            .getPosition(pmAddress, param.trader)
+            .openNotional;
+
         IPositionHouse(positionHouse).openMarketPosition(param);
+
+        uint256 entryPrice;
+        {
+            uint256 openNotionalAfter = IPositionHouse(positionHouse)
+                .getPosition(pmAddress, param.trader)
+                .openNotional;
+            uint256 openNotionalDelta = openNotionalAfter.sub(
+                openNotionalBefore
+            );
+            entryPrice = openNotionalDelta.mul(WEI_DECIMAL).div(param.quantity);
+            emit EntryPrice(
+                openNotionalBefore,
+                openNotionalAfter,
+                openNotionalDelta,
+                param.quantity,
+                entryPrice
+            );
+        }
 
         _crossBlockchainCall(
             _sourceBcId,
@@ -287,6 +329,7 @@ contract DptpCrossChainGateway is
             abi.encodeWithSelector(
                 EXECUTE_INCREASE_POSITION_METHOD,
                 requestKey,
+                entryPrice,
                 param.quantity,
                 isLong
             )
@@ -319,7 +362,38 @@ contract DptpCrossChainGateway is
 
         validateChainIDAndManualMargin(_sourceBcId, pmAddress, param.trader, 0);
 
+        uint256 openNotionalBefore = IPositionHouse(positionHouse)
+            .getPosition(pmAddress, param.trader)
+            .openNotional;
+
         IPositionHouse(positionHouse).openLimitOrder(param);
+
+        uint256 entryPrice;
+        {
+            uint256 openNotionalAfter = IPositionHouse(positionHouse)
+                .getPosition(pmAddress, param.trader)
+                .openNotional;
+            uint256 openNotionalDelta = openNotionalAfter.sub(
+                openNotionalBefore
+            );
+            if (openNotionalDelta == 0) {
+                uint256 basisPoint = param.positionManager.getBasisPoint();
+                entryPrice = uint256(param.pip).mul(WEI_DECIMAL).div(
+                    basisPoint
+                );
+            } else {
+                entryPrice = openNotionalDelta.mul(WEI_DECIMAL).div(
+                    param.quantity
+                );
+            }
+            emit EntryPrice(
+                openNotionalBefore,
+                openNotionalAfter,
+                openNotionalDelta,
+                param.quantity,
+                entryPrice
+            );
+        }
 
         _crossBlockchainCall(
             _sourceBcId,
@@ -327,6 +401,7 @@ contract DptpCrossChainGateway is
             abi.encodeWithSelector(
                 EXECUTE_INCREASE_POSITION_METHOD,
                 requestKey,
+                param.pip,
                 param.quantity,
                 isLong
             )
@@ -374,22 +449,135 @@ contract DptpCrossChainGateway is
         );
     }
 
+    function closePosition(uint256 _sourceBcId, bytes memory _functionCall)
+        internal
+    {
+        bytes32 requestKey;
+        address pmAddress;
+        uint256 quantity;
+        address trader;
+        (requestKey, pmAddress, quantity, trader) = abi.decode(
+            _functionCall,
+            (bytes32, address, uint256, address)
+        );
+
+        uint256 entryPrice;
+        bool isLong;
+        {
+            Position.Data memory positionData = IPositionHouse(positionHouse)
+                .getPosition(pmAddress, trader);
+            uint256 quantityAbs = positionData.quantity.abs();
+            if (quantity >= quantityAbs) {
+                entryPrice = 0;
+            } else {
+                entryPrice = positionData.openNotional.mul(WEI_DECIMAL).div(
+                    quantityAbs
+                );
+            }
+            isLong = positionData.quantity > 0 ? true : false;
+            emit EntryPrice(
+                positionData.openNotional,
+                0,
+                0,
+                quantityAbs,
+                entryPrice
+            );
+        }
+
+        (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
+            .closePosition(IPositionManager(pmAddress), quantity, trader);
+
+        IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
+
+        uint256 sourceBcId = _sourceBcId;
+        _crossBlockchainCall(
+            sourceBcId,
+            destChainFuturesGateways[sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_DECREASE_POSITION_METHOD,
+                requestKey,
+                withdrawAmount,
+                fee,
+                entryPrice,
+                quantity,
+                isLong
+            )
+        );
+    }
+
+    function closeLimitPosition(uint256 _sourceBcId, bytes memory _functionCall)
+        internal
+    {
+        bytes32 requestKey;
+        address pmAddress;
+        uint256 pip;
+        uint256 quantity;
+        address trader;
+        (requestKey, pmAddress, pip, quantity, trader) = abi.decode(
+            _functionCall,
+            (bytes32, address, uint256, uint256, address)
+        );
+
+        uint256 entryPrice;
+        bool isLong;
+        {
+            Position.Data memory positionData = IPositionHouse(positionHouse)
+                .getPosition(pmAddress, trader);
+            uint256 quantityAbs = positionData.quantity.abs();
+            entryPrice = positionData.openNotional.mul(WEI_DECIMAL).div(
+                quantityAbs
+            );
+            isLong = positionData.quantity > 0 ? true : false;
+            emit EntryPrice(
+                positionData.openNotional,
+                0,
+                0,
+                quantityAbs,
+                entryPrice
+            );
+        }
+
+        (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
+            .closeLimitPosition(
+                IPositionManager(pmAddress),
+                uint128(pip),
+                quantity,
+                trader
+            );
+
+        IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
+
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_DECREASE_POSITION_METHOD,
+                requestKey,
+                withdrawAmount,
+                fee,
+                entryPrice,
+                quantity,
+                isLong
+            )
+        );
+    }
+
     function removeMargin(
         uint256 _sourceBcId,
         bytes memory _functionCall
     ) internal {
         (
-            address collateralToken,
-            address indexToken,
-            address pmAddress,
-            uint256 amountInUsd,
-            uint256 amountInToken,
-            address trader,
-            bool shouldExecute
+        address collateralToken,
+        address indexToken,
+        address pmAddress,
+        uint256 amountInUsd,
+        uint256 amountInToken,
+        address trader,
+        bool shouldExecute
         ) = abi.decode(
-                _functionCall,
-                (address, address, address, uint256, uint256, address, bool)
-            );
+            _functionCall,
+            (address, address, address, uint256, uint256, address, bool)
+        );
 
         IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
             trader,
@@ -399,11 +587,11 @@ contract DptpCrossChainGateway is
         );
 
         Position.Data memory positionData = IPositionHouse(positionHouse)
-            .getPosition(pmAddress, trader);
+        .getPosition(pmAddress, trader);
         bool isLong = positionData.quantity > 0 ? true : false;
 
         (, , uint256 withdrawAmountUsd) = IPositionHouse(positionHouse)
-            .removeMargin(IPositionManager(pmAddress), amountInUsd, trader);
+        .removeMargin(IPositionManager(pmAddress), amountInUsd, trader);
         if (shouldExecute){
             bytes memory destFunctionCall = abi.encodeWithSelector(
                 EXECUTE_REMOVE_COLLATERAL_METHOD,
@@ -468,41 +656,6 @@ contract DptpCrossChainGateway is
         );
     }
 
-    function closePosition(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
-        bytes32 requestKey;
-        address pmAddress;
-        uint256 quantity;
-        address trader;
-        (requestKey, pmAddress, quantity, trader) = abi.decode(
-            _functionCall,
-            (bytes32, address, uint256, address)
-        );
-
-        Position.Data memory positionData = IPositionHouse(positionHouse)
-            .getPosition(pmAddress, trader);
-        bool isLong = positionData.quantity > 0 ? true : false;
-
-        (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
-            .closePosition(IPositionManager(pmAddress), quantity, trader);
-
-        IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
-
-        _crossBlockchainCall(
-            _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
-            abi.encodeWithSelector(
-                EXECUTE_DECREASE_POSITION_METHOD,
-                requestKey,
-                withdrawAmount,
-                fee,
-                quantity,
-                isLong
-            )
-        );
-    }
-
     function setTPSL(uint256 _sourceBcId, bytes memory _functionCall) internal {
         address _pmAddress;
         address _trader;
@@ -525,17 +678,20 @@ contract DptpCrossChainGateway is
     }
 
     function unsetTPAndSL(uint256 _sourceBcId, bytes memory _functionCall)
-    internal
+        internal
     {
         address _pmAddress;
         address _trader;
         (_pmAddress, _trader) = abi.decode(_functionCall, (address, address));
 
-        IPositionStrategyOrder(positionStrategyOrder).unsetTPAndSL(_pmAddress, _trader);
+        IPositionStrategyOrder(positionStrategyOrder).unsetTPAndSL(
+            _pmAddress,
+            _trader
+        );
     }
 
     function unsetTPOrSL(uint256 _sourceBcId, bytes memory _functionCall)
-    internal
+        internal
     {
         address _pmAddress;
         address _trader;
@@ -552,13 +708,24 @@ contract DptpCrossChainGateway is
         );
     }
 
-    function triggerTPSL(uint256 _sourceBcId, address _pmAddress, address _trader) external{
+    function triggerTPSL(
+        uint256 _sourceBcId,
+        address _pmAddress,
+        address _trader
+    ) external {
         Position.Data memory positionData = IPositionHouse(positionHouse)
-        .getPosition(_pmAddress, _trader);
+            .getPosition(_pmAddress, _trader);
         bool isLong = positionData.quantity > 0 ? true : false;
 
-        (, uint256 fee, uint256 withdrawAmount, bool isHigherPip) = IPositionStrategyOrder(positionStrategyOrder)
-        .triggerTPSL(_pmAddress, _trader);
+        (
+            ,
+            uint256 fee,
+            uint256 withdrawAmount,
+            bool isHigherPip
+        ) = IPositionStrategyOrder(positionStrategyOrder).triggerTPSL(
+                _pmAddress,
+                _trader
+            );
 
         _crossBlockchainCall(
             _sourceBcId,
