@@ -160,8 +160,8 @@ contract OrderTracker is
         uint256 _orderNotional
     ) external {
         onlyCounterParty();
-        address pmAddress = msg.sender;
-        IPositionManager positionManagerInterface = IPositionManager(pmAddress);
+//        address pmAddress = msg.sender;
+        IPositionManager positionManagerInterface = IPositionManager(msg.sender);
         (uint64 filledIndex, uint64 currentIndex) = positionManagerInterface
             .getTickPositionIndexes(_pip);
         if (filledIndex == 0) {
@@ -170,6 +170,7 @@ contract OrderTracker is
 
         address mmAddress = positionManagerInterface.getMarketMakerAddress();
         uint256 remainingSize = _size;
+        bool isFullFilled;
         for ( uint64 i = filledIndex; i <= currentIndex; i++) {
 
             PendingOrderDetail memory pendingOrderDetail;
@@ -186,32 +187,47 @@ contract OrderTracker is
 
             uint256 filledSize = pendingOrderDetail.size - pendingOrderDetail.partialFilled;
 
-            if ( remainingSize > filledSize ) {
-                remainingSize -= filledSize;
-            } else if ( remainingSize <= filledSize){
+            if ( remainingSize >= filledSize ) {
+                remainingSize = remainingSize - filledSize;
+                isFullFilled = true;
+            } else if ( remainingSize < filledSize){
                 filledSize = remainingSize;
                 remainingSize = 0;
+                isFullFilled = false;
             }
 
-            if (pendingOrderDetail.trader != mmAddress) {
+            if (pendingOrderDetail.trader != positionManagerInterface.getMarketMakerAddress()) {
 
                 (uint256 orderNotional, , ) = positionManagerInterface
                     .getNotionalMarginAndFee(filledSize, _pip, 1);
 
                 _updatePositionInfo(
-                    pmAddress,
+                    address(positionManagerInterface),
                     pendingOrderDetail.isBuy,
                     uint128(filledSize),
                     uint128(orderNotional)
                 );
-                emit LimitOrderPartialFilled(
-                    pmAddress,
-                    _pip,
-                    i,
-                    pendingOrderDetail.isBuy,
-                    filledSize,
-                    pendingOrderDetail.trader
-                );
+
+                if ( !isFullFilled) {
+                    emit LimitOrderPartialFilled(
+                        address(positionManagerInterface),
+                        _pip,
+                        i,
+                        pendingOrderDetail.isBuy,
+                        filledSize,
+                        pendingOrderDetail.trader
+                    );
+                }else {
+                    emit LimitOrderFilled(
+                        address(positionManagerInterface),
+                        _pip,
+                        i,
+                        pendingOrderDetail.isBuy,
+                        filledSize,
+                        pendingOrderDetail.trader
+                    );
+                }
+
             }
 
             if (remainingSize == 0 ) break;

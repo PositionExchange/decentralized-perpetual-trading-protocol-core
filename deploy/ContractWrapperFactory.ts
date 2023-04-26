@@ -669,12 +669,16 @@ export class ContractWrapperFactory {
             }
         })
 
+
         if (orderTrackerAddress) {
-            const upgraded = await this.hre.upgrades.upgradeProxy(orderTrackerAddress, orderTrackerFactory, {unsafeAllowLinkedLibraries: true})
             console.log(`Starting verify upgrade order tracker`)
+
+            const upgraded = await this.hre.upgrades.upgradeProxy(orderTrackerAddress, orderTrackerFactory, {unsafeAllowLinkedLibraries: true})
             await this.verifyImplContract(upgraded.deployTransaction)
             console.log(`Upgrade Order Tracker`)
         } else {
+            console.log("wait for deploy")
+
             const contractArgs = [];
 
             const instance = await this.hre.upgrades.deployProxy(orderTrackerFactory, contractArgs, {unsafeAllowLinkedLibraries: true})
