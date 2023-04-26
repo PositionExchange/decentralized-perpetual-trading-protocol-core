@@ -481,7 +481,11 @@ contract DptpCrossChainGateway is
         }
 
         (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
-            .closePosition(IPositionManager(pmAddress), quantity, trader);
+            .instantlyClosePosition(
+                IPositionManager(pmAddress),
+                quantity,
+                trader
+            );
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
 
@@ -718,6 +722,37 @@ contract DptpCrossChainGateway is
                 isHigherPip,
                 isLong
             )
+        );
+    }
+
+    function claimFund(uint256 _sourceBcId, bytes memory _functionCall)
+        internal
+    {
+        address pmAddress;
+        address account;
+        (pmAddress, account) = abi.decode(_functionCall, (address, address));
+
+        (, , uint256 withdrawAmount) = IPositionHouse(positionHouse).claimFund(
+            IPositionManager(pmAddress),
+            account
+        );
+
+        IDPTPValidator(dptpValidator).updateTraderData(account, pmAddress);
+
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(EXECUTE_ADD_COLLATERAL_METHOD, key)
+        );
+
+        _handleBalanceChangedEvent(
+            pmAddress,
+            account,
+            depositAmount,
+            fee,
+            withdrawAmount,
+            _busdBonusBalanceBeforeFunction,
+            _sourceBcId
         );
     }
 

@@ -1,6 +1,7 @@
 {"address":"yes","key":"0x8Fc4d1e27a1C3d7977410c38dE75D13b30248145:verified","_id":"06CzruYGTVgkKaCw"}
 {"address":"0xc4594df223a2c528956623c55ea7de32ac9da900","key":"InsuranceFundAdapter","_id":"1aHX8MymSn6K0Qf7"}
 {"address":"0x8d2b230dc3b66292bc60b5ff5444991c1535d637","key":"PositionStrategyOrder","_id":"2aMYsGzK974xkTrU"}
+{"address":"yes","key":"0x72177543E900d1bD74353f32989C8BE40402d289:verified","_id":"2ilJdZU9w6LiKc9r"}
 {"address":"yes","key":"0x27E6129EC179301a9e1Ece7Fa491D96882e83251:verified","_id":"2rvmlTHffGtL2pSj"}
 {"address":"yes","key":"0x0620d55A1b7234A5aE67981873b6B1c8a81bDD28:verified","_id":"3gZZOqGaLFrxRSqe"}
 {"address":"yes","key":"0x9bd619ebFfd4a539cE70e6c36EA6E910A5762f42:verified","_id":"3pHWvUDkJ5rS6xoJ"}
@@ -8,6 +9,7 @@
 {"address":"yes","key":"0x45aB1B513ba5271348aE688a0a82B7634eF61045:verified","_id":"4uu0x9vXI3949E7a"}
 {"address":"0x781801608d3834e66a5f84301497448e6a5ae238","key":"DptpValidator","_id":"59pWkyvOUZXHxCKt"}
 {"address":"0x4f08d3d24107ce3f6b18c717f1d22dfa976c883f","key":"ChainLinkPriceFeed","_id":"5REu6CWlYlXMZujx"}
+{"address":"0x2e8d5479cd2a618a23f53e3d3a2a03431db83a05","key":"OrderTracker","_id":"5TWUIRTXgxJtk9pO"}
 {"address":"yes","key":"0x5d78AdCAC3B67556Defb3E73aa6e6ED7fe329245:verified","_id":"5as9lz50vvJeVLYi"}
 {"address":"0x0142c2c794c59eab9955821156c84238c795d3cf","key":"PositionManager:DOGE_BUSD","_id":"6Cn6LvYRuqfMbljE"}
 {"address":"yes","key":"0x60497cB9b2e303e8db68681cCB2506d7B4eB1de4:verified","_id":"6NEI1nZ6pTQLxjlw"}
@@ -99,4 +101,4 @@
 {"address":"yes","key":"0x656CecBbB04aB782dD6Aa95Fcbfa1d78258cF6b9:verified","_id":"vWQiQC64j9HZf99l"}
 {"address":"yes","key":"0xEb4A06960edC5BD5FBdF99d4615f0073D9A476c9:verified","_id":"xdCQCuY7RJfltHhy"}
 {"address":"0xc93D8DeB87aeD518B2399cc3498E2EcEf19e0e02","key":"DptpCrossChainGateway","_id":"xwJ9iMLwIqOAAvIN"}
-{"address":"0x2e8d5479cd2a618a23f53e3d3a2a03431db83a05","key":"OrderTracker","_id":"5TWUIRTXgxJtk9pO"}
+{"address":"yes","key":"0x964155DfbA0026b220959FcA5F4016F72b0fF6bb:verified","_id":"gcnoTvW36pk3bNWp"}
