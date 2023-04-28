@@ -10,22 +10,12 @@ import "./scripts/deploy";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import {
-    BSC_MAINNET_URL,
-    BSC_TESTNET_URL,
-    GAS_PRICE,
-    PRIV_TESTNET_ACCOUNT,
-    PRIV_MAINNET_ACCOUNT,
-    GANACHE_QC_URL, PRIV_GANACHE_ACCOUNT,
-    POSI_CHAIN_DEVNET_URL,
+    POSI_CHAIN_MAINNET_URL,
     POSI_CHAIN_TESTNET_URL,
-    PRIV_POSI_CHAIN_DEVNET_ACCOUNT,
-    PRIV_POSI_CHAIN_TESTNET_ACCOUNT, PRIV_POSI_CHAIN_MAINNET_ACCOUNT, POSI_CHAIN_MAINNET_URL
+    PRIV_POSI_CHAIN_MAINNET_ACCOUNT,
+    PRIV_POSI_CHAIN_TESTNET_ACCOUNT
 } from "./constants";
-// const BSC_TESTNET_URL =
-//     `${process.env["BSC_TESTNET_ENDPOINT"]}` || "https://data-seed-prebsc-1-s1.binance.org:8545/"
-// const BSC_MAINNET_URL = `${process.env["BSC_MAINNET_ENDPOINT"]}`
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
+
 task("accounts", "Prints the list of accounts", async (args, hre) => {
     const accounts = await hre.ethers.getSigners();
     for (const account of accounts) {
