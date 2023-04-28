@@ -64,11 +64,7 @@ contract DptpCrossChainGateway is
         bytes4(keccak256("executeAddCollateral(bytes32)"));
 
     bytes4 private constant EXECUTE_REMOVE_COLLATERAL_METHOD =
-        bytes4(
-            keccak256(
-                "executeRemoveCollateral(address,address,address,bool,uint256)"
-            )
-        );
+        bytes4(keccak256("executeRemoveCollateral(bytes32,uint256)"));
 
     bytes4 private constant EXECUTE_CANCEL_INCREASE_ORDER_METHOD =
         bytes4(keccak256("executeCancelIncreaseOrder(bytes32,bool)"));
@@ -574,41 +570,42 @@ contract DptpCrossChainGateway is
         internal
     {
         (
-            address collateralToken,
-            address indexToken,
+            bytes32 requestKey,
             address pmAddress,
-            uint256 amountInUsd,
-            address trader
-        ) = abi.decode(
-                _functionCall,
-                (address, address, address, uint256, address)
-            );
+            uint256 amountUsd,
+            address account
+        ) = abi.decode(_functionCall, (bytes32, address, uint256, address));
 
         IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
-            trader,
+            account,
             pmAddress,
             _sourceBcId,
-            amountInUsd
+            amountUsd
         );
 
         Position.Data memory positionData = IPositionHouse(positionHouse)
-            .getPosition(pmAddress, trader);
+            .getPosition(pmAddress, account);
         bool isLong = positionData.quantity > 0 ? true : false;
 
-        (, , uint256 withdrawAmountUsd) = IPositionHouse(positionHouse)
-            .removeMargin(IPositionManager(pmAddress), amountInUsd, trader);
+        uint256 addedMargin = IPositionHouse(positionHouse)
+            .getAddedMargin(pmAddress, account)
+            .abs();
 
-        {
+        if (amountUsd > addedMargin) {
+            amountUsd = addedMargin;
+        }
+
+        (, , uint256 withdrawAmountUsd) = IPositionHouse(positionHouse)
+            .removeMargin(IPositionManager(pmAddress), amountUsd, account);
+
+        if (withdrawAmountUsd > 0) {
             uint256 sourceBcId = _sourceBcId;
             _crossBlockchainCall(
                 sourceBcId,
                 destChainFuturesGateways[sourceBcId],
                 abi.encodeWithSelector(
                     EXECUTE_REMOVE_COLLATERAL_METHOD,
-                    trader,
-                    collateralToken,
-                    indexToken,
-                    isLong,
+                    requestKey,
                     withdrawAmountUsd
                 )
             );

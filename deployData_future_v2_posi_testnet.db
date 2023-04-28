@@ -32,10 +32,12 @@
 {"address":"yes","key":"0xfdF0e5AE168F1735872a85913601132CF7ADbe25:verified","_id":"IkMp6ugurmPAZdCl"}
 {"address":"0xfed14f24d4a3d7bcd069d9c2747d78d9a30ce8c8","key":"PositionNotionalConfigProxy","_id":"IuElddK21XGkZD5P"}
 {"address":"0xadf94555e5f2eae345692b8b39f062640e42b06f","key":"CrossChainGateway","_id":"JHHr8ftZ1rcWb7It"}
+{"address":"yes","key":"0x9F0f330a0e239a99987B2De14DAf597c55A15f62:verified","_id":"Jw8kl6exMNFsy9x2"}
 {"address":"yes","key":"0xb544C95f4E9542e0B98A6b9bEF953F0F52Fd7381:verified","_id":"KvpaNVgdVBfagqLU"}
 {"address":"yes","key":"0x7f2DA5e445F06f9957906800Ab6F7ad20ea51547:verified","_id":"MPGstCytCk1d7FZO"}
 {"address":"0x1ace3af014bc452ad0fd51d982b15a0aff1e1a4c","key":"ValidatorCore","_id":"MeEPYGQd8RdFO0FL"}
 {"address":"0x6e99b7f81d645025b4118e8be05ec01eb72c42a6","key":"PositionManagerAdapter","_id":"NW4py4RKKlhbIltU"}
+{"address":"yes","key":"0x2737a2228f5d6C285ae8e3328d639D827FE70911:verified","_id":"NzUSjXeiMiPLtAUy"}
 {"address":"yes","key":"0xbd21D219cca3B37696504fD6937790E758edd43b:verified","_id":"OHPs1KHRqcZ3D218"}
 {"address":"yes","key":"0xdC9b517B0cA382a6BfFb061334d58BE0B1b51EeD:verified","_id":"P3nH9gkjy37s4Wbx"}
 {"address":"yes","key":"0x964e3d04170AF841dE2721c05B945ad0fD51eA8E:verified","_id":"PvAxSpyjiOhZ8vZC"}
@@ -50,6 +52,7 @@
 {"address":"0x2c4ccc4cbaa2a1da3c63ece160d83b8cfe67cfd0","key":"ValidatorGateway","_id":"X57s1E7A3Bw4LESJ"}
 {"address":"yes","key":"0x56ca9928A95579FC06E3929f5105cC0977782D16:verified","_id":"Zy80vIAwIxOI1QXZ"}
 {"address":"yes","key":"0xA233B47275DD39f5AB2dCC07084459FF03a68D7C:verified","_id":"ZzCvZ8eIwjnY17GX"}
+{"address":"yes","key":"0xA81369554055659F869AB8Fe5B82A939e7E84A38:verified","_id":"b7UYdCJ1Vf11Ct9O"}
 {"address":"yes","key":"0xb8E4c5670F9edE3e6314FD89081fD5aB0AF593fc:verified","_id":"cCbyuN9YFuqVDvue"}
 {"address":"yes","key":"0xDc4A3c54d8def0018029D0117daF335D4F445329:verified","_id":"cKCjFmmn2G18r7W0"}
 {"address":"yes","key":"0xa259785420ce64A5AFb69668847f387f85Ef29c4:verified","_id":"ddDV8qIO1KqX8GFN"}
@@ -91,6 +94,7 @@
 {"address":"yes","key":"0x9052987F1d59cFc25cA6A11931886b5474a0D187:verified","_id":"pblMuPCS3RZcZBPS"}
 {"address":"0x6200abaacd6eaadbf02f028c4343afd5f9aebc78","key":"UserGateway","_id":"q6a4xkcNiJv2K9Yt"}
 {"address":"yes","key":"0xE964b072CeD34ccF156ef474fBe23AE0a8E35029:verified","_id":"qWqLwIBYBDVVG710"}
+{"address":"yes","key":"0x3CC9563EE6Bcc6b7CCb41785ad9d1AFCEaD6a78b:verified","_id":"qkTilCUzbc3aUtn0"}
 {"address":"yes","key":"0x7b4686f76877B0Db8408043b4255cfEdbCE03752:verified","_id":"rNfOSs7q0ueVp2fJ"}
 {"address":"yes","key":"0x5D226CdC492C6d0740fB2c711af143b40e2e86EA:verified","_id":"sOEAZcCEeRVeUisA"}
 {"address":"yes","key":"0xB681620857B5988C931DC34cC3f44FdC994B12Ef:verified","_id":"scdAMSZCRnmK9xso"}
@@ -103,4 +107,4 @@
 {"address":"yes","key":"0x656CecBbB04aB782dD6Aa95Fcbfa1d78258cF6b9:verified","_id":"vWQiQC64j9HZf99l"}
 {"address":"yes","key":"0xEb4A06960edC5BD5FBdF99d4615f0073D9A476c9:verified","_id":"xdCQCuY7RJfltHhy"}
 {"address":"0xc93D8DeB87aeD518B2399cc3498E2EcEf19e0e02","key":"DptpCrossChainGateway","_id":"xwJ9iMLwIqOAAvIN"}
-{"address":"yes","key":"0x2737a2228f5d6C285ae8e3328d639D827FE70911:verified","_id":"NzUSjXeiMiPLtAUy"}
+{"address":"yes","key":"0x9409FE06CeFD58a6454bbb82a028D984F4Df8862:verified","_id":"NywAvM7Ndy1QsBrB"}
