@@ -485,7 +485,7 @@ contract DptpCrossChainGateway is
         }
 
         (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
-            .instantlyClosePosition(
+            .closePosition(
                 IPositionManager(pmAddress),
                 quantity,
                 trader
@@ -528,9 +528,13 @@ contract DptpCrossChainGateway is
             Position.Data memory positionData = IPositionHouse(positionHouse)
                 .getPosition(pmAddress, trader);
             uint256 quantityAbs = positionData.quantity.abs();
-            entryPrice = positionData.openNotional.mul(WEI_DECIMAL).div(
-                quantityAbs
-            );
+            if (quantity >= quantityAbs) {
+                entryPrice = 0;
+            } else {
+                entryPrice = positionData.openNotional.mul(WEI_DECIMAL).div(
+                    quantityAbs
+                );
+            }
             isLong = positionData.quantity > 0 ? true : false;
             emit EntryPrice(
                 positionData.openNotional,
