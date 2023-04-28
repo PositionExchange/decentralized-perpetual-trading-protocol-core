@@ -73,6 +73,9 @@ contract DptpCrossChainGateway is
     bytes4 private constant EXECUTE_CANCEL_INCREASE_ORDER_METHOD =
         bytes4(keccak256("executeCancelIncreaseOrder(bytes32,bool)"));
 
+    bytes4 private constant EXECUTE_CLAIM_FUND_METHOD =
+        bytes4(keccak256("executeClaimFund(address[],address,uint256)"));
+
     bytes4 private constant TRIGGER_TPSL_METHOD =
         bytes4(
             keccak256(
@@ -241,6 +244,11 @@ contract DptpCrossChainGateway is
             Method.CLOSE_LIMIT_POSITION
         ) {
             closeLimitPosition(_sourceBcId, functionCall);
+            return;
+        } else if (
+            Method(decodedEventData.functionMethodID) == Method.CLAIM_FUND
+        ) {
+            claimFund(_sourceBcId, functionCall);
             return;
         } else if (
             Method(decodedEventData.functionMethodID) == Method.SET_TPSL
@@ -728,9 +736,13 @@ contract DptpCrossChainGateway is
     function claimFund(uint256 _sourceBcId, bytes memory _functionCall)
         internal
     {
+        address[] memory path;
         address pmAddress;
         address account;
-        (pmAddress, account) = abi.decode(_functionCall, (address, address));
+        (path, pmAddress, account) = abi.decode(
+            _functionCall,
+            (address[], address, address)
+        );
 
         (, , uint256 withdrawAmount) = IPositionHouse(positionHouse).claimFund(
             IPositionManager(pmAddress),
@@ -739,20 +751,19 @@ contract DptpCrossChainGateway is
 
         IDPTPValidator(dptpValidator).updateTraderData(account, pmAddress);
 
+        if (withdrawAmount == 0) {
+            return;
+        }
+
         _crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
-            abi.encodeWithSelector(EXECUTE_ADD_COLLATERAL_METHOD, key)
-        );
-
-        _handleBalanceChangedEvent(
-            pmAddress,
-            account,
-            depositAmount,
-            fee,
-            withdrawAmount,
-            _busdBonusBalanceBeforeFunction,
-            _sourceBcId
+            abi.encodeWithSelector(
+                EXECUTE_CLAIM_FUND_METHOD,
+                path,
+                account,
+                withdrawAmount
+            )
         );
     }
 

@@ -76,13 +76,13 @@ contract DPTPValidator is
         if (_currentChainID != 0 && _currentChainID != _chainID) {
             revert("Cannot have positions on different chains");
         }
-        if (_amount != 0) {
-            Position.Data memory  _positionData = positionHouse.getPosition(_pmAddress, _trader);
-            _positionData.margin = _positionData.margin.absInt() + positionHouse.getAddedMargin(_pmAddress, _trader);
-            if (_positionData.margin.abs()+ _amount > _positionData.openNotional) {
-                revert("Invalid added margin amount");
-            }
-        }
+//        if (_amount != 0) {
+//            Position.Data memory  _positionData = positionHouse.getPosition(_pmAddress, _trader);
+//            _positionData.margin = _positionData.margin.absInt() + positionHouse.getAddedMargin(_pmAddress, _trader);
+//            if (_positionData.margin.abs()+ _amount > _positionData.openNotional) {
+//                revert("Invalid added margin amount");
+//            }
+//        }
         traderData[_trader][_pmAddress]=_chainID;
     }
 
