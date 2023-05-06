@@ -150,7 +150,8 @@ contract TesterGateway is
                 leverage: _leverage,
                 trader: _trader,
                 initialMargin: 0,
-                busdBonusAmount: 0
+                busdBonusAmount: 0,
+                sourceChainRequestKey: 0
             });
         }
         (
@@ -186,7 +187,8 @@ contract TesterGateway is
                 leverage: _leverage,
                 trader: _trader,
                 initialMargin: _depositedAmount,
-                busdBonusAmount: 0
+                busdBonusAmount: 0,
+                sourceChainRequestKey: 0
             });
         }
         (

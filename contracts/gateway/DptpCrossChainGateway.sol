@@ -358,13 +358,12 @@ contract DptpCrossChainGateway is
     function openLimitOrder(uint256 _sourceBcId, bytes memory _functionCall)
         internal
     {
-        bytes32 requestKey;
         address pmAddress;
         bool isLong;
         HouseBaseParam.OpenLimitOrderParams memory param;
 
         (
-            requestKey,
+            param.sourceChainRequestKey,
             pmAddress,
             isLong,
             param.quantity,
@@ -422,7 +421,7 @@ contract DptpCrossChainGateway is
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
                 EXECUTE_INCREASE_POSITION_METHOD,
-                requestKey,
+                param.sourceChainRequestKey,
                 param.pip,
                 param.quantity,
                 isLong

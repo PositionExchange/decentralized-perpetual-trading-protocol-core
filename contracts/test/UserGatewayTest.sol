@@ -57,7 +57,8 @@ contract UserGatewayTest is TesterGateway {
                 leverage: _leverage,
                 trader: _trader,
                 initialMargin: _depositAmount,
-                busdBonusAmount: 0
+                busdBonusAmount: 0,
+                sourceChainRequestKey: 0
             });
         }
         (

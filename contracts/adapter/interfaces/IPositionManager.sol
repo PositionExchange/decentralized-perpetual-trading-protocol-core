@@ -166,7 +166,8 @@ interface IPositionManager {
         address trader,
         uint128 pip,
         uint128 size,
-        bool isBuy
+        bool isBuy,
+        bytes32 sourceChainRequestKey
     )
         external
         returns (

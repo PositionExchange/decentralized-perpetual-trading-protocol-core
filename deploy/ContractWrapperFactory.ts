@@ -23,7 +23,7 @@ import {
     PositionManager,
     ValidatorGateway
 } from "../typeChain";
-import {BigNumber} from "ethers";
+import {BigNumber, ethers as ethersE} from "ethers";
 import {applyWorkaround} from "hardhat/internal/util/antlr-prototype-pollution-workaround";
 
 
@@ -39,8 +39,8 @@ export class ContractWrapperFactory {
         const accessController = await this.hre.ethers.getContractAt('AccessController', accessControllerContractAddress) as AccessController
         const isValidatedContract = await accessController.isGatewayOrCoreContract(contractAddress)
         if (!isValidatedContract) {
-            const tx = await accessController.updateValidatedContractStatus(contractAddress, true)
-            await tx.wait(1)
+            const tx = accessController.updateValidatedContractStatus(contractAddress, true)
+            await this.waitTx(tx, "accessController.updateValidatedContractStatus")
         }
     }
 
@@ -799,6 +799,39 @@ export class ContractWrapperFactory {
                 for (let i = 0; i < args.destChainFuturesGateways.length; i++) {
                     await contract.addDestChainFuturesGateway(args.destChainFuturesGateways[i].chainId, args.destChainFuturesGateways[i].address);
                 }
+            }
+        }
+    }
+
+    async waitTx(tx: Promise<ethersE.ContractTransaction>, name = '', skipOnFail = false): Promise<ethersE.ContractReceipt> {
+        // name match initialize, auto skipping
+        if(name.match(/initialize/i) && !skipOnFail){
+            skipOnFail = true;
+        }
+        try{
+            console.log(`Waiting for tx ${name}...`)
+            const txResponse = await tx
+            console.log(`Tx ${name} hash ${txResponse.hash}`)
+            const receipt = await txResponse.wait()
+            console.log(`Tx [${name}] tx ${txResponse.hash} mined at block ${receipt.blockNumber}`)
+            return receipt
+
+        }catch(err){
+            console.log(`Tx ${name} failed with the following error:`)
+            if(skipOnFail){
+                console.error(`-- tx ${name} failed, skipping...`, err)
+                return null
+            }
+
+            // prompt to ask for continue
+
+            const prompt = require('prompt-sync')();
+            console.log(`-- tx ${name} failed, error:`, err.message)
+            const continueDeploy = prompt(`Tx ${name} failed, continue? [y/n]`);
+            if(continueDeploy == 'y'){
+                return null
+            }else{
+                throw err
             }
         }
     }

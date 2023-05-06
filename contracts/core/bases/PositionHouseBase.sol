@@ -197,7 +197,8 @@ abstract contract PositionHouseBase is
                 initialMargin: PositionMath.getInitialMarginBasedOnSide(
                     _param.side == Position.Side.LONG,
                     int256(_param.initialMargin)
-                )
+                ),
+                sourceChainRequestKey: _param.sourceChainRequestKey
             });
         }
         (
@@ -423,7 +424,8 @@ abstract contract PositionHouseBase is
                 leverage: _positionDataWithManualMargin.leverage,
                 positionData: _positionDataWithManualMargin,
                 trader: _trader,
-                initialMargin: 0
+                initialMargin: 0,
+                sourceChainRequestKey: 0 // TODO: update later
             });
         }
         (
