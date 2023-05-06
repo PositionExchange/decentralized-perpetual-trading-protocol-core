@@ -98,4 +98,7 @@ abstract contract PositionHouseStorage {
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
     uint256[49] private __gap;
+    // Mapping pending position of each trader
+    // PmManager => trader
+    mapping(address => mapping(address => Position.Data)) public pendingPositionMap;
 }

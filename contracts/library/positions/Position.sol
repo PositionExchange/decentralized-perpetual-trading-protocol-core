@@ -48,6 +48,7 @@ library Position {
         _self.notional += _notional;
     }
 
+    /// Override new position data
     function update(
         Position.Data storage _self,
         Position.Data memory _newPosition

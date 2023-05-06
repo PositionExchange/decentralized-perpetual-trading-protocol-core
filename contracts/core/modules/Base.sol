@@ -82,6 +82,11 @@ abstract contract Base {
         int256 _changedAmount
     ) internal virtual;
 
+    function _executeUpdatePositionMap(
+        address _pmAddress,
+        address _trader
+    ) internal virtual;
+
     function clearPosition(address _pmAddress, address _trader)
         internal
         virtual;

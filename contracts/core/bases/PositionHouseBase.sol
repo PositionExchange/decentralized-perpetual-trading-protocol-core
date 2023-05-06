@@ -141,6 +141,14 @@ abstract contract PositionHouseBase is
         return (depositAmount, fee, withdrawAmount);
     }
 
+    function executeStorePosition(
+      address pmAddress,
+      address trader
+    ) external {
+        onlyCounterParty();
+        _executeUpdatePositionMap(pmAddress, trader);
+    }
+
     function openLimitOrder(HouseBaseParam.OpenLimitOrderParams memory _param)
         public
         virtual
@@ -964,7 +972,29 @@ abstract contract PositionHouseBase is
         address _trader,
         Position.Data memory newData
     ) internal override(Base) {
+      // Currently we only allow one pending update position for each trader
+      // For safety reason, we do not allow to update to a pending update position
+      // TODO need to support multiple pending update positions in the future (cover more pending cases)
+      require(
+        pendingPositionMap[_pmAddress][_trader].quantity == 0,
+        "PendingUpdatePositionExists"
+      );
+        // now we update to the pending position map
+        // then wait for source chain transaction success
+        // then update to the position map
+        pendingPositionMap[_pmAddress][_trader].update(newData);
+    }
+
+    function _executeUpdatePositionMap(
+        address _pmAddress,
+        address _trader
+    ) internal override(Base) {
+        Position.Data memory newData = pendingPositionMap[_pmAddress][_trader];
+        // No pending position exists
+        require(newData.quantity != 0, "!p");
         positionMap[_pmAddress][_trader].update(newData);
+        // delete pending position
+        pendingPositionMap[_pmAddress][_trader].clear();
     }
 
     function _updateManualMargin(
