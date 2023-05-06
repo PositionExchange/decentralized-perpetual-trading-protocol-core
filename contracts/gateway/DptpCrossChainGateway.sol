@@ -81,6 +81,14 @@ contract DptpCrossChainGateway is
 
     uint256 private constant WEI_DECIMAL = 10**18;
 
+    struct RequestKeyData {
+        address pm;
+        address trader;
+    }
+
+    // increase key => increase data
+    mapping(bytes32 => RequestKeyData) public requestKeyData;
+
     enum Method {
         OPEN_MARKET,
         OPEN_LIMIT,
@@ -94,7 +102,8 @@ contract DptpCrossChainGateway is
         SET_TPSL,
         UNSET_TP_AND_SL,
         UNSET_TP_OR_SL,
-        OPEN_MARKET_BY_QUOTE
+        OPEN_MARKET_BY_QUOTE,
+        EXECUTE_STORE_POSITION
     }
 
     event Deposit(
@@ -261,8 +270,13 @@ contract DptpCrossChainGateway is
         ) {
             unsetTPOrSL(_sourceBcId, functionCall);
             return;
+        } else if (
+            Method(decodedEventData.functionMethodID) ==
+            Method.EXECUTE_STORE_POSITION
+        ) {
+            _executeStorePosition(_sourceBcId, functionCall);
+            return;
         }
-
         revert("CGW-01");
     }
 
@@ -322,6 +336,10 @@ contract DptpCrossChainGateway is
                 entryPrice
             );
         }
+
+
+        // store key for callback execute
+        requestKeyData[requestKey] = RequestKeyData(pmAddress, param.trader);
 
         _crossBlockchainCall(
             _sourceBcId,
@@ -394,6 +412,9 @@ contract DptpCrossChainGateway is
                 entryPrice
             );
         }
+
+        // store key for callback execute
+        requestKeyData[requestKey] = RequestKeyData(pmAddress, param.trader);
 
         _crossBlockchainCall(
             _sourceBcId,
@@ -766,6 +787,20 @@ contract DptpCrossChainGateway is
                 withdrawAmount
             )
         );
+    }
+
+    function _executeStorePosition(
+      uint256 _sourceBcId,
+      bytes memory _functionCall
+    ) private {
+      (bytes32 _requestKey) = abi.decode(
+          _functionCall,
+          (bytes32)
+      );
+      (address _pmAddress, address _trader) = (requestKeyData[_requestKey].pm, requestKeyData[_requestKey].trader);
+      require(_pmAddress != address(0) && _trader != address(0), "Invalid request key");
+      IPositionHouse(positionHouse).executeStorePosition(_pmAddress, _trader);
+      delete requestKeyData[_requestKey];
     }
 
     function setMyChainID(uint256 _chainID) external onlyOwner {
