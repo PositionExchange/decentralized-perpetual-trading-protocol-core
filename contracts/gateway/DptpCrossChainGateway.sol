@@ -56,7 +56,7 @@ contract DptpCrossChainGateway is
     bytes4 private constant EXECUTE_DECREASE_POSITION_METHOD =
         bytes4(
             keccak256(
-                "executeDecreasePosition(bytes32,uint256,uint256,uint256,bool)"
+                "executeDecreasePosition(bytes32,uint256,uint256,uint256,uint256,bool)"
             )
         );
 
