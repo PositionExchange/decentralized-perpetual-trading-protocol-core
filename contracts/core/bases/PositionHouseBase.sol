@@ -132,7 +132,7 @@ abstract contract PositionHouseBase is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
-        ) = _internalOpenMarketPosition(internalOpenMarketPositionParam);
+        ) = _internalOpenMarketPosition(internalOpenMarketPositionParam, false);
         _validateInitialMargin(_param.initialMargin, depositAmount);
         // return depositAmount, fee and withdrawAmount
         if (needClaim) {
@@ -373,7 +373,7 @@ abstract contract PositionHouseBase is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
-        ) = _internalOpenMarketPosition(param);
+        ) = _internalOpenMarketPosition(param, true);
         // return depositAmount, fee and withdrawAmount
         return (
             depositAmount,
@@ -970,8 +970,14 @@ abstract contract PositionHouseBase is
     function _updatePositionMap(
         address _pmAddress,
         address _trader,
-        Position.Data memory newData
+        Position.Data memory newData,
+        bool isReducePosittion
     ) internal override(Base) {
+      if(isReducePosittion){
+        // Update the position data directly for reducing position
+        positionMap[_pmAddress][_trader].update(newData);
+        return;
+      }
       // Currently we only allow one pending update position for each trader
       // For safety reason, we do not allow to update to a pending update position
       // TODO need to support multiple pending update positions in the future (cover more pending cases)
@@ -979,10 +985,10 @@ abstract contract PositionHouseBase is
         pendingPositionMap[_pmAddress][_trader].quantity == 0,
         "PendingUpdatePositionExists"
       );
-        // now we update to the pending position map
-        // then wait for source chain transaction success
-        // then update to the position map
-        pendingPositionMap[_pmAddress][_trader].update(newData);
+      // now we update to the pending position map
+      // then wait for source chain transaction success
+      // then update to the position map
+      pendingPositionMap[_pmAddress][_trader].update(newData);
     }
 
     function _executeUpdatePositionMap(

@@ -469,7 +469,7 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
                     ? int256(_depositedMargin)
                     : -int256(_depositedMargin)
             );
-            _updatePositionMap(_pmAddress, _trader, newData);
+            _updatePositionMap(_pmAddress, _trader, newData, false);
         }
     }
 
