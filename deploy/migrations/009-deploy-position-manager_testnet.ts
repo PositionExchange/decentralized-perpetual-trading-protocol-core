@@ -1,6 +1,6 @@
 import {MigrationContext, MigrationDefinition} from "../types";
 import {ContractWrapperFactory} from "../ContractWrapperFactory";
-import {BNBBUSD, BTCBUSD, CAKEBUSD, DOGEBUSD, ETHBUSD} from "../config_production";
+import {BNBBUSD, BTCBUSD, CAKEBUSD, LINKBUSD, ETHBUSD} from "../config_production";
 import {BUSD} from "../../constants";
 
 const migrations: MigrationDefinition = {
@@ -39,35 +39,35 @@ const migrations: MigrationDefinition = {
                 })
             },
 
-            'deploy BNBBUSD position manager': async () => {
-                /**
-                 quoteAsset: string;
-                 initialPrice: number;
-                 priceFeedKey: string;
-                 basisPoint: number;
-                 baseBasisPoint: number;
-                 tollRatio: number;
-                 maxMarketFindingWordsIndex: number;
-                 fundingPeriod: number;
-                 priceFeed: string;
-                 */
-                const positionHouseFunctionContractAddress = await context.db.findAddressByKey('PositionHouse');
-                const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
-                await context.factory.createPositionManager({
-                    quoteAsset: await context.db.getMockContract(`BUSD`),
-                    initialPrice: BNBBUSD.initialPrice,
-                    priceFeedKey: BNBBUSD.priceFeedKey,
-                    basisPoint: BNBBUSD.basisPoint,
-                    baseBasisPoint: BNBBUSD.baseBasisPoint,
-                    tollRatio: BNBBUSD.tollRatio,
-                    maxMarketFindingWordsIndex: BNBBUSD.maxMarketFindingWordsIndex,
-                    maxLimitFindingWordsIndex: BNBBUSD.maxLimitFindingWordsIndex,
-                    fundingPeriod: BNBBUSD.fundingPeriod,
-                    priceFeed: chainLinkPriceFeedContractAddress,
-                    quote: BNBBUSD.quote,
-                    leverage: BNBBUSD.leverage
-                })
-            },
+            // 'deploy BNBBUSD position manager': async () => {
+            //     /**
+            //      quoteAsset: string;
+            //      initialPrice: number;
+            //      priceFeedKey: string;
+            //      basisPoint: number;
+            //      baseBasisPoint: number;
+            //      tollRatio: number;
+            //      maxMarketFindingWordsIndex: number;
+            //      fundingPeriod: number;
+            //      priceFeed: string;
+            //      */
+            //     const positionHouseFunctionContractAddress = await context.db.findAddressByKey('PositionHouse');
+            //     const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
+            //     await context.factory.createPositionManager({
+            //         quoteAsset: await context.db.getMockContract(`BUSD`),
+            //         initialPrice: BNBBUSD.initialPrice,
+            //         priceFeedKey: BNBBUSD.priceFeedKey,
+            //         basisPoint: BNBBUSD.basisPoint,
+            //         baseBasisPoint: BNBBUSD.baseBasisPoint,
+            //         tollRatio: BNBBUSD.tollRatio,
+            //         maxMarketFindingWordsIndex: BNBBUSD.maxMarketFindingWordsIndex,
+            //         maxLimitFindingWordsIndex: BNBBUSD.maxLimitFindingWordsIndex,
+            //         fundingPeriod: BNBBUSD.fundingPeriod,
+            //         priceFeed: chainLinkPriceFeedContractAddress,
+            //         quote: BNBBUSD.quote,
+            //         leverage: BNBBUSD.leverage
+            //     })
+            // },
 
             'deploy ETHBUSD position manager': async () => {
                 /**
@@ -99,7 +99,7 @@ const migrations: MigrationDefinition = {
                 })
             },
 
-            'deploy DOGEBUSD position manager': async () => {
+            'deploy LINKBUSD position manager': async () => {
                 /**
                  quoteAsset: string;
                  initialPrice: number;
@@ -115,49 +115,49 @@ const migrations: MigrationDefinition = {
                 const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
                 await context.factory.createPositionManager({
                     quoteAsset: await context.db.getMockContract(`BUSD`),
-                    initialPrice: DOGEBUSD.initialPrice,
-                    priceFeedKey: DOGEBUSD.priceFeedKey,
-                    basisPoint: DOGEBUSD.basisPoint,
-                    baseBasisPoint: DOGEBUSD.baseBasisPoint,
-                    tollRatio: DOGEBUSD.tollRatio,
-                    maxMarketFindingWordsIndex: DOGEBUSD.maxMarketFindingWordsIndex,
-                    maxLimitFindingWordsIndex: DOGEBUSD.maxLimitFindingWordsIndex,
-                    fundingPeriod: DOGEBUSD.fundingPeriod,
+                    initialPrice: LINKBUSD.initialPrice,
+                    priceFeedKey: LINKBUSD.priceFeedKey,
+                    basisPoint: LINKBUSD.basisPoint,
+                    baseBasisPoint: LINKBUSD.baseBasisPoint,
+                    tollRatio: LINKBUSD.tollRatio,
+                    maxMarketFindingWordsIndex: LINKBUSD.maxMarketFindingWordsIndex,
+                    maxLimitFindingWordsIndex: LINKBUSD.maxLimitFindingWordsIndex,
+                    fundingPeriod: LINKBUSD.fundingPeriod,
                     priceFeed: chainLinkPriceFeedContractAddress,
-                    quote: DOGEBUSD.quote,
-                    leverage: DOGEBUSD.leverage
+                    quote: LINKBUSD.quote,
+                    leverage: LINKBUSD.leverage
                 })
             },
 
-            'deploy CAKEBUSD position manager': async () => {
-                /**
-                 quoteAsset: string;
-                 initialPrice: number;
-                 priceFeedKey: string;
-                 basisPoint: number;
-                 baseBasisPoint: number;
-                 tollRatio: number;
-                 maxMarketFindingWordsIndex: number;
-                 fundingPeriod: number;
-                 priceFeed: string;
-                 */
-                const positionHouseFunctionContractAddress = await context.db.findAddressByKey('PositionHouse');
-                const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
-                await context.factory.createPositionManager({
-                    quoteAsset: await context.db.getMockContract(`BUSD`),
-                    initialPrice: CAKEBUSD.initialPrice,
-                    priceFeedKey: CAKEBUSD.priceFeedKey,
-                    basisPoint: CAKEBUSD.basisPoint,
-                    baseBasisPoint: CAKEBUSD.baseBasisPoint,
-                    tollRatio: CAKEBUSD.tollRatio,
-                    maxMarketFindingWordsIndex: CAKEBUSD.maxMarketFindingWordsIndex,
-                    maxLimitFindingWordsIndex: CAKEBUSD.maxLimitFindingWordsIndex,
-                    fundingPeriod: CAKEBUSD.fundingPeriod,
-                    priceFeed: chainLinkPriceFeedContractAddress,
-                    quote: CAKEBUSD.quote,
-                    leverage: CAKEBUSD.leverage
-                })
-            },
+            // 'deploy CAKEBUSD position manager': async () => {
+            //     /**
+            //      quoteAsset: string;
+            //      initialPrice: number;
+            //      priceFeedKey: string;
+            //      basisPoint: number;
+            //      baseBasisPoint: number;
+            //      tollRatio: number;
+            //      maxMarketFindingWordsIndex: number;
+            //      fundingPeriod: number;
+            //      priceFeed: string;
+            //      */
+            //     const positionHouseFunctionContractAddress = await context.db.findAddressByKey('PositionHouse');
+            //     const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
+            //     await context.factory.createPositionManager({
+            //         quoteAsset: await context.db.getMockContract(`BUSD`),
+            //         initialPrice: CAKEBUSD.initialPrice,
+            //         priceFeedKey: CAKEBUSD.priceFeedKey,
+            //         basisPoint: CAKEBUSD.basisPoint,
+            //         baseBasisPoint: CAKEBUSD.baseBasisPoint,
+            //         tollRatio: CAKEBUSD.tollRatio,
+            //         maxMarketFindingWordsIndex: CAKEBUSD.maxMarketFindingWordsIndex,
+            //         maxLimitFindingWordsIndex: CAKEBUSD.maxLimitFindingWordsIndex,
+            //         fundingPeriod: CAKEBUSD.fundingPeriod,
+            //         priceFeed: chainLinkPriceFeedContractAddress,
+            //         quote: CAKEBUSD.quote,
+            //         leverage: CAKEBUSD.leverage
+            //     })
+            // },
         }
     }
 }
