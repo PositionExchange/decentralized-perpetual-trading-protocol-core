@@ -584,16 +584,16 @@ abstract contract PositionHouseBase is
         uint256 _liquidatedNotional,
         int256 _liquidatedManualMargin
     ) external nonReentrant {
-        onlyCounterParty();
-        debtPosition[_pmAddress][_trader].updateDebt(
-            _liquidatedQuantity,
-            _liquidatedMargin,
-            _liquidatedAbsoluteMargin,
-            _liquidatedNotional
-        );
-
-        // reduce manual margin by liquidatedManualMargin
-        _updateManualMargin(_pmAddress, _trader, -_liquidatedManualMargin);
+//        onlyCounterParty();
+//        debtPosition[_pmAddress][_trader].updateDebt(
+//            _liquidatedQuantity,
+//            _liquidatedMargin,
+//            _liquidatedAbsoluteMargin,
+//            _liquidatedNotional
+//        );
+//
+//        // reduce manual margin by liquidatedManualMargin
+//        _updateManualMargin(_pmAddress, _trader, -_liquidatedManualMargin);
     }
 
     // OWNER UPDATE VARIABLE STORAGE
