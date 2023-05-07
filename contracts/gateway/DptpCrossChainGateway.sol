@@ -127,6 +127,7 @@ contract DptpCrossChainGateway is
         address _caller,
         uint256 _destBcId,
         address _destContract,
+        uint8 _destMethodID,
         bytes _destFunctionCall
     );
 
@@ -867,6 +868,8 @@ contract DptpCrossChainGateway is
             msg.sender,
             _destBcId,
             _destContract,
+            // Mocking only
+            0,
             _destData
         );
     }
