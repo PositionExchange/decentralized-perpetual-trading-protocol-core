@@ -24,7 +24,6 @@ import {LimitOrderManager} from "../modules/LimitOrder.sol";
 import {MarketOrder} from "../modules/MarketOrder.sol";
 import {Base} from "../modules/Base.sol";
 
-import "hardhat/console.sol";
 
 abstract contract PositionHouseBase is
     ReentrancyGuardUpgradeable,
@@ -78,7 +77,7 @@ abstract contract PositionHouseBase is
     function openMarketPosition(
         HouseBaseParam.OpenMarketOrderParams memory _param
     )
-        public
+        external
         virtual
         returns (
             uint256,
@@ -150,7 +149,7 @@ abstract contract PositionHouseBase is
     }
 
     function openLimitOrder(HouseBaseParam.OpenLimitOrderParams memory _param)
-        public
+        external
         virtual
         returns (
             uint256,
@@ -279,7 +278,7 @@ abstract contract PositionHouseBase is
         uint256 _quantity,
         address _trader
     )
-        public
+        external
         virtual
         returns (
             uint256,
@@ -288,12 +287,11 @@ abstract contract PositionHouseBase is
         )
     {
         onlyCounterParty();
-        address _pmAddress = address(_positionManager);
         (
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
-        ) = _internalCloseMarketPosition(_pmAddress, _trader, _quantity);
+        ) = _internalCloseMarketPosition(address(_positionManager), _trader, _quantity);
         // return depositAmount, fee and withdrawAmount
         return (depositAmount, fee, withdrawAmount);
     }
@@ -343,10 +341,9 @@ abstract contract PositionHouseBase is
         )
     {
         onlyCounterParty();
-        address _pmAddress = address(_positionManager);
         Position.Data
             memory _positionDataWithManualMargin = getPositionWithManualMargin(
-                _pmAddress,
+                address(_positionManager),
                 _trader
             );
         uint256 withdrawAmountWhenCancelOrder = _internalCancelMultiPendingOrder(
@@ -371,7 +368,7 @@ abstract contract PositionHouseBase is
         // must reuse this code instead of using function _internalCloseMarketPosition
         (
             uint256 depositAmount,
-            uint256 fee,
+            ,
             uint256 withdrawAmount
         ) = _internalOpenMarketPosition(param, true);
         // return depositAmount, fee and withdrawAmount
@@ -403,10 +400,9 @@ abstract contract PositionHouseBase is
         )
     {
         onlyCounterParty();
-        address _pmAddress = address(_positionManager);
         Position.Data
             memory _positionDataWithManualMargin = getPositionWithManualMargin(
-                _pmAddress,
+                address(_positionManager),
                 _trader
             );
         {
@@ -493,7 +489,7 @@ abstract contract PositionHouseBase is
         address _trader,
         Position.Data memory _positionData,
         int256 _claimableAmount
-    ) internal returns (int256) {
+    ) private returns (int256) {
         if (_claimableAmount == 0) {
             _claimableAmount = _getClaimAmount(_pmAddress, _trader);
         }
