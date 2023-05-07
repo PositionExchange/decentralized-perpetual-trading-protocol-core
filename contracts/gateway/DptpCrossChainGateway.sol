@@ -799,7 +799,7 @@ contract DptpCrossChainGateway is
           (bytes32)
       );
       (address _pmAddress, address _trader) = (requestKeyData[_requestKey].pm, requestKeyData[_requestKey].trader);
-      require(_pmAddress != address(0) && _trader != address(0), "Invalid request key");
+      require(_pmAddress != address(0) && _trader != address(0), "Invalid request key.");
       IPositionHouse(positionHouse).executeStorePosition(_pmAddress, _trader);
       delete requestKeyData[_requestKey];
     }
