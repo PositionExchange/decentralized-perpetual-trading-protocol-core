@@ -53,7 +53,8 @@ contract CrossChainGateway is
         SET_TPSL,
         UNSET_TP_AND_SL,
         UNSET_TP_OR_SL,
-        OPEN_MARKET_BY_QUOTE
+        OPEN_MARKET_BY_QUOTE,
+        EXECUTE_STORE_POSITION
     }
 
     event Deposit(
@@ -274,6 +275,16 @@ contract CrossChainGateway is
             Method.OPEN_MARKET_BY_QUOTE
         ) {
             openMarketPositionByQuote(functionCall, _sourceBcId);
+            return;
+        } else if (
+            Method(decodedEventData.functionMethodID) ==
+            Method.EXECUTE_STORE_POSITION
+        ) {
+            (address _pmAddress, address _trader) = abi.decode(
+                functionCall,
+                (address, address)
+            );
+            positionHouse.executeStorePosition(_pmAddress, _trader);
             return;
         }
 

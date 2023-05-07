@@ -59,8 +59,8 @@ export class ContractWrapperFactory {
         );
         const implContractAddress = decodedData[1]
         const isVerified = await this.db.findAddressByKey(`${implContractAddress}:verified`)
-        if (isVerified) return console.log(`Implement contract already verified`)
         console.log("Upgraded to impl contract", implContractAddress)
+        if (isVerified) return console.log(`Implement contract already verified`)
         try {
             await verifyContract(this.hre, implContractAddress)
             await this.db.saveAddressByKey(`${implContractAddress}:verified`, 'yes')
@@ -765,7 +765,11 @@ export class ContractWrapperFactory {
         const contractFactory = await this.hre.ethers.getContractFactory(contractName);
         let contractAddress = await this.db.findAddressByKey(contractName);
         if (contractAddress) {
-            const proposal = await this.hre.upgrades.upgradeProxy(contractAddress, contractFactory, {unsafeAllowLinkedLibraries: true});
+            const proposal = await this.hre.upgrades.upgradeProxy(contractAddress, contractFactory, {
+              unsafeAllowLinkedLibraries: true,
+              useDeployedImplementation: false,
+            });
+            console.log(`Starting verify upgrade ${contractName}`, proposal.deployTransaction)
             await this.verifyImplContract(proposal.deployTransaction)
         } else {
             const contractArgs = [

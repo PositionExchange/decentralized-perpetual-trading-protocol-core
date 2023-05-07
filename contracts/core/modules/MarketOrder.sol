@@ -41,7 +41,8 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
     }
 
     function _internalOpenMarketPosition(
-        InternalOpenMarketPositionParam memory _param
+        InternalOpenMarketPositionParam memory _param,
+        bool isReducePosition
     )
         internal
         returns (
@@ -128,7 +129,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
             );
         }
         // update position state
-        _updatePositionMap(_pmAddress, _param.trader, pResp.position);
+        _updatePositionMap(_pmAddress, _param.trader, pResp.position, isReducePosition);
         {
             emit OpenMarket(
                 _param.trader,
@@ -188,7 +189,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
-        ) = _internalOpenMarketPosition(param);
+        ) = _internalOpenMarketPosition(param, true);
         return (depositAmount, fee, withdrawAmount);
     }
 

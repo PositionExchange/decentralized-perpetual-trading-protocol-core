@@ -73,13 +73,19 @@ abstract contract Base {
     function _updatePositionMap(
         address _pmAddress,
         address _trader,
-        Position.Data memory newData
+        Position.Data memory newData,
+        bool isReducePosition
     ) internal virtual;
 
     function _updateManualMargin(
         address _pmAddress,
         address _trader,
         int256 _changedAmount
+    ) internal virtual;
+
+    function _executeUpdatePositionMap(
+        address _pmAddress,
+        address _trader
     ) internal virtual;
 
     function clearPosition(address _pmAddress, address _trader)

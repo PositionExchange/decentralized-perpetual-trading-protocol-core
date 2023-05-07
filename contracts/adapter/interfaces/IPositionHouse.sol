@@ -82,6 +82,10 @@ interface IPositionHouse {
             uint256,
             uint256
         );
+    function executeStorePosition(
+        address pmAddress,
+        address trader
+    ) external;
 
     function openLimitOrder(HouseBaseParam.OpenLimitOrderParams memory param)
         external

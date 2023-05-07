@@ -24,7 +24,6 @@ import {LimitOrderManager} from "../modules/LimitOrder.sol";
 import {MarketOrder} from "../modules/MarketOrder.sol";
 import {Base} from "../modules/Base.sol";
 
-import "hardhat/console.sol";
 
 abstract contract PositionHouseBase is
     ReentrancyGuardUpgradeable,
@@ -78,7 +77,7 @@ abstract contract PositionHouseBase is
     function openMarketPosition(
         HouseBaseParam.OpenMarketOrderParams memory _param
     )
-        public
+        external
         virtual
         returns (
             uint256,
@@ -132,7 +131,7 @@ abstract contract PositionHouseBase is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
-        ) = _internalOpenMarketPosition(internalOpenMarketPositionParam);
+        ) = _internalOpenMarketPosition(internalOpenMarketPositionParam, false);
         _validateInitialMargin(_param.initialMargin, depositAmount);
         // return depositAmount, fee and withdrawAmount
         if (needClaim) {
@@ -141,8 +140,16 @@ abstract contract PositionHouseBase is
         return (depositAmount, fee, withdrawAmount);
     }
 
+    function executeStorePosition(
+      address pmAddress,
+      address trader
+    ) external {
+        onlyCounterParty();
+        _executeUpdatePositionMap(pmAddress, trader);
+    }
+
     function openLimitOrder(HouseBaseParam.OpenLimitOrderParams memory _param)
-        public
+        external
         virtual
         returns (
             uint256,
@@ -271,7 +278,7 @@ abstract contract PositionHouseBase is
         uint256 _quantity,
         address _trader
     )
-        public
+        external
         virtual
         returns (
             uint256,
@@ -280,12 +287,11 @@ abstract contract PositionHouseBase is
         )
     {
         onlyCounterParty();
-        address _pmAddress = address(_positionManager);
         (
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
-        ) = _internalCloseMarketPosition(_pmAddress, _trader, _quantity);
+        ) = _internalCloseMarketPosition(address(_positionManager), _trader, _quantity);
         // return depositAmount, fee and withdrawAmount
         return (depositAmount, fee, withdrawAmount);
     }
@@ -335,10 +341,9 @@ abstract contract PositionHouseBase is
         )
     {
         onlyCounterParty();
-        address _pmAddress = address(_positionManager);
         Position.Data
             memory _positionDataWithManualMargin = getPositionWithManualMargin(
-                _pmAddress,
+                address(_positionManager),
                 _trader
             );
         uint256 withdrawAmountWhenCancelOrder = _internalCancelMultiPendingOrder(
@@ -363,9 +368,9 @@ abstract contract PositionHouseBase is
         // must reuse this code instead of using function _internalCloseMarketPosition
         (
             uint256 depositAmount,
-            uint256 fee,
+            ,
             uint256 withdrawAmount
-        ) = _internalOpenMarketPosition(param);
+        ) = _internalOpenMarketPosition(param, true);
         // return depositAmount, fee and withdrawAmount
         return (
             depositAmount,
@@ -395,10 +400,9 @@ abstract contract PositionHouseBase is
         )
     {
         onlyCounterParty();
-        address _pmAddress = address(_positionManager);
         Position.Data
             memory _positionDataWithManualMargin = getPositionWithManualMargin(
-                _pmAddress,
+                address(_positionManager),
                 _trader
             );
         {
@@ -485,7 +489,7 @@ abstract contract PositionHouseBase is
         address _trader,
         Position.Data memory _positionData,
         int256 _claimableAmount
-    ) internal returns (int256) {
+    ) private returns (int256) {
         if (_claimableAmount == 0) {
             _claimableAmount = _getClaimAmount(_pmAddress, _trader);
         }
@@ -962,9 +966,37 @@ abstract contract PositionHouseBase is
     function _updatePositionMap(
         address _pmAddress,
         address _trader,
-        Position.Data memory newData
+        Position.Data memory newData,
+        bool isReducePosittion
     ) internal override(Base) {
+      if(isReducePosittion){
+        // Update the position data directly for reducing position
         positionMap[_pmAddress][_trader].update(newData);
+        return;
+      }
+      // Currently we only allow one pending update position for each trader
+      // For safety reason, we do not allow to update to a pending update position
+      // TODO need to support multiple pending update positions in the future (cover more pending cases)
+      require(
+        pendingPositionMap[_pmAddress][_trader].quantity == 0,
+        "PendingUpdatePositionExists"
+      );
+      // now we update to the pending position map
+      // then wait for source chain transaction success
+      // then update to the position map
+      pendingPositionMap[_pmAddress][_trader].update(newData);
+    }
+
+    function _executeUpdatePositionMap(
+        address _pmAddress,
+        address _trader
+    ) internal override(Base) {
+        Position.Data memory newData = pendingPositionMap[_pmAddress][_trader];
+        // No pending position exists
+        require(newData.quantity != 0, "!p");
+        positionMap[_pmAddress][_trader].update(newData);
+        // delete pending position
+        pendingPositionMap[_pmAddress][_trader].clear();
     }
 
     function _updateManualMargin(
