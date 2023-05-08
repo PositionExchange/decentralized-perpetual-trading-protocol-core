@@ -343,7 +343,7 @@ contract DptpCrossChainGateway is
         // store key for callback execute
         requestKeyData[requestKey] = RequestKeyData(pmAddress, param.trader);
 
-        crossBlockchainCall(
+        _crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -415,18 +415,9 @@ contract DptpCrossChainGateway is
         }
 
         // store key for callback execute
-        requestKeyData[param.sourceChainRequestKey] = RequestKeyData(pmAddress, param.trader);
-
-        crossBlockchainCall(
-            _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
-            abi.encodeWithSelector(
-                EXECUTE_INCREASE_POSITION_METHOD,
-                param.sourceChainRequestKey,
-                param.pip,
-                param.quantity,
-                isLong
-            )
+        requestKeyData[param.sourceChainRequestKey] = RequestKeyData(
+            pmAddress,
+            param.trader
         );
     }
 
@@ -460,7 +451,7 @@ contract DptpCrossChainGateway is
 
         IDPTPValidator(dptpValidator).updateTraderData(account, pmAddress);
 
-        crossBlockchainCall(
+        _crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -512,7 +503,7 @@ contract DptpCrossChainGateway is
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
 
         uint256 sourceBcId = _sourceBcId;
-        crossBlockchainCall(
+        _crossBlockchainCall(
             sourceBcId,
             destChainFuturesGateways[sourceBcId],
             abi.encodeWithSelector(
@@ -573,20 +564,6 @@ contract DptpCrossChainGateway is
             );
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
-
-        crossBlockchainCall(
-            _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
-            abi.encodeWithSelector(
-                EXECUTE_DECREASE_POSITION_METHOD,
-                requestKey,
-                withdrawAmount,
-                fee,
-                entryPrice,
-                quantity,
-                isLong
-            )
-        );
     }
 
     function removeMargin(uint256 _sourceBcId, bytes memory _functionCall)
@@ -623,7 +600,7 @@ contract DptpCrossChainGateway is
 
         if (withdrawAmountUsd > 0) {
             uint256 sourceBcId = _sourceBcId;
-            crossBlockchainCall(
+            _crossBlockchainCall(
                 sourceBcId,
                 destChainFuturesGateways[sourceBcId],
                 abi.encodeWithSelector(
@@ -659,7 +636,7 @@ contract DptpCrossChainGateway is
             trader
         );
 
-        crossBlockchainCall(
+        _crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(EXECUTE_ADD_COLLATERAL_METHOD, key)
@@ -737,7 +714,7 @@ contract DptpCrossChainGateway is
                 _trader
             );
 
-        crossBlockchainCall(
+        _crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -775,7 +752,7 @@ contract DptpCrossChainGateway is
             return;
         }
 
-        crossBlockchainCall(
+        _crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -846,22 +823,55 @@ contract DptpCrossChainGateway is
         whitelistRelayers[_destChainId][_relayer] = _status;
     }
 
-    function crossBlockchainCall(uint256 _destBcId, bytes memory _destData)
-        public
-        override
-    {
-        crossBlockchainCall(
-            _destBcId,
-            destChainFuturesGateways[_destBcId],
-            _destData
+    function executeIncreaseOrder(
+        uint256 _sourceBcId,
+        bytes32 _requestKey,
+        uint256 _entryPrice,
+        uint256 _quantity,
+        bool _isLong
+    ) external override {
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_INCREASE_POSITION_METHOD,
+                _requestKey,
+                _entryPrice,
+                _quantity,
+                _isLong
+            )
         );
     }
 
-    function crossBlockchainCall(
+    function executeDecreaseOrder(
+        uint256 _sourceBcId,
+        bytes32 _requestKey,
+        uint256 _withdrawAmount,
+        uint256 _fee,
+        uint256 _entryPrice,
+        uint256 _quantity,
+        bool _isLong
+    ) external override {
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_DECREASE_POSITION_METHOD,
+                _requestKey,
+                _withdrawAmount,
+                _fee,
+                _entryPrice,
+                _quantity,
+                _isLong
+            )
+        );
+    }
+
+    function _crossBlockchainCall(
         uint256 _destBcId,
         address _destContract,
         bytes memory _destData
-    ) public override {
+    ) private {
         txIndex++;
         bytes32 txId = keccak256(
             abi.encodePacked(

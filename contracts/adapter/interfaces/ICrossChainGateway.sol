@@ -2,14 +2,21 @@
 pragma solidity ^0.8.8;
 
 interface ICrossChainGateway {
-    function crossBlockchainCall(
-        uint256 _destBcId,
-        bytes memory _destData
+    function executeIncreaseOrder(
+        uint256 _sourceBcId,
+        bytes32 _requestKey,
+        uint256 _entryPrice,
+        uint256 _quantity,
+        bool _isLong
     ) external;
 
-    function crossBlockchainCall(
-        uint256 _destBcId,
-        address _destContract,
-        bytes memory _destData
+    function executeDecreaseOrder(
+        uint256 _sourceBcId,
+        bytes32 _requestKey,
+        uint256 _withdrawAmount,
+        uint256 _fee,
+        uint256 _entryPrice,
+        uint256 _quantity,
+        bool _isLong
     ) external;
 }

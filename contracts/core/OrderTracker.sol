@@ -136,38 +136,20 @@ contract OrderTracker is
                 isReduce,
                 sourceChainRequestKey
             ) = positionManagerInterface.getPendingOrderDetailFull(_pip, i);
-            if (pendingOrderDetail.trader != mmAddress) {
-                {
-                    uint128 pip = _pip;
-                    uint256 size = pendingOrderDetail.size;
-                    uint256 partialFilled = pendingOrderDetail.partialFilled;
-                    uint256 filledSize = size - partialFilled;
-
-                    // input leverage = 1 cause we don't use it
-                    (uint256 orderNotional, , ) = positionManagerInterface
-                        .getNotionalMarginAndFee(filledSize, pip, 1);
-
-                    _updatePositionInfo(
-                        pmAddress,
-                        pendingOrderDetail.isBuy,
-                        uint128(filledSize),
-                        uint128(orderNotional)
-                    );
-
-                    emit LimitOrderFilled(
-                        pmAddress,
-                        pip,
-                        i,
-                        pendingOrderDetail.isBuy,
-                        filledSize,
-                        pendingOrderDetail.trader
-                    );
-                }
-                //                _crossBlockchainCall(
-                //                    421613, // TODO: Refactor later
-                //                    0
-                //                );
+            if (pendingOrderDetail.trader == mmAddress) {
+                continue;
             }
+
+            _executeOrderFilled(pendingOrderDetail, pmAddress, _pip, i);
+
+            _executeIncreasePosition(
+                positionManagerInterface,
+                sourceChainRequestKey,
+                _pip,
+                pendingOrderDetail.size,
+                pendingOrderDetail.isBuy,
+                isReduce
+            );
         }
     }
 
@@ -352,12 +334,58 @@ contract OrderTracker is
         crossChainGateway = _address;
     }
 
-    function _crossBlockchainCall(uint256 _destBcId, bytes memory _destData)
-        private
-    {
-        ICrossChainGateway(crossChainGateway).crossBlockchainCall(
-            _destBcId,
-            _destData
+    function _executeOrderFilled(
+        PendingOrderDetail memory _pendingOrderDetail,
+        address _pmAddress,
+        uint128 _pip,
+        uint64 _index
+    ) private {
+        uint256 filledSize = _pendingOrderDetail.size -
+            _pendingOrderDetail.partialFilled;
+
+        // input leverage = 1 cause we don't use it
+        (uint256 orderNotional, , ) = IPositionManager(_pmAddress)
+            .getNotionalMarginAndFee(filledSize, _pip, 1);
+
+        _updatePositionInfo(
+            _pmAddress,
+            _pendingOrderDetail.isBuy,
+            uint128(filledSize),
+            uint128(orderNotional)
+        );
+
+        emit LimitOrderFilled(
+            _pmAddress,
+            _pip,
+            _index,
+            _pendingOrderDetail.isBuy,
+            filledSize,
+            _pendingOrderDetail.trader
+        );
+    }
+
+    function _executeIncreasePosition(
+        IPositionManager _positionManagerInterface,
+        bytes32 _requestKey,
+        uint128 _pip,
+        uint256 _size,
+        bool _isBuy,
+        bool _isReduce
+    ) private {
+        uint256 basisPoint = _positionManagerInterface.getBasisPoint();
+        uint256 entryPrice = (uint256(_pip) * (10**18)) / basisPoint;
+
+        if (_isReduce) {
+            // TODO: Implement execute close limit
+            return;
+        }
+
+        ICrossChainGateway(crossChainGateway).executeIncreaseOrder(
+            421613, // TODO: Refactor later
+            _requestKey,
+            entryPrice,
+            _size,
+            _isBuy
         );
     }
 
