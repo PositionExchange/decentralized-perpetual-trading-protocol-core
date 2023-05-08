@@ -390,7 +390,8 @@ abstract contract PositionHouseBase is
         IPositionManager _positionManager,
         uint128 _pip,
         uint256 _quantity,
-        address _trader
+        address _trader,
+        bytes32 sourceChainRequestKey
     )
         public
         virtual
@@ -425,7 +426,7 @@ abstract contract PositionHouseBase is
                 positionData: _positionDataWithManualMargin,
                 trader: _trader,
                 initialMargin: 0,
-                sourceChainRequestKey: 0 // TODO: update later
+                sourceChainRequestKey: sourceChainRequestKey
             });
         }
         (

@@ -358,7 +358,8 @@ contract TesterGateway is
                 _positionManagerInterface,
                 _pip,
                 _quantity,
-                _trader
+                _trader,
+                0
             );
         _handleMarginToInsuranceFund(
             _positionManagerInterface,

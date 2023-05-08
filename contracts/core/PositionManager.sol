@@ -245,6 +245,7 @@ contract PositionManager is
                 _hasLiquidity,
                 _order.quantity > 0,
                 _marketMakerAddress,
+                false,
                 0
             );
             if (!_hasLiquidity) {
@@ -299,6 +300,7 @@ contract PositionManager is
                 hasLiquidityInTargetPip,
                 !marketOrderIsBuy,
                 _marketMakerAddress,
+                false,
                 0
             );
             liquidityBitmap.toggleSingleBit(_targetPip, true);
@@ -379,6 +381,7 @@ contract PositionManager is
         uint128 _pip,
         uint128 _size,
         bool _isBuy,
+        bool _isReduce,
         bytes32 _sourceChainRequestKey
     )
         external
@@ -445,6 +448,7 @@ contract PositionManager is
                 uint128 pip = _pip;
                 bool isBuy = _isBuy;
                 address trader = _trader;
+                bool isReduce = _isReduce;
                 bytes32 sourceChainRequestKey = _sourceChainRequestKey;
                 orderId = _internalInsertLimitOrder(
                     remainingSize,
@@ -452,6 +456,7 @@ contract PositionManager is
                     hasLiquidity,
                     isBuy,
                     trader,
+                    isReduce,
                     sourceChainRequestKey
                 );
                 if (remainingSize != _size) {
@@ -689,12 +694,10 @@ contract PositionManager is
             bool isFilled,
             bool isBuy,
             uint256 size,
-            uint256 partialFilled,
-            bytes32 sourceChainRequestKey
+            uint256 partialFilled
         )
     {
-        address trader;
-        (isFilled, isBuy, size, partialFilled, trader,sourceChainRequestKey) = tickPosition[_pip]
+        (isFilled, isBuy, size, partialFilled, , ,) = tickPosition[_pip]
             .getQueueOrder(_orderId);
 
         if (!liquidityBitmap.hasLiquidity(_pip)) {
@@ -714,10 +717,11 @@ contract PositionManager is
             uint256 size,
             uint256 partialFilled,
             address trader,
+            bool isReduce,
             bytes32 sourceChainRequestKey
         )
     {
-        (isFilled, isBuy, size, partialFilled, trader, sourceChainRequestKey) = tickPosition[_pip]
+        (isFilled, isBuy, size, partialFilled, trader, isReduce, sourceChainRequestKey) = tickPosition[_pip]
             .getQueueOrder(_orderId);
 
         if (!liquidityBitmap.hasLiquidity(_pip)) {
@@ -1261,6 +1265,7 @@ contract PositionManager is
         bool _hasLiquidity,
         bool _isBuy,
         address _trader,
+        bool _isReduce,
         bytes32 _sourceChainRequestKey
     ) internal returns (uint64) {
         return
@@ -1269,6 +1274,7 @@ contract PositionManager is
                 _hasLiquidity,
                 _isBuy,
                 _trader,
+                _isReduce,
                 _sourceChainRequestKey
             );
     }

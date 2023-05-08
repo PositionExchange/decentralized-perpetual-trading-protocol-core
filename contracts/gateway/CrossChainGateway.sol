@@ -610,7 +610,8 @@ contract CrossChainGateway is
                 IPositionManager(_pmAddress),
                 _pip,
                 _quantity,
-                _trader
+                _trader,
+                0
             );
         dptpValidator.updateTraderData(
             _trader,

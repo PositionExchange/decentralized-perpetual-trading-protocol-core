@@ -11,6 +11,7 @@ import "../adapter/interfaces/IPositionHouse.sol";
 import "../adapter/interfaces/IPositionManager.sol";
 import "../adapter/interfaces/IPositionStrategyOrder.sol";
 import "../adapter/interfaces/IInsuranceFund.sol";
+import "../adapter/interfaces/ICrossChainGateway.sol";
 import "../library/types/PositionStrategyOrderStorage.sol";
 import "../library/positions/HouseBaseParam.sol";
 import {Quantity} from "../library/helpers/Quantity.sol";
@@ -21,7 +22,8 @@ import "../library/positions/Position.sol";
 contract DptpCrossChainGateway is
     PausableUpgradeable,
     OwnableUpgradeable,
-    ReentrancyGuardUpgradeable
+    ReentrancyGuardUpgradeable,
+    ICrossChainGateway
 {
     using Quantity for int256;
     using SafeMathUpgradeable for uint256;
@@ -338,11 +340,10 @@ contract DptpCrossChainGateway is
             );
         }
 
-
         // store key for callback execute
         requestKeyData[requestKey] = RequestKeyData(pmAddress, param.trader);
 
-        _crossBlockchainCall(
+        crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -414,9 +415,9 @@ contract DptpCrossChainGateway is
         }
 
         // store key for callback execute
-        requestKeyData[requestKey] = RequestKeyData(pmAddress, param.trader);
+        requestKeyData[param.sourceChainRequestKey] = RequestKeyData(pmAddress, param.trader);
 
-        _crossBlockchainCall(
+        crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -459,7 +460,7 @@ contract DptpCrossChainGateway is
 
         IDPTPValidator(dptpValidator).updateTraderData(account, pmAddress);
 
-        _crossBlockchainCall(
+        crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -506,16 +507,12 @@ contract DptpCrossChainGateway is
         }
 
         (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
-            .closePosition(
-                IPositionManager(pmAddress),
-                quantity,
-                trader
-            );
+            .closePosition(IPositionManager(pmAddress), quantity, trader);
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
 
         uint256 sourceBcId = _sourceBcId;
-        _crossBlockchainCall(
+        crossBlockchainCall(
             sourceBcId,
             destChainFuturesGateways[sourceBcId],
             abi.encodeWithSelector(
@@ -571,12 +568,13 @@ contract DptpCrossChainGateway is
                 IPositionManager(pmAddress),
                 uint128(pip),
                 quantity,
-                trader
+                trader,
+                requestKey
             );
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
 
-        _crossBlockchainCall(
+        crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -625,7 +623,7 @@ contract DptpCrossChainGateway is
 
         if (withdrawAmountUsd > 0) {
             uint256 sourceBcId = _sourceBcId;
-            _crossBlockchainCall(
+            crossBlockchainCall(
                 sourceBcId,
                 destChainFuturesGateways[sourceBcId],
                 abi.encodeWithSelector(
@@ -661,7 +659,7 @@ contract DptpCrossChainGateway is
             trader
         );
 
-        _crossBlockchainCall(
+        crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(EXECUTE_ADD_COLLATERAL_METHOD, key)
@@ -739,7 +737,7 @@ contract DptpCrossChainGateway is
                 _trader
             );
 
-        _crossBlockchainCall(
+        crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -777,7 +775,7 @@ contract DptpCrossChainGateway is
             return;
         }
 
-        _crossBlockchainCall(
+        crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
             abi.encodeWithSelector(
@@ -790,17 +788,20 @@ contract DptpCrossChainGateway is
     }
 
     function _executeStorePosition(
-      uint256 _sourceBcId,
-      bytes memory _functionCall
+        uint256 _sourceBcId,
+        bytes memory _functionCall
     ) private {
-      (bytes32 _requestKey) = abi.decode(
-          _functionCall,
-          (bytes32)
-      );
-      (address _pmAddress, address _trader) = (requestKeyData[_requestKey].pm, requestKeyData[_requestKey].trader);
-      require(_pmAddress != address(0) && _trader != address(0), "Invalid request key.");
-      IPositionHouse(positionHouse).executeStorePosition(_pmAddress, _trader);
-      delete requestKeyData[_requestKey];
+        bytes32 _requestKey = abi.decode(_functionCall, (bytes32));
+        (address _pmAddress, address _trader) = (
+            requestKeyData[_requestKey].pm,
+            requestKeyData[_requestKey].trader
+        );
+        require(
+            _pmAddress != address(0) && _trader != address(0),
+            "Invalid request key."
+        );
+        IPositionHouse(positionHouse).executeStorePosition(_pmAddress, _trader);
+        delete requestKeyData[_requestKey];
     }
 
     function setMyChainID(uint256 _chainID) external onlyOwner {
@@ -845,11 +846,22 @@ contract DptpCrossChainGateway is
         whitelistRelayers[_destChainId][_relayer] = _status;
     }
 
-    function _crossBlockchainCall(
+    function crossBlockchainCall(uint256 _destBcId, bytes memory _destData)
+        public
+        override
+    {
+        crossBlockchainCall(
+            _destBcId,
+            destChainFuturesGateways[_destBcId],
+            _destData
+        );
+    }
+
+    function crossBlockchainCall(
         uint256 _destBcId,
         address _destContract,
         bytes memory _destData
-    ) internal {
+    ) public override {
         txIndex++;
         bytes32 txId = keccak256(
             abi.encodePacked(

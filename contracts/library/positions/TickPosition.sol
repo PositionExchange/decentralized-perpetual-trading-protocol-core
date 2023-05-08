@@ -28,6 +28,7 @@ library TickPosition {
         bool _hasLiquidity,
         bool _isBuy,
         address _trader,
+        bool _isReduce,
         bytes32 _sourceChainRequestKey
     ) internal returns (uint64) {
         _self.currentIndex++;
@@ -43,7 +44,7 @@ library TickPosition {
         } else {
             _self.liquidity = _self.liquidity + _size;
         }
-        _self.orderQueue[_self.currentIndex].update(_isBuy, _size, _trader, _sourceChainRequestKey);
+        _self.orderQueue[_self.currentIndex].update(_isBuy, _size, _trader, _isReduce, _sourceChainRequestKey);
         return _self.currentIndex;
     }
 
@@ -63,10 +64,11 @@ library TickPosition {
             uint256 size,
             uint256 partialFilled,
             address trader,
+            bool isReduce,
             bytes32 sourceChainRequestKey
         )
     {
-        (isBuy, size, partialFilled, trader, sourceChainRequestKey) = _self
+        (isBuy, size, partialFilled, trader, isReduce, sourceChainRequestKey) = _self
             .orderQueue[_orderId]
             .getData();
         if (_self.filledIndex > _orderId && size != 0) {
@@ -122,7 +124,7 @@ library TickPosition {
             uint256 size,
             uint256 partialFilled,
             address trader,
-            bytes32 sourceChainRequestKey
+            ,
         ) = _self.orderQueue[_orderId].getData();
 
         {
@@ -131,34 +133,34 @@ library TickPosition {
             if (self.liquidity >= uint128(size - partialFilled)) {
                 self.liquidity = self.liquidity - uint128(size - partialFilled);
             }
-            self.orderQueue[orderId].update(isBuy, partialFilled, trader, 0);
+            self.orderQueue[orderId].update(isBuy, partialFilled, trader, false, 0);
         }
 
         return (size - partialFilled, partialFilled, isBuy, trader);
     }
 
-    function closeLimitOrder(
-        TickPosition.Data storage _self,
-        uint64 _orderId,
-        uint256 _amountClose
-    ) internal returns (uint256 remainAmountClose) {
-        (
-            bool isBuy,
-            uint256 size,
-            uint256 partialFilled,
-            address trader,
-            bytes32 sourceChainRequestKey
-        ) = _self.orderQueue[_orderId].getData();
-
-        uint256 amount = _amountClose > partialFilled ? 0 : _amountClose;
-        if (_amountClose > partialFilled) {
-            uint256 amount = size - partialFilled;
-            _self.orderQueue[_orderId].update(isBuy, amount, trader, 0);
-            remainAmountClose = _amountClose - partialFilled;
-        } else {
-            uint256 amount = partialFilled - _amountClose;
-            _self.orderQueue[_orderId].update(isBuy, amount, trader, 0);
-            remainAmountClose = 0;
-        }
-    }
+//    function closeLimitOrder(
+//        TickPosition.Data storage _self,
+//        uint64 _orderId,
+//        uint256 _amountClose
+//    ) internal returns (uint256 remainAmountClose) {
+//        (
+//            bool isBuy,
+//            uint256 size,
+//            uint256 partialFilled,
+//            address trader,
+//            bytes32 sourceChainRequestKey
+//        ) = _self.orderQueue[_orderId].getData();
+//
+//        uint256 amount = _amountClose > partialFilled ? 0 : _amountClose;
+//        if (_amountClose > partialFilled) {
+//            uint256 amount = size - partialFilled;
+//            _self.orderQueue[_orderId].update(isBuy, amount, trader, true, 0);
+//            remainAmountClose = _amountClose - partialFilled;
+//        } else {
+//            uint256 amount = partialFilled - _amountClose;
+//            _self.orderQueue[_orderId].update(isBuy, amount, trader, true, 0);
+//            remainAmountClose = 0;
+//        }
+//    }
 }

@@ -224,7 +224,8 @@ contract ValidatorCore is
                 _positionManagerInterface,
                 _pip,
                 _quantity,
-                _trader
+                _trader,
+                0
             );
         revert(Errors.VL_PASS_ALL);
     }
