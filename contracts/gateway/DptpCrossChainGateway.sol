@@ -768,17 +768,23 @@ contract DptpCrossChainGateway is
         uint256 _sourceBcId,
         bytes memory _functionCall
     ) private {
-        bytes32 _requestKey = abi.decode(_functionCall, (bytes32));
-        (address _pmAddress, address _trader) = (
-            requestKeyData[_requestKey].pm,
-            requestKeyData[_requestKey].trader
-        );
-        require(
-            _pmAddress != address(0) && _trader != address(0),
-            "Invalid request key."
-        );
+      /*
+        uint8 signal
+        0: Execute
+        1: Remove
+      */
+      (bytes32 _requestKey, uint8 _signal) = abi.decode(
+          _functionCall,
+          (bytes32, uint8)
+      );
+      (address _pmAddress, address _trader) = (requestKeyData[_requestKey].pm, requestKeyData[_requestKey].trader);
+      require(_pmAddress != address(0) && _trader != address(0), "Invalid request key.");
+      if (_signal == 0) {
         IPositionHouse(positionHouse).executeStorePosition(_pmAddress, _trader);
-        delete requestKeyData[_requestKey];
+      }else {
+        IPositionHouse(positionHouse).clearStorePendingPosition(_pmAddress, _trader);
+      }
+      delete requestKeyData[_requestKey];
     }
 
     function setMyChainID(uint256 _chainID) external onlyOwner {
