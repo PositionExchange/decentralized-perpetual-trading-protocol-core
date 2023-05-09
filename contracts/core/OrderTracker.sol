@@ -6,11 +6,13 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import {Errors} from "../library/helpers/Errors.sol";
+import "../library/positions/Position.sol";
 import {AccessControllerAdapter} from "../adapter/AccessControllerAdapter.sol";
 import {IOrderTracker} from "../adapter/interfaces/IOrderTracker.sol";
 import {IPositionManager} from "../adapter/interfaces/IPositionManager.sol";
 import {IAccessController} from "../adapter/interfaces/IAccessController.sol";
 import {ICrossChainGateway} from "../adapter/interfaces/ICrossChainGateway.sol";
+import {IPositionHouse} from "../adapter/interfaces/IPositionHouse.sol";
 import "hardhat/console.sol";
 
 contract OrderTracker is
@@ -20,6 +22,7 @@ contract OrderTracker is
     OwnableUpgradeable
 {
     using AccessControllerAdapter for OrderTracker;
+    using Position for Position.Data;
 
     IAccessController public accessControllerInterface;
     address public crossChainGateway;
@@ -142,13 +145,24 @@ contract OrderTracker is
 
             _executeOrderFilled(pendingOrderDetail, pmAddress, _pip, i);
 
+            if (isReduce) {
+                _executeDecreasePosition(
+                    pmAddress,
+                    pendingOrderDetail.trader,
+                    sourceChainRequestKey,
+                    _pip,
+                    pendingOrderDetail.size,
+                    pendingOrderDetail.isBuy
+                );
+                continue;
+            }
+
             _executeIncreasePosition(
                 positionManagerInterface,
                 sourceChainRequestKey,
                 _pip,
                 pendingOrderDetail.size,
-                pendingOrderDetail.isBuy,
-                isReduce
+                pendingOrderDetail.isBuy
             );
         }
     }
@@ -369,16 +383,10 @@ contract OrderTracker is
         bytes32 _requestKey,
         uint128 _pip,
         uint256 _size,
-        bool _isBuy,
-        bool _isReduce
+        bool _isBuy
     ) private {
         uint256 basisPoint = _positionManagerInterface.getBasisPoint();
         uint256 entryPrice = (uint256(_pip) * (10**18)) / basisPoint;
-
-        if (_isReduce) {
-            // TODO: Implement execute close limit
-            return;
-        }
 
         ICrossChainGateway(crossChainGateway).executeIncreaseOrder(
             421613, // TODO: Refactor later
@@ -389,10 +397,46 @@ contract OrderTracker is
         );
     }
 
+    function _executeDecreasePosition(
+        address _manager,
+        address _trader,
+        bytes32 _requestKey,
+        uint128 _pip,
+        uint256 _size,
+        bool _isBuy
+    ) private {
+        // TODO: Refactor this function later
+        Position.Data memory positionData = IPositionHouse(positionHouse)
+            .getPosition(_manager, _trader);
+
+        uint256 basisPoint = IPositionManager(_manager).getBasisPoint();
+        uint256 price = (uint256(_pip) * (10**18)) / basisPoint;
+
+        uint256 withdrawAmount = (price * _size) / positionData.leverage;
+
+        uint256 positionAveragePrice;
+        if (positionData.openNotional > 0) {
+            positionAveragePrice =
+                (positionData.openNotional * (10 * 18)) /
+                uint256(positionData.quantity);
+        }
+
+        ICrossChainGateway(crossChainGateway).executeDecreaseOrder(
+            421613, // TODO: Refactor later
+            _requestKey,
+            withdrawAmount,
+            0, // Temporary set fee to 0, will calculate later
+            positionAveragePrice,
+            _size,
+            !_isBuy
+        );
+    }
+
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
      * variables without shifting down storage in the inheritance chain.
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
     uint256[49] private __gap;
+    address public positionHouse;
 }
