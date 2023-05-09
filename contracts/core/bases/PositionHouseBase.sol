@@ -148,6 +148,14 @@ abstract contract PositionHouseBase is
         _executeUpdatePositionMap(pmAddress, trader);
     }
 
+    function clearStorePendingPosition(
+      address pmAddress,
+      address trader
+    ) external {
+        onlyCounterParty();
+        pendingPositionMap[pmAddress][trader].clear();
+    }
+
     function openLimitOrder(HouseBaseParam.OpenLimitOrderParams memory _param)
         external
         virtual
