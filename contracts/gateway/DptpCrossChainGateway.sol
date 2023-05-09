@@ -133,6 +133,14 @@ contract DptpCrossChainGateway is
         bytes _destFunctionCall
     );
 
+    event EntryPrice(
+        uint256 _openNotionalBefore,
+        uint256 _openNotionalAfter,
+        uint256 _notionalDelta,
+        uint256 _quantity,
+        uint256 _entryPrice
+    );
+
     function initialize(
         uint256 _myBlockchainId,
         uint256 _timeHorizon,
@@ -282,14 +290,6 @@ contract DptpCrossChainGateway is
         }
         revert("CGW-01");
     }
-
-    event EntryPrice(
-        uint256 _openNotionalBefore,
-        uint256 _openNotionalAfter,
-        uint256 _notionalDelta,
-        uint256 _quantity,
-        uint256 _entryPrice
-    );
 
     function openMarketPosition(uint256 _sourceBcId, bytes memory _functionCall)
         internal

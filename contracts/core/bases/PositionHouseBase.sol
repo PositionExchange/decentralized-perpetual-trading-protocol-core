@@ -401,41 +401,41 @@ abstract contract PositionHouseBase is
             uint256
         )
     {
-        onlyCounterParty();
-        Position.Data
-            memory _positionDataWithManualMargin = getPositionWithManualMargin(
-                address(_positionManager),
-                _trader
-            );
-        {
-            require(
-                _positionDataWithManualMargin.quantity.abs() != 0,
-                Errors.VL_INVALID_CLOSE_QUANTITY
-            );
-        }
-        InternalOpenLimitOrderParam memory internalOpenLimitOrderParam;
-        {
-            internalOpenLimitOrderParam = InternalOpenLimitOrderParam({
-                positionManager: _positionManager,
-                side: _positionDataWithManualMargin.quantity > 0
-                    ? Position.Side.SHORT
-                    : Position.Side.LONG,
-                uQuantity: _quantity,
-                pip: _pip,
-                leverage: _positionDataWithManualMargin.leverage,
-                positionData: _positionDataWithManualMargin,
-                trader: _trader,
-                initialMargin: 0,
-                sourceChainRequestKey: sourceChainRequestKey
-            });
-        }
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount
-        ) = _internalOpenLimitOrder(internalOpenLimitOrderParam);
-        // return depositAmount, fee and withdrawAmount
-        return (depositAmount, fee, withdrawAmount);
+//        onlyCounterParty();
+//        Position.Data
+//            memory _positionDataWithManualMargin = getPositionWithManualMargin(
+//                address(_positionManager),
+//                _trader
+//            );
+//        {
+//            require(
+//                _positionDataWithManualMargin.quantity.abs() != 0,
+//                Errors.VL_INVALID_CLOSE_QUANTITY
+//            );
+//        }
+//        InternalOpenLimitOrderParam memory internalOpenLimitOrderParam;
+//        {
+//            internalOpenLimitOrderParam = InternalOpenLimitOrderParam({
+//                positionManager: _positionManager,
+//                side: _positionDataWithManualMargin.quantity > 0
+//                    ? Position.Side.SHORT
+//                    : Position.Side.LONG,
+//                uQuantity: _quantity,
+//                pip: _pip,
+//                leverage: _positionDataWithManualMargin.leverage,
+//                positionData: _positionDataWithManualMargin,
+//                trader: _trader,
+//                initialMargin: 0,
+//                sourceChainRequestKey: sourceChainRequestKey
+//            });
+//        }
+//        (
+//            uint256 depositAmount,
+//            uint256 fee,
+//            uint256 withdrawAmount
+//        ) = _internalOpenLimitOrder(internalOpenLimitOrderParam);
+//        // return depositAmount, fee and withdrawAmount
+//        return (depositAmount, fee, withdrawAmount);
     }
 
     function clearTraderData(address _pmAddress, address _trader)
@@ -599,18 +599,18 @@ abstract contract PositionHouseBase is
 
     // OWNER UPDATE VARIABLE STORAGE
 
-    function setPositionStrategyOrder(
-        IPositionStrategyOrder _positionStrategyOrder
-    ) external onlyOwner {
-        positionStrategyOrder = _positionStrategyOrder;
-    }
+//    function setPositionStrategyOrder(
+//        IPositionStrategyOrder _positionStrategyOrder
+//    ) external onlyOwner {
+//        positionStrategyOrder = _positionStrategyOrder;
+//    }
 
-    function updateAccessControllerInterface(address _accessControllerAddress)
-        external
-        onlyOwner
-    {
-        accessControllerInterface = IAccessController(_accessControllerAddress);
-    }
+//    function updateAccessControllerInterface(address _accessControllerAddress)
+//        external
+//        onlyOwner
+//    {
+//        accessControllerInterface = IAccessController(_accessControllerAddress);
+//    }
 
     function updateConfigNotionalKey(address _pmAddress, bytes32 _key)
         external

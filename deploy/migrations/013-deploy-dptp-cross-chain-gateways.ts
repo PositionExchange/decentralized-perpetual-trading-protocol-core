@@ -25,8 +25,8 @@ const migrations: MigrationDefinition = {
         ],
         destChainFuturesGateways: [
           {
-            chainId: 97,
-            address: "0x7f8cd121aedd5249a03328ce792c6fc5a7f224ce",
+            chainId: 421613,
+            address: "0x2F17eed46c4D0e78697F152259323fE7C32bDA56",
           },
         ],
       });

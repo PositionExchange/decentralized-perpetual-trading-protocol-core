@@ -26,6 +26,7 @@ contract OrderTracker is
 
     IAccessController public accessControllerInterface;
     address public crossChainGateway;
+    address public positionHouse;
 
     event LimitOrderFilled(
         address pmAddress,
@@ -73,10 +74,18 @@ contract OrderTracker is
         );
     }
 
-    function initialize() public initializer {
+    function initialize(
+        address _accessControllerInterface,
+        address _crossChainGateway,
+        address _positionHouse
+    ) public initializer {
         __ReentrancyGuard_init();
         __Ownable_init();
         __Pausable_init();
+
+        accessControllerInterface = IAccessController(_accessControllerInterface);
+        crossChainGateway = _crossChainGateway;
+        positionHouse = _positionHouse;
     }
 
     struct PositionInfo {
@@ -348,6 +357,10 @@ contract OrderTracker is
         crossChainGateway = _address;
     }
 
+    function setPositionHouse(address _address) external onlyOwner {
+        positionHouse = _address;
+    }
+
     function _executeOrderFilled(
         PendingOrderDetail memory _pendingOrderDetail,
         address _pmAddress,
@@ -438,5 +451,4 @@ contract OrderTracker is
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
     uint256[49] private __gap;
-    address public positionHouse;
 }

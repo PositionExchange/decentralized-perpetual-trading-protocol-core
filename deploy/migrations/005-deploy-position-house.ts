@@ -64,8 +64,8 @@ const migrations: MigrationDefinition = {
             const currentStrategyOrderAddress = await positionHouse.positionStrategyOrder()
             if(currentStrategyOrderAddress === context.hre.ethers.constants.AddressZero){
                 console.log("Set Position Strategy Order to PositionHouse")
-                const tx = await positionHouse.setPositionStrategyOrder(positionStrategyOrderAddress)
-                await tx.wait(1)
+                // const tx = positionHouse.setPositionStrategyOrder(positionStrategyOrderAddress)
+                // await this.waitTx(tx, "positionHouse.setPositionStrategyOrder")
                 console.log("Set Position Strategy Order to PositionHouse Done.")
             }
         },

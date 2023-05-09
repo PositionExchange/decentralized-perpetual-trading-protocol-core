@@ -116,4 +116,12 @@ contract PositionManagerStorage {
     uint256 stepBaseSize;
     address validatedMarketMaker;
     IOrderTracker public orderTrackerInterface;
+
+    function setInsuranceFund(address _address) external {
+        insuranceFundInterface = IInsuranceFund(_address);
+    }
+
+    function setOrderTracker(address _address) external {
+        orderTrackerInterface = IOrderTracker(_address);
+    }
 }

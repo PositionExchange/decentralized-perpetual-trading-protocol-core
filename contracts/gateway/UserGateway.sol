@@ -434,9 +434,15 @@ contract UserGateway is
         return (_price * 10**18) / _baseBasisPoint;
     }
 
-    function updatePositionStrategyOrder(address _strategyOrderAddress) public {
+    function setPositionStrategyOrder(address _strategyOrderAddress) public {
         positionStrategyOrderInterface = IPositionStrategyOrder(
             _strategyOrderAddress
+        );
+    }
+
+    function setPositionHouse(address _address) public {
+        positionHouseInterface = IPositionHouse(
+            _address
         );
     }
 
