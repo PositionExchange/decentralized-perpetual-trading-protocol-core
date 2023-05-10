@@ -23,7 +23,7 @@ import {
     PositionManager,
     ValidatorGateway
 } from "../typeChain";
-import {BigNumber} from "ethers";
+import {BigNumber, ContractTransaction, ethers as ethersE} from "ethers";
 import {applyWorkaround} from "hardhat/internal/util/antlr-prototype-pollution-workaround";
 
 
@@ -39,8 +39,8 @@ export class ContractWrapperFactory {
         const accessController = await this.hre.ethers.getContractAt('AccessController', accessControllerContractAddress) as AccessController
         const isValidatedContract = await accessController.isGatewayOrCoreContract(contractAddress)
         if (!isValidatedContract) {
-            const tx = await accessController.updateValidatedContractStatus(contractAddress, true)
-            await tx.wait(1)
+            const tx = accessController.updateValidatedContractStatus(contractAddress, true)
+            await this.waitTx(tx, "accessController.updateValidatedContractStatus")
         }
     }
 
@@ -83,11 +83,17 @@ export class ContractWrapperFactory {
         const positionMathContractAddress = await this.db.findAddressByKey(`PositionMath`);
         console.log(`positionHouseMathContractAddress ${positionMathContractAddress}`);
 
+        const insuranceFundContractAddress = await this.db.findAddressByKey(`InsuranceFund`);
+        console.log(`insuranceFundContractAddress ${insuranceFundContractAddress}`);
+
         const insuranceFundAdapterContractAddress = await this.db.findAddressByKey(`InsuranceFundAdapter`);
         console.log(`insuranceFundAdapterContractAddress ${insuranceFundAdapterContractAddress}`);
 
         const accessControllerAdapterContractAddress = await this.db.findAddressByKey(`AccessControllerAdapter`);
         console.log(`accessControllerAdapterContractAddress ${accessControllerAdapterContractAddress}`);
+
+        const orderTrackerContractAddress = await this.db.findAddressByKey(`OrderTracker`);
+        console.log(`orderTrackerContractAddress ${orderTrackerContractAddress}`);
 
         const symbol = `${args.priceFeedKey}_${args.quote}`;
         const saveKey = `PositionManager:${symbol}`
@@ -111,22 +117,33 @@ export class ContractWrapperFactory {
             const currentAccessControllerAddress = await positionManager.accessControllerInterface()
             if (currentAccessControllerAddress === this.hre.ethers.constants.AddressZero) {
                 const accessControllerContractAddress = await this.db.findAddressByKey('AccessController')
-                const tx = await positionManager.updateAccessControllerInterface(accessControllerContractAddress)
-                await tx.wait(1)
+                const tx = positionManager.updateAccessControllerInterface(accessControllerContractAddress)
+                await this.waitTx(tx, "positionManager.updateAccessControllerInterface")
             }
 
-            let res = null;
-            try {
-                res = []
-                // res.push(await positionManager.updateLeverage(args.leverage))
-                // res.push(await positionManager.updateMaxWordRangeForLimitOrder(args.maxLimitFindingWordsIndex))
-                // res.push(await positionManager.updateMaxWordRangeForMarketOrder(args.maxMarketFindingWordsIndex))
-                // res.push(await positionManager.initializePip())
-                res.push(await positionManager.updateStepBaseSize(BigNumber.from(args.stepBaseSize)))
-                // TODO add script payFunding
-            } catch (err) {
+            let tx: Promise<ContractTransaction>;
 
-            }
+            // tx = positionManager.updateLeverage(args.leverage)
+            // await this.waitTx(tx, "positionManager.updateLeverage")
+            //
+            // tx = positionManager.updateMaxWordRangeForLimitOrder(args.maxLimitFindingWordsIndex)
+            // await this.waitTx(tx, "positionManager.updateMaxWordRangeForLimitOrder")
+            //
+            // tx = positionManager.updateMaxWordRangeForMarketOrder(args.maxMarketFindingWordsIndex)
+            // await this.waitTx(tx, "positionManager.updateMaxWordRangeForMarketOrder")
+
+            // tx = positionManager.initializePip()
+            // await this.waitTx(tx, "positionManager.initializePip")
+
+            // tx = positionManager.updateStepBaseSize(BigNumber.from(args.stepBaseSize))
+            // await this.waitTx(tx, "positionManager.updateStepBaseSize")
+
+            tx = positionManager.setInsuranceFund(insuranceFundContractAddress)
+            await this.waitTx(tx, "positionManager.setInsuranceFund")
+
+            tx = positionManager.setOrderTracker(orderTrackerContractAddress)
+            await this.waitTx(tx, "positionManager.setOrderTracker")
+
         } else {
             const contractArgs = [
                 args.initialPrice,
@@ -151,12 +168,11 @@ export class ContractWrapperFactory {
             await this.verifyProxy(address)
         }
         // Set WhiteList Pair manager to insurance fund
-        const insuranceFundContractAddress = await this.db.findAddressByKey(`InsuranceFund`);
         const insuranceFund = await this.hre.ethers.getContractAt('InsuranceFund', insuranceFundContractAddress) as InsuranceFund
         const isWhitelistManager = await insuranceFund.isWhitelistManager(contractAddress)
         if (!isWhitelistManager) {
-            const tx = await insuranceFund.updateWhitelistManager(contractAddress, true)
-            await tx.wait(1)
+            const tx = insuranceFund.updateWhitelistManager(contractAddress, true)
+            await this.waitTx(tx, "insuranceFund.updateWhitelistManager")
         }
 
         // Update isValidatedContract in AccessController
@@ -679,7 +695,15 @@ export class ContractWrapperFactory {
         } else {
             console.log("wait for deploy")
 
-            const contractArgs = [];
+            const accessController = await this.db.findAddressByKey("AccessController")
+            const crossChainGateway = await this.db.findAddressByKey("DptpCrossChainGateway")
+            const positionHouse = await this.db.findAddressByKey("PositionHouse")
+
+            const contractArgs = [
+                accessController,
+                crossChainGateway,
+                positionHouse
+            ];
 
             const instance = await this.hre.upgrades.deployProxy(orderTrackerFactory, contractArgs, {unsafeAllowLinkedLibraries: true})
             console.log("wait for deploy")
@@ -801,5 +825,49 @@ export class ContractWrapperFactory {
                 }
             }
         }
+    }
+
+    async waitTx(tx: Promise<ethersE.ContractTransaction>, name = '', skipOnFail = false): Promise<ethersE.ContractReceipt> {
+        // name match initialize, auto skipping
+        if(name.match(/initialize/i) && !skipOnFail){
+            skipOnFail = true;
+        }
+        try{
+            console.log(`Waiting for tx ${name}...`)
+            const txResponse = await tx
+            console.log(`Tx ${name} hash ${txResponse.hash}`)
+            const receipt = await txResponse.wait()
+            console.log(`Tx [${name}] tx ${txResponse.hash} mined at block ${receipt.blockNumber}`)
+            return receipt
+
+        }catch(err){
+            console.log(`Tx ${name} failed with the following error:`)
+            if(skipOnFail){
+                console.error(`-- tx ${name} failed, skipping...`, err)
+                return null
+            }
+
+            // prompt to ask for continue
+
+            const prompt = require('prompt-sync')();
+            console.log(`-- tx ${name} failed, error:`, err.message)
+            const continueDeploy = prompt(`Tx ${name} failed, continue? [y/n]`);
+            if(continueDeploy == 'y'){
+                return null
+            }else{
+                throw err
+            }
+        }
+    }
+
+    async getDeployedContract<T>(contractId: string, contractName?: string): Promise<T> {
+        if(!contractName){
+            contractName = contractId
+        }
+        const address = await this.db.findAddressByKey(contractId)
+        console.log(`ID: ${contractId} Address: ${address}`)
+        if (!address) throw new Error(`Contract ${contractId} not found`)
+        const contract = await this.hre.ethers.getContractAt(contractName, address)
+        return contract as unknown as T;
     }
 }

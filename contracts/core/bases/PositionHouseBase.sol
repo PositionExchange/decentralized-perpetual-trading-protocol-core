@@ -63,12 +63,12 @@ abstract contract PositionHouseBase is
         IPositionNotionalConfigProxy _positionNotionalConfigProxy,
         IAccessController _accessControllerInterface
     ) public initializer {
-        __ReentrancyGuard_init();
-        __Ownable_init();
-        insuranceFundInterface = IInsuranceFund(_insuranceFund);
-        positionHouseConfigurationProxy = _positionHouseConfigurationProxy;
-        positionNotionalConfigProxy = _positionNotionalConfigProxy;
-        accessControllerInterface = _accessControllerInterface;
+//        __ReentrancyGuard_init();
+//        __Ownable_init();
+//        insuranceFundInterface = IInsuranceFund(_insuranceFund);
+//        positionHouseConfigurationProxy = _positionHouseConfigurationProxy;
+//        positionNotionalConfigProxy = _positionNotionalConfigProxy;
+//        accessControllerInterface = _accessControllerInterface;
     }
 
     /**
@@ -205,7 +205,8 @@ abstract contract PositionHouseBase is
                 initialMargin: PositionMath.getInitialMarginBasedOnSide(
                     _param.side == Position.Side.LONG,
                     int256(_param.initialMargin)
-                )
+                ),
+                sourceChainRequestKey: _param.sourceChainRequestKey
             });
         }
         (
@@ -397,7 +398,8 @@ abstract contract PositionHouseBase is
         IPositionManager _positionManager,
         uint128 _pip,
         uint256 _quantity,
-        address _trader
+        address _trader,
+        bytes32 sourceChainRequestKey
     )
         public
         virtual
@@ -431,7 +433,8 @@ abstract contract PositionHouseBase is
                 leverage: _positionDataWithManualMargin.leverage,
                 positionData: _positionDataWithManualMargin,
                 trader: _trader,
-                initialMargin: 0
+                initialMargin: 0,
+                sourceChainRequestKey: sourceChainRequestKey
             });
         }
         (
@@ -604,25 +607,25 @@ abstract contract PositionHouseBase is
 
     // OWNER UPDATE VARIABLE STORAGE
 
-    function setPositionStrategyOrder(
-        IPositionStrategyOrder _positionStrategyOrder
-    ) external onlyOwner {
-        positionStrategyOrder = _positionStrategyOrder;
-    }
+//    function setPositionStrategyOrder(
+//        IPositionStrategyOrder _positionStrategyOrder
+//    ) external onlyOwner {
+//        positionStrategyOrder = _positionStrategyOrder;
+//    }
 
-    function updateAccessControllerInterface(address _accessControllerAddress)
-        external
-        onlyOwner
-    {
-        accessControllerInterface = IAccessController(_accessControllerAddress);
-    }
+//    function updateAccessControllerInterface(address _accessControllerAddress)
+//        external
+//        onlyOwner
+//    {
+//        accessControllerInterface = IAccessController(_accessControllerAddress);
+//    }
 
-    function updateConfigNotionalKey(address _pmAddress, bytes32 _key)
-        external
-        onlyOwner
-    {
-        configNotionalKey[_pmAddress] = _key;
-    }
+//    function updateConfigNotionalKey(address _pmAddress, bytes32 _key)
+//        external
+//        onlyOwner
+//    {
+//        configNotionalKey[_pmAddress] = _key;
+//    }
 
     // PUBLIC VIEW QUERY
 

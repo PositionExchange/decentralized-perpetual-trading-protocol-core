@@ -43,6 +43,8 @@ module.exports = {
             url: POSI_CHAIN_TESTNET_URL,
             chainId: 910000,
             accounts: PRIV_POSI_CHAIN_TESTNET_ACCOUNT ? [PRIV_POSI_CHAIN_TESTNET_ACCOUNT] : [],
+            allowUnlimitedContractSize: true,
+            blockGasLimit: 0x1fffffffffffff,
         },
         posi_mainnet: {
             url: POSI_CHAIN_MAINNET_URL,

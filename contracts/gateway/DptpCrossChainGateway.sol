@@ -11,6 +11,7 @@ import "../adapter/interfaces/IPositionHouse.sol";
 import "../adapter/interfaces/IPositionManager.sol";
 import "../adapter/interfaces/IPositionStrategyOrder.sol";
 import "../adapter/interfaces/IInsuranceFund.sol";
+import "../adapter/interfaces/ICrossChainGateway.sol";
 import "../library/types/PositionStrategyOrderStorage.sol";
 import "../library/positions/HouseBaseParam.sol";
 import {Quantity} from "../library/helpers/Quantity.sol";
@@ -21,7 +22,8 @@ import "../library/positions/Position.sol";
 contract DptpCrossChainGateway is
     PausableUpgradeable,
     OwnableUpgradeable,
-    ReentrancyGuardUpgradeable
+    ReentrancyGuardUpgradeable,
+    ICrossChainGateway
 {
     using Quantity for int256;
     using SafeMathUpgradeable for uint256;
@@ -131,6 +133,14 @@ contract DptpCrossChainGateway is
         bytes _destFunctionCall
     );
 
+    event EntryPrice(
+        uint256 _openNotionalBefore,
+        uint256 _openNotionalAfter,
+        uint256 _notionalDelta,
+        uint256 _quantity,
+        uint256 _entryPrice
+    );
+
     function initialize(
         uint256 _myBlockchainId,
         uint256 _timeHorizon,
@@ -158,8 +168,7 @@ contract DptpCrossChainGateway is
         bytes calldata _signature,
         bytes32 _sourceTxHash
     ) public nonReentrant {
-        address relayer = msg.sender;
-        //        require(whitelistRelayers[_sourceBcId][relayer], "invalid relayer");
+        require(whitelistRelayers[_sourceBcId][msg.sender], "invalid relayer");
 
         // Decode _eventData
         // Recall that the cross call event is:
@@ -281,14 +290,6 @@ contract DptpCrossChainGateway is
         revert("CGW-01");
     }
 
-    event EntryPrice(
-        uint256 _openNotionalBefore,
-        uint256 _openNotionalAfter,
-        uint256 _notionalDelta,
-        uint256 _quantity,
-        uint256 _entryPrice
-    );
-
     function openMarketPosition(uint256 _sourceBcId, bytes memory _functionCall)
         internal
     {
@@ -338,7 +339,6 @@ contract DptpCrossChainGateway is
             );
         }
 
-
         // store key for callback execute
         requestKeyData[requestKey] = RequestKeyData(pmAddress, param.trader);
 
@@ -358,13 +358,12 @@ contract DptpCrossChainGateway is
     function openLimitOrder(uint256 _sourceBcId, bytes memory _functionCall)
         internal
     {
-        bytes32 requestKey;
         address pmAddress;
         bool isLong;
         HouseBaseParam.OpenLimitOrderParams memory param;
 
         (
-            requestKey,
+            param.sourceChainRequestKey,
             pmAddress,
             isLong,
             param.quantity,
@@ -381,52 +380,12 @@ contract DptpCrossChainGateway is
 
         validateChainIDAndManualMargin(_sourceBcId, pmAddress, param.trader, 0);
 
-        uint256 openNotionalBefore = IPositionHouse(positionHouse)
-            .getPosition(pmAddress, param.trader)
-            .openNotional;
-
         IPositionHouse(positionHouse).openLimitOrder(param);
 
-        uint256 entryPrice;
-        {
-            uint256 openNotionalAfter = IPositionHouse(positionHouse)
-                .getPosition(pmAddress, param.trader)
-                .openNotional;
-            uint256 openNotionalDelta = openNotionalAfter.sub(
-                openNotionalBefore
-            );
-            if (openNotionalDelta == 0) {
-                uint256 basisPoint = param.positionManager.getBasisPoint();
-                entryPrice = uint256(param.pip).mul(WEI_DECIMAL).div(
-                    basisPoint
-                );
-            } else {
-                entryPrice = openNotionalDelta.mul(WEI_DECIMAL).div(
-                    param.quantity
-                );
-            }
-            emit EntryPrice(
-                openNotionalBefore,
-                openNotionalAfter,
-                openNotionalDelta,
-                param.quantity,
-                entryPrice
-            );
-        }
-
         // store key for callback execute
-        requestKeyData[requestKey] = RequestKeyData(pmAddress, param.trader);
-
-        _crossBlockchainCall(
-            _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
-            abi.encodeWithSelector(
-                EXECUTE_INCREASE_POSITION_METHOD,
-                requestKey,
-                param.pip,
-                param.quantity,
-                isLong
-            )
+        requestKeyData[param.sourceChainRequestKey] = RequestKeyData(
+            pmAddress,
+            param.trader
         );
     }
 
@@ -507,11 +466,7 @@ contract DptpCrossChainGateway is
         }
 
         (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
-            .closePosition(
-                IPositionManager(pmAddress),
-                quantity,
-                trader
-            );
+            .closePosition(IPositionManager(pmAddress), quantity, trader);
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
 
@@ -544,52 +499,16 @@ contract DptpCrossChainGateway is
             (bytes32, address, uint256, uint256, address)
         );
 
-        uint256 entryPrice;
-        bool isLong;
-        {
-            Position.Data memory positionData = IPositionHouse(positionHouse)
-                .getPosition(pmAddress, trader);
-            uint256 quantityAbs = positionData.quantity.abs();
-            if (quantity >= quantityAbs) {
-                entryPrice = 0;
-            } else {
-                entryPrice = positionData.openNotional.mul(WEI_DECIMAL).div(
-                    quantityAbs
-                );
-            }
-            isLong = positionData.quantity > 0 ? true : false;
-            emit EntryPrice(
-                positionData.openNotional,
-                0,
-                0,
-                quantityAbs,
-                entryPrice
-            );
-        }
-
         (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
             .closeLimitPosition(
                 IPositionManager(pmAddress),
                 uint128(pip),
                 quantity,
-                trader
+                trader,
+                requestKey
             );
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
-
-        _crossBlockchainCall(
-            _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
-            abi.encodeWithSelector(
-                EXECUTE_DECREASE_POSITION_METHOD,
-                requestKey,
-                withdrawAmount,
-                fee,
-                entryPrice,
-                quantity,
-                isLong
-            )
-        );
     }
 
     function removeMargin(uint256 _sourceBcId, bytes memory _functionCall)
@@ -791,8 +710,8 @@ contract DptpCrossChainGateway is
     }
 
     function _executeStorePosition(
-      uint256 _sourceBcId,
-      bytes memory _functionCall
+        uint256 _sourceBcId,
+        bytes memory _functionCall
     ) private {
       /*
         uint8 signal
@@ -855,11 +774,55 @@ contract DptpCrossChainGateway is
         whitelistRelayers[_destChainId][_relayer] = _status;
     }
 
+    function executeIncreaseOrder(
+        uint256 _sourceBcId,
+        bytes32 _requestKey,
+        uint256 _entryPrice,
+        uint256 _quantity,
+        bool _isLong
+    ) external override {
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_INCREASE_POSITION_METHOD,
+                _requestKey,
+                _entryPrice,
+                _quantity,
+                _isLong
+            )
+        );
+    }
+
+    function executeDecreaseOrder(
+        uint256 _sourceBcId,
+        bytes32 _requestKey,
+        uint256 _withdrawAmount,
+        uint256 _fee,
+        uint256 _entryPrice,
+        uint256 _quantity,
+        bool _isLong
+    ) external override {
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_DECREASE_POSITION_METHOD,
+                _requestKey,
+                _withdrawAmount,
+                _fee,
+                _entryPrice,
+                _quantity,
+                _isLong
+            )
+        );
+    }
+
     function _crossBlockchainCall(
         uint256 _destBcId,
         address _destContract,
         bytes memory _destData
-    ) internal {
+    ) private {
         txIndex++;
         bytes32 txId = keccak256(
             abi.encodePacked(

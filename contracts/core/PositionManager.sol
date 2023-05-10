@@ -244,7 +244,9 @@ contract PositionManager is
                 _order.pip,
                 _hasLiquidity,
                 _order.quantity > 0,
-                _marketMakerAddress
+                _marketMakerAddress,
+                false,
+                0
             );
             if (!_hasLiquidity) {
                 // TODO using toggle in multiple pips
@@ -297,7 +299,9 @@ contract PositionManager is
                 _targetPip,
                 hasLiquidityInTargetPip,
                 !marketOrderIsBuy,
-                _marketMakerAddress
+                _marketMakerAddress,
+                false,
+                0
             );
             liquidityBitmap.toggleSingleBit(_targetPip, true);
             requestId++;
@@ -376,7 +380,9 @@ contract PositionManager is
         address _trader,
         uint128 _pip,
         uint128 _size,
-        bool _isBuy
+        bool _isBuy,
+        bool _isReduce,
+        bytes32 _sourceChainRequestKey
     )
         external
         whenNotPaused
@@ -439,15 +445,22 @@ contract PositionManager is
             // save at that pip has how many liquidity
             {
                 uint128 remainingSize = _size - uint128(sizeOut);
+                uint128 pip = _pip;
+                bool isBuy = _isBuy;
+                address trader = _trader;
+                bool isReduce = _isReduce;
+                bytes32 sourceChainRequestKey = _sourceChainRequestKey;
                 orderId = _internalInsertLimitOrder(
                     remainingSize,
-                    _pip,
+                    pip,
                     hasLiquidity,
-                    _isBuy,
-                    _trader
+                    isBuy,
+                    trader,
+                    isReduce,
+                    sourceChainRequestKey
                 );
                 if (remainingSize != _size) {
-                    emit LimitOrderUpdated(orderId, _pip, remainingSize);
+                    emit LimitOrderUpdated(orderId, pip, remainingSize);
                 }
             }
             if (!hasLiquidity) {
@@ -684,7 +697,7 @@ contract PositionManager is
             uint256 partialFilled
         )
     {
-        (isFilled, isBuy, size, partialFilled, ) = tickPosition[_pip]
+        (isFilled, isBuy, size, partialFilled, , ,) = tickPosition[_pip]
             .getQueueOrder(_orderId);
 
         if (!liquidityBitmap.hasLiquidity(_pip)) {
@@ -703,10 +716,12 @@ contract PositionManager is
             bool isBuy,
             uint256 size,
             uint256 partialFilled,
-            address trader
+            address trader,
+            bool isReduce,
+            bytes32 sourceChainRequestKey
         )
     {
-        (isFilled, isBuy, size, partialFilled, trader) = tickPosition[_pip]
+        (isFilled, isBuy, size, partialFilled, trader, isReduce, sourceChainRequestKey) = tickPosition[_pip]
             .getQueueOrder(_orderId);
 
         if (!liquidityBitmap.hasLiquidity(_pip)) {
@@ -1249,14 +1264,18 @@ contract PositionManager is
         uint128 _pip,
         bool _hasLiquidity,
         bool _isBuy,
-        address _trader
+        address _trader,
+        bool _isReduce,
+        bytes32 _sourceChainRequestKey
     ) internal returns (uint64) {
         return
             tickPosition[_pip].insertLimitOrder(
                 _orderSize,
                 _hasLiquidity,
                 _isBuy,
-                _trader
+                _trader,
+                _isReduce,
+                _sourceChainRequestKey
             );
     }
 

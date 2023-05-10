@@ -128,7 +128,8 @@ interface IPositionHouse {
         IPositionManager _positionManager,
         uint128 _pip,
         uint256 _quantity,
-        address _trader
+        address _trader,
+        bytes32 sourceChainRequestKey
     )
         external
         returns (

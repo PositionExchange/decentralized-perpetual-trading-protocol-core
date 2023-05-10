@@ -64,6 +64,7 @@
     "mocha-chai-jest-snapshot": "^1.1.2",
     "nedb": "^1.8.0",
     "nedb-promises": "^5.0.1",
+    "prompt-sync": "^4.2.0",
     "semaphore": "^1.1.0",
     "solidity-coverage": "^0.7.20"
   },

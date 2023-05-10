@@ -116,7 +116,9 @@ interface IPositionManager {
             bool isBuy,
             uint256 size,
             uint256 partialFilled,
-            address trader
+            address trader,
+            bool isReduce,
+            bytes32 sourceChainRequestKey
         );
 
     function getNotionalMarginAndFee(
@@ -166,7 +168,9 @@ interface IPositionManager {
         address trader,
         uint128 pip,
         uint128 size,
-        bool isBuy
+        bool isBuy,
+        bool isReduce,
+        bytes32 sourceChainRequestKey
     )
         external
         returns (

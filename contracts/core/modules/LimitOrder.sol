@@ -113,6 +113,7 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
         Position.Data positionData;
         address trader;
         int256 initialMargin;
+        bytes32 sourceChainRequestKey;
     }
 
     function _internalOpenLimitOrder(InternalOpenLimitOrderParam memory _param)
@@ -125,21 +126,21 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
     {
         PositionHouseStorage.OpenLimitResp memory openLimitResp;
         address pmAddress = address(_param.positionManager);
-        {
-            (
-                bool isReduceOrder,
-                uint256 remainClosableQuantity
-            ) = _requireOrderSideAndQuantity(
-                    pmAddress,
-                    _param.trader,
-                    _param.side,
-                    _param.uQuantity,
-                    _param.positionData.quantity
-                );
-            if (isReduceOrder && remainClosableQuantity < _param.uQuantity) {
-                _param.uQuantity = remainClosableQuantity;
-            }
+
+        (
+            bool isReduceOrder,
+            uint256 remainClosableQuantity
+        ) = _requireOrderSideAndQuantity(
+            pmAddress,
+            _param.trader,
+            _param.side,
+            _param.uQuantity,
+            _param.positionData.quantity
+        );
+        if (isReduceOrder && remainClosableQuantity < _param.uQuantity) {
+            _param.uQuantity = remainClosableQuantity;
         }
+
         int256 quantity = _param.side == Position.Side.LONG
             ? int256(_param.uQuantity)
             : -int256(_param.uQuantity);
@@ -156,7 +157,9 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
                     initialMargin: PositionMath.getInitialMarginBasedOnSide(
                         quantity > 0,
                         _param.initialMargin
-                    )
+                    ),
+                    isReduce: isReduceOrder,
+                    sourceChainRequestKey: _param.sourceChainRequestKey
                 });
             }
 
@@ -307,6 +310,8 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
         int256 rawQuantity;
         uint128 pip;
         uint16 leverage;
+        bool isReduce;
+        bytes32 sourceChainRequestKey;
     }
 
     function _openLimitOrder(OpenLimitOrderParam memory _param)
@@ -337,7 +342,9 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
                         _param.trader,
                         _param.pip,
                         _quantity,
-                        _param.rawQuantity > 0
+                        _param.rawQuantity > 0,
+                        _param.isReduce,
+                        _param.sourceChainRequestKey
                     );
             }
             if (sizeOut != 0) {

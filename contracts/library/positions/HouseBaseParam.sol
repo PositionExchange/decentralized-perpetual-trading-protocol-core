@@ -41,5 +41,6 @@ library HouseBaseParam {
         address trader;
         uint256 initialMargin;
         uint256 busdBonusAmount;
+        bytes32 sourceChainRequestKey;
     }
 }

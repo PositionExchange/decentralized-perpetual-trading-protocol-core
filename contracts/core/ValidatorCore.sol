@@ -109,7 +109,8 @@ contract ValidatorCore is
                 leverage: _leverage,
                 trader: _trader,
                 initialMargin: _initialMargin,
-                busdBonusAmount: _busdBonusAmount
+                busdBonusAmount: _busdBonusAmount,
+                sourceChainRequestKey: 0
             });
         }
         (
@@ -223,7 +224,8 @@ contract ValidatorCore is
                 _positionManagerInterface,
                 _pip,
                 _quantity,
-                _trader
+                _trader,
+                0
             );
         revert(Errors.VL_PASS_ALL);
     }

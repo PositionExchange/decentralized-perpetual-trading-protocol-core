@@ -45,6 +45,7 @@ abstract contract PositionHouseStorage {
         uint64 blockNumber;
         uint256 orderIdx;
         uint256 orderId;
+        bytes32 sourceChainRequestKey;
     }
 
     struct OpenLimitResp {

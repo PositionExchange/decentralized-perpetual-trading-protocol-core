@@ -193,10 +193,10 @@ task('configNotionalKey', 'Config notional key', async (taskArgs: {stage: Stage,
     let res = null;
     try {
         res = []
-        res.push(await positionHouse.updateConfigNotionalKey(managerAddressBTC, hre.ethers.utils.formatBytes32String('BTC_BUSD')))
-        res.push(await positionHouse.updateConfigNotionalKey(managerAddressBNB, hre.ethers.utils.formatBytes32String('BNB_BUSD')))
-        res.push(await positionHouse.updateConfigNotionalKey(managerAddressETH, hre.ethers.utils.formatBytes32String('ETH_BUSD')))
-        res.push(await positionHouse.updateConfigNotionalKey(managerAddressSOL, hre.ethers.utils.formatBytes32String('SOL_BUSD')))
+        // res.push(await positionHouse.updateConfigNotionalKey(managerAddressBTC, hre.ethers.utils.formatBytes32String('BTC_BUSD')))
+        // res.push(await positionHouse.updateConfigNotionalKey(managerAddressBNB, hre.ethers.utils.formatBytes32String('BNB_BUSD')))
+        // res.push(await positionHouse.updateConfigNotionalKey(managerAddressETH, hre.ethers.utils.formatBytes32String('ETH_BUSD')))
+        // res.push(await positionHouse.updateConfigNotionalKey(managerAddressSOL, hre.ethers.utils.formatBytes32String('SOL_BUSD')))
         console.log("success")
     } catch (err) {
         console.log("fail", err)

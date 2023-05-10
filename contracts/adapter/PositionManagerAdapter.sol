@@ -155,8 +155,11 @@ library PositionManagerAdapter {
                     bool isFilled,
                     bool isBuy,
                     uint256 quantity,
-                    uint256 partialFilled
-                ) = _positionManagerInterface.getPendingOrderDetail(
+                    uint256 partialFilled,
+                    ,
+                    ,
+                    bytes32 sourceChainRequestKey
+                ) = _positionManagerInterface.getPendingOrderDetailFull(
                         _limitOrders[i].pip,
                         _limitOrders[i].orderId
                     );
@@ -171,7 +174,8 @@ library PositionManagerAdapter {
                             blockNumber: uint64(_limitOrders[i].blockNumber),
                             isReduce: 0,
                             orderIdx: i,
-                            orderId: _limitOrders[i].orderId
+                            orderId: _limitOrders[i].orderId,
+                            sourceChainRequestKey: sourceChainRequestKey
                         });
                     index++;
                 }
@@ -181,8 +185,11 @@ library PositionManagerAdapter {
                     bool isFilled,
                     bool isBuy,
                     uint256 quantity,
-                    uint256 partialFilled
-                ) = _positionManagerInterface.getPendingOrderDetail(
+                    uint256 partialFilled,
+                    ,
+                    ,
+                    bytes32 sourceChainRequestKey
+                ) = _positionManagerInterface.getPendingOrderDetailFull(
                         _reduceLimitOrders[i].pip,
                         _reduceLimitOrders[i].orderId
                     );
@@ -199,7 +206,8 @@ library PositionManagerAdapter {
                             ),
                             isReduce: 1,
                             orderIdx: i,
-                            orderId: _reduceLimitOrders[i].orderId
+                            orderId: _reduceLimitOrders[i].orderId,
+                            sourceChainRequestKey: sourceChainRequestKey
                         });
                     index++;
                 }
