@@ -168,8 +168,7 @@ contract DptpCrossChainGateway is
         bytes calldata _signature,
         bytes32 _sourceTxHash
     ) public nonReentrant {
-        address relayer = msg.sender;
-        //        require(whitelistRelayers[_sourceBcId][relayer], "invalid relayer");
+        require(whitelistRelayers[_sourceBcId][msg.sender], "invalid relayer");
 
         // Decode _eventData
         // Recall that the cross call event is:
