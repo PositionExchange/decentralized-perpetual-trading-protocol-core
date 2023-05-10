@@ -141,6 +141,11 @@ contract DptpCrossChainGateway is
         uint256 _entryPrice
     );
 
+    modifier onlyRelayer(uint256 _sourceBcId) {
+      require(whitelistRelayers[_sourceBcId][msg.sender], "invalid relayer");
+      _;
+    }
+
     function initialize(
         uint256 _myBlockchainId,
         uint256 _timeHorizon,
@@ -167,8 +172,7 @@ contract DptpCrossChainGateway is
         bytes calldata _eventData,
         bytes calldata _signature,
         bytes32 _sourceTxHash
-    ) public nonReentrant {
-        require(whitelistRelayers[_sourceBcId][msg.sender], "invalid relayer");
+    ) public nonReentrant onlyRelayer(_sourceBcId) {
 
         // Decode _eventData
         // Recall that the cross call event is:
@@ -288,6 +292,28 @@ contract DptpCrossChainGateway is
             return;
         }
         revert("CGW-01");
+    }
+
+    /// @notice This function is for manual call update execute update position
+    /// For testing or backup for relayer
+    /// !Note: Will deprecate once the relayer become more stable or on mainnet
+    /// @param _sourceBcId The source bc id, used for determine the relayer
+    /// @param _signal Signal to execute or clear the pending update position map
+    /// 0: Execute - mean create position
+    /// 1: Clear - clear the pending map to avoid "PendingUpdatePositionExists" revert error
+    /// @param _pmAddress The position manager address
+    /// @param _trader The trader address
+    function manualCallExecuteUpdatePosition(
+      uint256 _sourceBcId,
+      uint8 _signal,
+      address _pmAddress,
+      address _trader
+    ) external onlyRelayer(_sourceBcId) {
+      if (_signal == 0) {
+        IPositionHouse(positionHouse).executeStorePosition(_pmAddress, _trader);
+      }else {
+        IPositionHouse(positionHouse).clearStorePendingPosition(_pmAddress, _trader);
+      }
     }
 
     function openMarketPosition(uint256 _sourceBcId, bytes memory _functionCall)
