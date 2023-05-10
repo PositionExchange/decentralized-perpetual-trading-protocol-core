@@ -87,6 +87,11 @@ interface IPositionHouse {
         address trader
     ) external;
 
+    function clearStorePendingPosition(
+        address pmAddress,
+        address trader
+    ) external;
+
     function openLimitOrder(HouseBaseParam.OpenLimitOrderParams memory param)
         external
         returns (
