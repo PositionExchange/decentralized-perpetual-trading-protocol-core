@@ -381,38 +381,7 @@ contract DptpCrossChainGateway is
 
         validateChainIDAndManualMargin(_sourceBcId, pmAddress, param.trader, 0);
 
-        uint256 openNotionalBefore = IPositionHouse(positionHouse)
-            .getPosition(pmAddress, param.trader)
-            .openNotional;
-
         IPositionHouse(positionHouse).openLimitOrder(param);
-
-        uint256 entryPrice;
-        {
-            uint256 openNotionalAfter = IPositionHouse(positionHouse)
-                .getPosition(pmAddress, param.trader)
-                .openNotional;
-            uint256 openNotionalDelta = openNotionalAfter.sub(
-                openNotionalBefore
-            );
-            if (openNotionalDelta == 0) {
-                uint256 basisPoint = param.positionManager.getBasisPoint();
-                entryPrice = uint256(param.pip).mul(WEI_DECIMAL).div(
-                    basisPoint
-                );
-            } else {
-                entryPrice = openNotionalDelta.mul(WEI_DECIMAL).div(
-                    param.quantity
-                );
-            }
-            emit EntryPrice(
-                openNotionalBefore,
-                openNotionalAfter,
-                openNotionalDelta,
-                param.quantity,
-                entryPrice
-            );
-        }
 
         // store key for callback execute
         requestKeyData[param.sourceChainRequestKey] = RequestKeyData(
@@ -530,29 +499,6 @@ contract DptpCrossChainGateway is
             _functionCall,
             (bytes32, address, uint256, uint256, address)
         );
-
-        uint256 entryPrice;
-        bool isLong;
-        {
-            Position.Data memory positionData = IPositionHouse(positionHouse)
-                .getPosition(pmAddress, trader);
-            uint256 quantityAbs = positionData.quantity.abs();
-            if (quantity >= quantityAbs) {
-                entryPrice = 0;
-            } else {
-                entryPrice = positionData.openNotional.mul(WEI_DECIMAL).div(
-                    quantityAbs
-                );
-            }
-            isLong = positionData.quantity > 0 ? true : false;
-            emit EntryPrice(
-                positionData.openNotional,
-                0,
-                0,
-                quantityAbs,
-                entryPrice
-            );
-        }
 
         (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
             .closeLimitPosition(
