@@ -197,14 +197,16 @@ contract OrderTracker is
         bool isFullFilled;
         for (uint64 i = filledIndex; i <= currentIndex; i++) {
             PendingOrderDetail memory pendingOrderDetail;
+            bool isReduce;
+            bytes32 sourceChainRequestKey;
             (
                 ,
                 pendingOrderDetail.isBuy,
                 pendingOrderDetail.size,
                 pendingOrderDetail.partialFilled,
                 pendingOrderDetail.trader,
-                ,
-
+                isReduce,
+                sourceChainRequestKey
             ) = positionManagerInterface.getPendingOrderDetailFull(_pip, i);
 
             uint256 filledSize = pendingOrderDetail.size -
@@ -223,34 +225,57 @@ contract OrderTracker is
                 pendingOrderDetail.trader !=
                 positionManagerInterface.getMarketMakerAddress()
             ) {
+
+                uint256 filledSize_ = filledSize;
+                uint128 pip_ = _pip;
+
                 (uint256 orderNotional, , ) = positionManagerInterface
-                    .getNotionalMarginAndFee(filledSize, _pip, 1);
+                    .getNotionalMarginAndFee(filledSize_, pip_, 1);
 
                 _updatePositionInfo(
                     address(positionManagerInterface),
                     pendingOrderDetail.isBuy,
-                    uint128(filledSize),
+                    uint128(filledSize_),
                     uint128(orderNotional)
                 );
 
                 if (!isFullFilled) {
                     emit LimitOrderPartialFilled(
                         address(positionManagerInterface),
-                        _pip,
+                        pip_,
                         i,
                         pendingOrderDetail.isBuy,
-                        filledSize,
+                        filledSize_,
                         pendingOrderDetail.trader
                     );
                 } else {
                     emit LimitOrderFilled(
                         address(positionManagerInterface),
-                        _pip,
+                        pip_,
                         i,
                         pendingOrderDetail.isBuy,
-                        filledSize,
+                        filledSize_,
                         pendingOrderDetail.trader
                     );
+
+                    if (isReduce) {
+                        _executeDecreasePosition(
+                            address(positionManagerInterface),
+                            pendingOrderDetail.trader,
+                            sourceChainRequestKey,
+                            pip_,
+                            pendingOrderDetail.size,
+                            pendingOrderDetail.isBuy
+                        );
+                    } else {
+                        _executeIncreasePosition(
+                            positionManagerInterface,
+                            sourceChainRequestKey,
+                            pip_,
+                            pendingOrderDetail.size,
+                            pendingOrderDetail.isBuy
+                        );
+                    }
                 }
             }
 
