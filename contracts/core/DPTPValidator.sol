@@ -88,24 +88,25 @@ contract DPTPValidator is
 
     function updateTraderData(address _trader,address _pmAddress) external {
         onlyCounterParty();
-        int256 _claimAmount = PositionManagerAdapter.getClaimAmount(
-            _pmAddress,
-            positionHouse.getAddedMargin(_pmAddress, _trader),
-            positionHouse.getDebtPosition(_pmAddress, _trader),
-            positionHouse.positionMap(_pmAddress, _trader),
-            positionHouse.getLimitOrders(_pmAddress, _trader),
-            positionHouse.getReduceLimitOrders(
-                _pmAddress,
-                _trader
-            ),
-            positionHouse.getLimitOrderPremiumFraction(
-                _pmAddress,
-                _trader
-            ),
-            positionHouse.getLatestCumulativePremiumFraction(
-                _pmAddress
-            )
-        );
+        int256 _claimAmount = 0;
+//        int256 _claimAmount = PositionManagerAdapter.getClaimAmount(
+//            _pmAddress,
+//            positionHouse.getAddedMargin(_pmAddress, _trader),
+//            positionHouse.getDebtPosition(_pmAddress, _trader),
+//            positionHouse.positionMap(_pmAddress, _trader),
+//            positionHouse.getLimitOrders(_pmAddress, _trader),
+//            positionHouse.getReduceLimitOrders(
+//                _pmAddress,
+//                _trader
+//            ),
+//            positionHouse.getLimitOrderPremiumFraction(
+//                _pmAddress,
+//                _trader
+//            ),
+//            positionHouse.getLatestCumulativePremiumFraction(
+//                _pmAddress
+//            )
+//        );
 
         PositionHouseStorage.LimitOrderPending[] memory _pendingOrders = PositionManagerAdapter.getListOrderPending(
             _pmAddress,

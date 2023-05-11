@@ -378,70 +378,71 @@ library PositionManagerAdapter {
         int128 _positionLatestCumulativePremiumFraction,
         int128 _latestCumulativePremiumFraction
     ) external view returns (int256 totalClaimableAmount) {
-        ClaimAbleState memory state;
-        IPositionManager _positionManagerInterface = IPositionManager(
-            _pmAddress
-        );
-        // avoid multiple calls
-        (state.baseBasicPoint, state.basisPoint) = _positionManagerInterface
-            .getBasisPointFactors();
-        // position data with increase only
-        Position.Data memory _pDataIncr = _positionDataWithoutLimit;
-        for (uint256 i; i < _limitOrders.length; i++) {
-            if (_limitOrders[i].pip == 0 && _limitOrders[i].orderId == 0) {
-                // skip
-                continue;
-            }
-            _pDataIncr = accumulateLimitOrderToPositionData(
-                _pmAddress,
-                _limitOrders[i],
-                _pDataIncr,
-                _limitOrders[i].entryPrice
-            );
-        }
-        // TODO check this accMargin carefully
-        state.accMargin = _pDataIncr.margin;
-        if (_pDataIncr.quantity == 0) {
-            return 0;
-        }
-        // copy openNotional and quantity
-        Position.Data memory _cpIncrPosition;
-        _cpIncrPosition.openNotional = _pDataIncr.openNotional;
-        _cpIncrPosition.quantity = _pDataIncr.quantity;
-        for (uint256 j; j < _reduceLimitOrders.length; j++) {
-            // check is the reduce limit orders are filled
-            if (_reduceLimitOrders[j].pip != 0) {
-                int256 _filledAmount = _getPartialFilledAmount(
-                    _positionManagerInterface,
-                    _reduceLimitOrders[j].pip,
-                    _reduceLimitOrders[j].orderId
-                );
-                _accumulatePnLInReduceLimitOrder(
-                    _positionManagerInterface,
-                    state,
-                    _cpIncrPosition,
-                    _filledAmount,
-                    _reduceLimitOrders[j]
-                );
-            }
-        }
-        if (_pDataIncr.lastUpdatedCumulativePremiumFraction == 0) {
-            _pDataIncr
-                .lastUpdatedCumulativePremiumFraction = _positionLatestCumulativePremiumFraction;
-        }
-        (, , int256 fundingPayment) = PositionMath
-            .calcRemainMarginWithFundingPayment(
-                _pDataIncr,
-                state.accMargin,
-                _latestCumulativePremiumFraction
-            );
-        state.amount +=
-            state.accMargin.absInt() +
-            fundingPayment +
-            _manualMargin -
-            _positionLiquidatedData.margin.absInt() -
-            int256(state.accFee);
-        return state.amount < 0 ? int256(0) : state.amount;
+//        ClaimAbleState memory state;
+//        IPositionManager _positionManagerInterface = IPositionManager(
+//            _pmAddress
+//        );
+//        // avoid multiple calls
+//        (state.baseBasicPoint, state.basisPoint) = _positionManagerInterface
+//            .getBasisPointFactors();
+//        // position data with increase only
+//        Position.Data memory _pDataIncr = _positionDataWithoutLimit;
+//        for (uint256 i; i < _limitOrders.length; i++) {
+//            if (_limitOrders[i].pip == 0 && _limitOrders[i].orderId == 0) {
+//                // skip
+//                continue;
+//            }
+//            _pDataIncr = accumulateLimitOrderToPositionData(
+//                _pmAddress,
+//                _limitOrders[i],
+//                _pDataIncr,
+//                _limitOrders[i].entryPrice
+//            );
+//        }
+//        // TODO check this accMargin carefully
+//        state.accMargin = _pDataIncr.margin;
+//        if (_pDataIncr.quantity == 0) {
+//            return 0;
+//        }
+//        // copy openNotional and quantity
+//        Position.Data memory _cpIncrPosition;
+//        _cpIncrPosition.openNotional = _pDataIncr.openNotional;
+//        _cpIncrPosition.quantity = _pDataIncr.quantity;
+//        for (uint256 j; j < _reduceLimitOrders.length; j++) {
+//            // check is the reduce limit orders are filled
+//            if (_reduceLimitOrders[j].pip != 0) {
+//                int256 _filledAmount = _getPartialFilledAmount(
+//                    _positionManagerInterface,
+//                    _reduceLimitOrders[j].pip,
+//                    _reduceLimitOrders[j].orderId
+//                );
+//                _accumulatePnLInReduceLimitOrder(
+//                    _positionManagerInterface,
+//                    state,
+//                    _cpIncrPosition,
+//                    _filledAmount,
+//                    _reduceLimitOrders[j]
+//                );
+//            }
+//        }
+//        if (_pDataIncr.lastUpdatedCumulativePremiumFraction == 0) {
+//            _pDataIncr
+//                .lastUpdatedCumulativePremiumFraction = _positionLatestCumulativePremiumFraction;
+//        }
+//        (, , int256 fundingPayment) = PositionMath
+//            .calcRemainMarginWithFundingPayment(
+//                _pDataIncr,
+//                state.accMargin,
+//                _latestCumulativePremiumFraction
+//            );
+//        state.amount +=
+//            state.accMargin.absInt() +
+//            fundingPayment +
+//            _manualMargin -
+//            _positionLiquidatedData.margin.absInt() -
+//            int256(state.accFee);
+//        return state.amount < 0 ? int256(0) : state.amount;
+        return 0;
     }
 
     function getClaimAmountWhenLiquidated(

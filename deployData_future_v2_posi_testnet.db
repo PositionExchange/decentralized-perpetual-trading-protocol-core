@@ -60,8 +60,10 @@
 {"address":"yes","key":"0xdC9b517B0cA382a6BfFb061334d58BE0B1b51EeD:verified","_id":"P3nH9gkjy37s4Wbx"}
 {"address":"0x218b17c430e5248571f543376f8875533af9f865","key":"PositionManager:LINK_BUSD","_id":"P4nNQfhsLhTAnjv7"}
 {"address":"yes","key":"0x6402C543d6e175f13733D3Ad29C55Fb3dbD6C8bb:verified","_id":"P60pFn3gKou3rUA6"}
+{"address":"yes","key":"0x5df2994A9A2A2fFDDB78E88b4CF958104e67c6E6:verified","_id":"PPRkA5BF6xBlNBPO"}
 {"address":"yes","key":"0xe1035E1EDec321EB85526125895aa6F787255C60:verified","_id":"PYPlFGUqfyxUsWQw"}
 {"address":"yes","key":"0x964e3d04170AF841dE2721c05B945ad0fD51eA8E:verified","_id":"PvAxSpyjiOhZ8vZC"}
+{"address":"yes","key":"0x4d69d71180eF02418A0299c6408dA494CC75675a:verified","_id":"QE4rBrJVeRcBAPmo"}
 {"address":"yes","key":"0xfDa3358ffB71253421D16cA10A018D1507fa4968:verified","_id":"R2yYb5FzjDT7MJgR"}
 {"address":"yes","key":"0xE27F56A75b89939175DA73C05CceB443Bc5F560D:verified","_id":"S5xMyySyo8A3LdGQ"}
 {"address":"0x899af23b40b518d2c8908255e8589d61b5718bef","key":"PositionHouseConfigurationProxy","_id":"SBjMLIz3Ztuguuoj"}
@@ -144,9 +146,10 @@
 {"address":"0x8745ae348754f0e711614bd0b4c3a655c18bf1d3","key":"LiquidatorGateway","_id":"tkkUPrbtlfjALlHQ"}
 {"address":"yes","key":"0x43C38069A877d5F67B4C2d9FF710447A8e3e5c2f:verified","_id":"tzzWqi2y1OVB2RN7"}
 {"address":"0xd07055cf5eeae9aa4e8d078c0703cdfa4dfd556d","key":"PositionMath","_id":"uJVHYxAMaMXG8HJD"}
+{"address":"yes","key":"0x0a22f8787d60e47931603e33820408e29f6c31cc:verified","_id":"ujZMHRBCmJXjOXnm"}
 {"address":"yes","key":"0x1e597c3947AA269ed3062f0E6fB331494bF15BB1:verified","_id":"ulQp7xeGes7MgUor"}
 {"address":"yes","key":"0x656CecBbB04aB782dD6Aa95Fcbfa1d78258cF6b9:verified","_id":"vWQiQC64j9HZf99l"}
 {"address":"0x898b5760b0197cb4150cb61b579f3d078da48254","key":"DptpValidator","_id":"vvaY0gmXAMK1qKtT"}
 {"address":"yes","key":"0x82E72D57b93E4A9Dd8733C28A5Eb80A5b85852A0:verified","_id":"w40en7pGqHAPkiCr"}
 {"address":"yes","key":"0xEb4A06960edC5BD5FBdF99d4615f0073D9A476c9:verified","_id":"xdCQCuY7RJfltHhy"}
-{"address":"yes","key":"0x0a22f8787d60e47931603e33820408e29f6c31cc:verified","_id":"ujZMHRBCmJXjOXnm"}
+{"address":"yes","key":"0xe2091d1a31FE360f57FF411f35a5827a16CC7A51:verified","_id":"jwhEcJWXoxarOBAb"}

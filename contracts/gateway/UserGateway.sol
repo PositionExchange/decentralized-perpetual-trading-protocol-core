@@ -86,25 +86,26 @@ contract UserGateway is
         view
         returns (int256 totalClaimableAmount)
     {
-        return
-            PositionManagerAdapter.getClaimAmount(
-                _pmAddress,
-                positionHouseInterface.getAddedMargin(_pmAddress, _trader),
-                positionHouseInterface.getDebtPosition(_pmAddress, _trader),
-                positionHouseInterface.positionMap(_pmAddress, _trader),
-                positionHouseInterface.getLimitOrders(_pmAddress, _trader),
-                positionHouseInterface.getReduceLimitOrders(
-                    _pmAddress,
-                    _trader
-                ),
-                positionHouseInterface.getLimitOrderPremiumFraction(
-                    _pmAddress,
-                    _trader
-                ),
-                positionHouseInterface.getLatestCumulativePremiumFraction(
-                    _pmAddress
-                )
-            );
+        return 0;
+//        return
+//            PositionManagerAdapter.getClaimAmount(
+//                _pmAddress,
+//                positionHouseInterface.getAddedMargin(_pmAddress, _trader),
+//                positionHouseInterface.getDebtPosition(_pmAddress, _trader),
+//                positionHouseInterface.positionMap(_pmAddress, _trader),
+//                positionHouseInterface.getLimitOrders(_pmAddress, _trader),
+//                positionHouseInterface.getReduceLimitOrders(
+//                    _pmAddress,
+//                    _trader
+//                ),
+//                positionHouseInterface.getLimitOrderPremiumFraction(
+//                    _pmAddress,
+//                    _trader
+//                ),
+//                positionHouseInterface.getLatestCumulativePremiumFraction(
+//                    _pmAddress
+//                )
+//            );
     }
 
     function getListOrderPending(address _pmAddress, address _trader)
