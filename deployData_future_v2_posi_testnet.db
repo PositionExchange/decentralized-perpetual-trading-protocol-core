@@ -9,6 +9,7 @@
 {"address":"0xe4915b19a887f8819ad21e58e53598ef35b738cb","key":"PositionManager:CAKE_BUSD","_id":"4uXTGjdGeK9og8AZ"}
 {"address":"yes","key":"0x45aB1B513ba5271348aE688a0a82B7634eF61045:verified","_id":"4uu0x9vXI3949E7a"}
 {"address":"0x4f08d3d24107ce3f6b18c717f1d22dfa976c883f","key":"ChainLinkPriceFeed","_id":"5REu6CWlYlXMZujx"}
+{"address":"yes","key":"0x3664d400C74756674401D7D6847b58c34421bb0c:verified","_id":"5WVB1BrW2d8IVCcr"}
 {"address":"yes","key":"0x5d78AdCAC3B67556Defb3E73aa6e6ED7fe329245:verified","_id":"5as9lz50vvJeVLYi"}
 {"address":"0x5cfe9d9e50de10a8eeae7e37c011f6adccd348ab","key":"PositionHouse","_id":"650DffM5PYy2OTGr"}
 {"address":"0x0142c2c794c59eab9955821156c84238c795d3cf","key":"PositionManager:DOGE_BUSD","_id":"6Cn6LvYRuqfMbljE"}
@@ -148,4 +149,4 @@
 {"address":"0x898b5760b0197cb4150cb61b579f3d078da48254","key":"DptpValidator","_id":"vvaY0gmXAMK1qKtT"}
 {"address":"yes","key":"0x82E72D57b93E4A9Dd8733C28A5Eb80A5b85852A0:verified","_id":"w40en7pGqHAPkiCr"}
 {"address":"yes","key":"0xEb4A06960edC5BD5FBdF99d4615f0073D9A476c9:verified","_id":"xdCQCuY7RJfltHhy"}
-{"address":"yes","key":"0x3664d400C74756674401D7D6847b58c34421bb0c:verified","_id":"5WVB1BrW2d8IVCcr"}
+{"address":"yes","key":"0x0a22f8787d60e47931603e33820408e29f6c31cc:verified","_id":"ujZMHRBCmJXjOXnm"}
