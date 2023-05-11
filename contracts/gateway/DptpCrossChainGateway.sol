@@ -308,7 +308,8 @@ contract DptpCrossChainGateway is
       uint8 _signal,
       address _pmAddress,
       address _trader
-    ) external onlyRelayer(_sourceBcId) {
+    ) external {
+        // TOOD: Temp not validate relayer
       if (_signal == 0) {
         IPositionHouse(positionHouse).executeStorePosition(_pmAddress, _trader);
       }else {
