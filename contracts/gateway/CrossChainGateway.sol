@@ -327,6 +327,7 @@ contract CrossChainGateway is
                 uint256 _depositAmount,
                 uint256 _fee,
                 uint256 _withdrawAmount
+                ,
             ) = positionHouse.openMarketPosition(param);
             _handleBalanceChangedEvent(
                 _pmAddress,

@@ -133,17 +133,11 @@ contract DptpCrossChainGateway is
         bytes _destFunctionCall
     );
 
-    event EntryPrice(
-        uint256 _openNotionalBefore,
-        uint256 _openNotionalAfter,
-        uint256 _notionalDelta,
-        uint256 _quantity,
-        uint256 _entryPrice
-    );
+    event EntryPrice(uint256 _entryPrice);
 
     modifier onlyRelayer(uint256 _sourceBcId) {
-      require(whitelistRelayers[_sourceBcId][msg.sender], "invalid relayer");
-      _;
+        require(whitelistRelayers[_sourceBcId][msg.sender], "invalid relayer");
+        _;
     }
 
     function initialize(
@@ -173,7 +167,6 @@ contract DptpCrossChainGateway is
         bytes calldata _signature,
         bytes32 _sourceTxHash
     ) public nonReentrant onlyRelayer(_sourceBcId) {
-
         // Decode _eventData
         // Recall that the cross call event is:
         // CrossCall(bytes32 _txId, uint256 _timestamp, address _caller,
@@ -304,17 +297,23 @@ contract DptpCrossChainGateway is
     /// @param _pmAddress The position manager address
     /// @param _trader The trader address
     function manualCallExecuteUpdatePosition(
-      uint256 _sourceBcId,
-      uint8 _signal,
-      address _pmAddress,
-      address _trader
+        uint256 _sourceBcId,
+        uint8 _signal,
+        address _pmAddress,
+        address _trader
     ) external {
         // TOOD: Temp not validate relayer
-      if (_signal == 0) {
-        IPositionHouse(positionHouse).executeStorePosition(_pmAddress, _trader);
-      }else {
-        IPositionHouse(positionHouse).clearStorePendingPosition(_pmAddress, _trader);
-      }
+        if (_signal == 0) {
+            IPositionHouse(positionHouse).executeStorePosition(
+                _pmAddress,
+                _trader
+            );
+        } else {
+            IPositionHouse(positionHouse).clearStorePendingPosition(
+                _pmAddress,
+                _trader
+            );
+        }
     }
 
     function openMarketPosition(uint256 _sourceBcId, bytes memory _functionCall)
@@ -342,28 +341,14 @@ contract DptpCrossChainGateway is
 
         validateChainIDAndManualMargin(_sourceBcId, pmAddress, param.trader, 0);
 
-        uint256 openNotionalBefore = IPositionHouse(positionHouse)
-            .getPosition(pmAddress, param.trader)
-            .openNotional;
-
-        IPositionHouse(positionHouse).openMarketPosition(param);
-
         uint256 entryPrice;
         {
-            uint256 openNotionalAfter = IPositionHouse(positionHouse)
-                .getPosition(pmAddress, param.trader)
-                .openNotional;
-            uint256 openNotionalDelta = openNotionalAfter.sub(
-                openNotionalBefore
-            );
-            entryPrice = openNotionalDelta.mul(WEI_DECIMAL).div(param.quantity);
-            emit EntryPrice(
-                openNotionalBefore,
-                openNotionalAfter,
-                openNotionalDelta,
-                param.quantity,
-                entryPrice
-            );
+            (, , , entryPrice) = IPositionHouse(positionHouse)
+                .openMarketPosition(param);
+            uint256 basisPoint = IPositionManager(pmAddress).getBasisPoint();
+
+            entryPrice = entryPrice.mul(WEI_DECIMAL).div(basisPoint);
+            emit EntryPrice(entryPrice);
         }
 
         // store key for callback execute
@@ -483,13 +468,7 @@ contract DptpCrossChainGateway is
                 );
             }
             isLong = positionData.quantity > 0 ? true : false;
-            emit EntryPrice(
-                positionData.openNotional,
-                0,
-                0,
-                quantityAbs,
-                entryPrice
-            );
+            emit EntryPrice(0);
         }
 
         (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
@@ -740,23 +719,35 @@ contract DptpCrossChainGateway is
         uint256 _sourceBcId,
         bytes memory _functionCall
     ) private {
-      /*
-        uint8 signal
-        0: Execute
-        1: Remove
-      */
-      (bytes32 _requestKey, uint8 _signal) = abi.decode(
-          _functionCall,
-          (bytes32, uint8)
-      );
-      (address _pmAddress, address _trader) = (requestKeyData[_requestKey].pm, requestKeyData[_requestKey].trader);
-      require(_pmAddress != address(0) && _trader != address(0), "Invalid request key.");
-      if (_signal == 0) {
-        IPositionHouse(positionHouse).executeStorePosition(_pmAddress, _trader);
-      }else {
-        IPositionHouse(positionHouse).clearStorePendingPosition(_pmAddress, _trader);
-      }
-      delete requestKeyData[_requestKey];
+        /*
+          uint8 signal
+          0: Execute
+          1: Remove
+        */
+        (bytes32 _requestKey, uint8 _signal) = abi.decode(
+            _functionCall,
+            (bytes32, uint8)
+        );
+        (address _pmAddress, address _trader) = (
+            requestKeyData[_requestKey].pm,
+            requestKeyData[_requestKey].trader
+        );
+        require(
+            _pmAddress != address(0) && _trader != address(0),
+            "Invalid request key."
+        );
+        if (_signal == 0) {
+            IPositionHouse(positionHouse).executeStorePosition(
+                _pmAddress,
+                _trader
+            );
+        } else {
+            IPositionHouse(positionHouse).clearStorePendingPosition(
+                _pmAddress,
+                _trader
+            );
+        }
+        delete requestKeyData[_requestKey];
     }
 
     function setMyChainID(uint256 _chainID) external onlyOwner {

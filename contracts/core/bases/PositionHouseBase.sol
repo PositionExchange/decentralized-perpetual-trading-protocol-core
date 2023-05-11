@@ -82,6 +82,7 @@ abstract contract PositionHouseBase is
         returns (
             uint256,
             uint256,
+            uint256,
             uint256
         )
     {
@@ -130,14 +131,15 @@ abstract contract PositionHouseBase is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
+            uint256 entryPrice
         ) = _internalOpenMarketPosition(internalOpenMarketPositionParam, false);
         _validateInitialMargin(_param.initialMargin, depositAmount);
         // return depositAmount, fee and withdrawAmount
         if (needClaim) {
-            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount);
+            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount, entryPrice);
         }
-        return (depositAmount, fee, withdrawAmount);
+        return (depositAmount, fee, withdrawAmount, entryPrice);
     }
 
     function executeStorePosition(
@@ -379,6 +381,7 @@ abstract contract PositionHouseBase is
             uint256 depositAmount,
             ,
             uint256 withdrawAmount
+            ,
         ) = _internalOpenMarketPosition(param, true);
         // return depositAmount, fee and withdrawAmount
         return (

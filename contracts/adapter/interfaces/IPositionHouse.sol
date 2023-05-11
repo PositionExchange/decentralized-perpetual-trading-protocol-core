@@ -80,6 +80,7 @@ interface IPositionHouse {
         returns (
             uint256,
             uint256,
+            uint256,
             uint256
         );
     function executeStorePosition(

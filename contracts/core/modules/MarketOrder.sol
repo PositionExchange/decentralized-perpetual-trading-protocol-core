@@ -48,6 +48,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
         returns (
             uint256,
             uint256,
+            uint256,
             uint256
         )
     {
@@ -97,54 +98,58 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
             _param.positionData.quantity == 0 ||
             _param.positionData.side() == _param.side
         ) {
+            InternalOpenMarketPositionParam memory param_ = _param;
             pResp = increasePosition(
                 _pmAddress,
-                _param.side,
+                param_.side,
                 iQuantity,
-                _param.leverage,
-                _param.trader,
-                _param.positionData,
-                _param.initialMargin
+                param_.leverage,
+                param_.trader,
+                param_.positionData,
+                param_.initialMargin
             );
             require(
                 _checkMaxNotional(
                     pResp.exchangedQuoteAssetAmount,
                     _pmAddress,
-                    _param.leverage
+                    param_.leverage
                 ),
                 Errors.VL_EXCEED_MAX_NOTIONAL
             );
-            orderMargin = _param.initialMargin != 0
-                ? _param.initialMargin.abs()
+            orderMargin = param_.initialMargin != 0
+                ? param_.initialMargin.abs()
                 : pResp.marginToVault.abs();
         } else {
+            InternalOpenMarketPositionParam memory param_ = _param;
             pResp = openReversePosition(
-                _param.positionManager,
-                _param.side,
+                param_.positionManager,
+                param_.side,
                 iQuantity,
-                _param.leverage,
-                _param.trader,
-                _param.positionData,
-                _param.initialMargin
+                param_.leverage,
+                param_.trader,
+                param_.positionData,
+                param_.initialMargin
             );
         }
+        uint256 entryPrice = pResp.entryPrice;
         // update position state
-        _updatePositionMap(_pmAddress, _param.trader, pResp.position, isReducePosition);
         {
+            InternalOpenMarketPositionParam memory param_ = _param;
+            _updatePositionMap(_pmAddress, param_.trader, pResp.position, isReducePosition);
             emit OpenMarket(
-                _param.trader,
+                param_.trader,
                 pResp.exchangedPositionSize,
                 pResp.exchangedQuoteAssetAmount,
-                _param.leverage,
+                param_.leverage,
                 pResp.entryPrice,
-                _param.positionManager,
+                param_.positionManager,
                 orderMargin
             );
         }
         if (pResp.marginToVault > 0) {
-            return (pResp.marginToVault.abs(), pResp.fee, 0);
+            return (pResp.marginToVault.abs(), pResp.fee, 0, entryPrice);
         } else {
-            return (0, pResp.fee, pResp.marginToVault.abs());
+            return (0, pResp.fee, pResp.marginToVault.abs(), entryPrice);
         }
     }
 
@@ -189,6 +194,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
+            ,
         ) = _internalOpenMarketPosition(param, true);
         return (depositAmount, fee, withdrawAmount);
     }
