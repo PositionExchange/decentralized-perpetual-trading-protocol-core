@@ -69,7 +69,7 @@ contract DptpCrossChainGateway is
         bytes4(keccak256("executeRemoveCollateral(bytes32,uint256)"));
 
     bytes4 private constant EXECUTE_CANCEL_INCREASE_ORDER_METHOD =
-        bytes4(keccak256("executeCancelIncreaseOrder(bytes32,bool)"));
+        bytes4(keccak256("executeCancelIncreaseOrder(bytes32,bool,uint256,uint256)"));
 
     bytes4 private constant EXECUTE_CLAIM_FUND_METHOD =
         bytes4(keccak256("executeClaimFund(address[],address,uint256)"));
@@ -422,12 +422,13 @@ contract DptpCrossChainGateway is
             0
         );
 
-        IPositionHouse(positionHouse).cancelLimitOrder(
-            IPositionManager(pmAddress),
-            orderIdx,
-            isReduce,
-            account
-        );
+        (, , uint256 withdrawAmountUsd, uint256 partialFilledQuantity) = IPositionHouse(positionHouse)
+            .cancelLimitOrder(
+                IPositionManager(pmAddress),
+                orderIdx,
+                isReduce,
+                account
+            );
 
         IDPTPValidator(dptpValidator).updateTraderData(account, pmAddress);
 
@@ -437,7 +438,9 @@ contract DptpCrossChainGateway is
             abi.encodeWithSelector(
                 EXECUTE_CANCEL_INCREASE_ORDER_METHOD,
                 requestKey,
-                isReduce
+                isReduce,
+                withdrawAmountUsd,
+                partialFilledQuantity
             )
         );
     }
