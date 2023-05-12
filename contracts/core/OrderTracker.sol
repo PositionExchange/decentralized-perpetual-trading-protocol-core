@@ -83,7 +83,9 @@ contract OrderTracker is
         __Ownable_init();
         __Pausable_init();
 
-        accessControllerInterface = IAccessController(_accessControllerInterface);
+        accessControllerInterface = IAccessController(
+            _accessControllerInterface
+        );
         crossChainGateway = _crossChainGateway;
         positionHouse = _positionHouse;
     }
@@ -225,7 +227,6 @@ contract OrderTracker is
                 pendingOrderDetail.trader !=
                 positionManagerInterface.getMarketMakerAddress()
             ) {
-
                 uint256 filledSize_ = filledSize;
                 uint128 pip_ = _pip;
 
@@ -447,27 +448,108 @@ contract OrderTracker is
         Position.Data memory positionData = IPositionHouse(positionHouse)
             .getPosition(_manager, _trader);
 
+        bool isLong = positionData.quantity > 0;
+        uint256 quantityAbs = positionData.quantity > 0
+            ? uint256(positionData.quantity)
+            : uint256(-positionData.quantity);
+        bool isFullyClose = _size >= quantityAbs;
+
         uint256 basisPoint = IPositionManager(_manager).getBasisPoint();
-        uint256 price = (uint256(_pip) * (10**18)) / basisPoint;
+        uint256 baseBasisPoint = IPositionManager(_manager).getBaseBasisPoint();
 
-        uint256 withdrawAmount = (price * _size) / positionData.leverage;
+        uint256 entryPrice = _calculateEntryPrice(
+            positionData.openNotional,
+            quantityAbs,
+            baseBasisPoint
+        );
+        uint256 openNotional = _calculateNotional(
+            entryPrice,
+            _size,
+            baseBasisPoint
+        );
 
-        uint256 positionAveragePrice;
-        if (positionData.openNotional > 0) {
-            positionAveragePrice =
-                (positionData.openNotional * (10 * 18)) /
-                uint256(positionData.quantity);
+        uint256 closeNotional;
+        {
+            uint256 closePrice = _toPrice(_pip, baseBasisPoint, basisPoint);
+            closeNotional = _calculateNotional(
+                closePrice,
+                _size,
+                baseBasisPoint
+            );
         }
 
+        int256 amountOutUsd;
+        {
+            int256 marginOut = int256(openNotional / positionData.leverage);
+            int256 pnl = _calculatePnl(isLong, openNotional, closeNotional);
+            amountOutUsd = marginOut + pnl;
+        }
+
+        _executeDecreaseOrder(
+            _requestKey,
+            uint256(amountOutUsd),
+            isFullyClose ? 0 : (entryPrice * (10**18)) / baseBasisPoint,
+            _size,
+            isLong
+        );
+    }
+
+    function _executeDecreaseOrder(
+        bytes32 requestKey_,
+        uint256 amountOutUsd_,
+        uint256 entryPrice_,
+        uint256 size_,
+        bool isLong_
+    ) private {
         ICrossChainGateway(crossChainGateway).executeDecreaseOrder(
             421613, // TODO: Refactor later
-            _requestKey,
-            withdrawAmount,
+            requestKey_,
+            amountOutUsd_,
             0, // Temporary set fee to 0, will calculate later
-            positionAveragePrice,
-            _size,
-            !_isBuy
+            entryPrice_,
+            size_,
+            isLong_
         );
+    }
+
+    function _calculatePnl(
+        bool _isLong,
+        uint256 _openNotional,
+        uint256 _closeNotional
+    ) private pure returns (int256) {
+        // LONG position
+        if (_isLong) {
+            return (int256(_closeNotional) - int256(_openNotional));
+        }
+        // SHORT position
+        return (int256(_openNotional) - int256(_closeNotional));
+    }
+
+    function _toPrice(
+        uint128 pip,
+        uint256 baseBasicPoint,
+        uint256 basisPoint
+    ) private pure returns (uint256) {
+        return (uint256(pip) * baseBasicPoint) / basisPoint;
+    }
+
+    function _calculateNotional(
+        uint256 _price,
+        uint256 _quantity,
+        uint256 _baseBasisPoint
+    ) private pure returns (uint256) {
+        return (_quantity * _price) / _baseBasisPoint;
+    }
+
+    function _calculateEntryPrice(
+        uint256 _notional,
+        uint256 _quantity,
+        uint256 _baseBasisPoint
+    ) private pure returns (uint256) {
+        if (_quantity != 0) {
+            return (_notional * _baseBasisPoint) / _quantity;
+        }
+        return 0;
     }
 
     /**

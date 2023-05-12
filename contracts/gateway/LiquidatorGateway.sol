@@ -491,6 +491,14 @@ contract LiquidatorGateway is
         positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
     }
 
+    function getPositionHouse() external view returns (address) {
+        return address(positionHouseInterface);
+    }
+
+    function setPositionHouse(address _address) external onlyOwner {
+        positionHouseInterface = IPositionHouse(_address);
+    }
+
     bytes4 private constant WITHDRAW_SELECTOR =
         bytes4(
             keccak256(
