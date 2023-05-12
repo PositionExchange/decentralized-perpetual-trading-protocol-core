@@ -396,6 +396,15 @@ contract DptpCrossChainGateway is
 
         validateChainIDAndManualMargin(_sourceBcId, pmAddress, param.trader, 0);
 
+        {
+            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
+            if (isLong) {
+                require(param.pip < currentPip, "must less than current pip");
+            } else {
+                require(param.pip > currentPip, "must greater than current pip");
+            }
+        }
+
         IPositionHouse(positionHouse).openLimitOrder(param);
 
         // store key for callback execute
