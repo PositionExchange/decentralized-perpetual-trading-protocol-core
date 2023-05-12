@@ -208,6 +208,7 @@ abstract contract PositionHouseBase is
                     _param.side == Position.Side.LONG,
                     int256(_param.initialMargin)
                 ),
+                isReduceOrder: false,
                 sourceChainRequestKey: _param.sourceChainRequestKey
             });
         }
@@ -445,6 +446,7 @@ abstract contract PositionHouseBase is
                 positionData: _positionDataWithManualMargin,
                 trader: _trader,
                 initialMargin: 0,
+                isReduceOrder: true,
                 sourceChainRequestKey: sourceChainRequestKey
             });
         }

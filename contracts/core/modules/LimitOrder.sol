@@ -114,6 +114,7 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
         Position.Data positionData;
         address trader;
         int256 initialMargin;
+        bool isReduceOrder;
         bytes32 sourceChainRequestKey;
     }
 
@@ -159,7 +160,7 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
                         quantity > 0,
                         _param.initialMargin
                     ),
-                    isReduce: isReduceOrder,
+                    isReduce: _param.isReduceOrder,
                     sourceChainRequestKey: _param.sourceChainRequestKey
                 });
             }
