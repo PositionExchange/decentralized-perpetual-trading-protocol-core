@@ -417,8 +417,7 @@ contract CrossChainGateway is
         (
             uint256 _depositAmount,
             uint256 _fee,
-            uint256 _withdrawAmount
-            ,
+            uint256 _withdrawAmount,,,
         ) = positionHouse.cancelLimitOrder(
                 IPositionManager(_pmAddress),
                 _orderIdx,

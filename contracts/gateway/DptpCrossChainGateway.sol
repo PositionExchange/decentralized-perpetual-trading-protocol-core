@@ -69,7 +69,11 @@ contract DptpCrossChainGateway is
         bytes4(keccak256("executeRemoveCollateral(bytes32,uint256)"));
 
     bytes4 private constant EXECUTE_CANCEL_INCREASE_ORDER_METHOD =
-        bytes4(keccak256("executeCancelIncreaseOrder(bytes32,bool,uint256,uint256)"));
+        bytes4(
+            keccak256(
+                "executeCancelIncreaseOrder(bytes32,bool,uint256,uint256,uint256,bool)"
+            )
+        );
 
     bytes4 private constant EXECUTE_CLAIM_FUND_METHOD =
         bytes4(keccak256("executeClaimFund(address[],address,uint256)"));
@@ -422,27 +426,58 @@ contract DptpCrossChainGateway is
             0
         );
 
-        (, , uint256 withdrawAmountUsd, uint256 partialFilledQuantity) = IPositionHouse(positionHouse)
-            .cancelLimitOrder(
+        (
+            ,
+            ,
+            uint256 withdrawAmountUsd,
+            uint256 partialFilledQuantity,
+            uint128 pip,
+            uint8 isBuy
+        ) = IPositionHouse(positionHouse).cancelLimitOrder(
                 IPositionManager(pmAddress),
                 orderIdx,
                 isReduce,
                 account
             );
 
+        uint256 entryPrice;
+        bool isLong;
+        if (partialFilledQuantity > 0) {
+            bool isBuy_ = isBuy == 1 ? true : false;
+            if (isReduce == 0) {
+                uint256 basisPoint = IPositionManager(pmAddress)
+                    .getBasisPoint();
+                entryPrice = uint256(pip).mul(WEI_DECIMAL).div(basisPoint);
+                isLong = isBuy_;
+            } else {
+                Position.Data memory positionData = IPositionHouse(
+                    positionHouse
+                ).getPosition(pmAddress, account);
+                uint256 quantityAbs = positionData.quantity.abs();
+                uint256 positionNotional = positionData.openNotional;
+                entryPrice = positionNotional.mul(WEI_DECIMAL).div(quantityAbs);
+                isLong = !isBuy_;
+            }
+        }
+
         IDPTPValidator(dptpValidator).updateTraderData(account, pmAddress);
 
-        _crossBlockchainCall(
-            _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
-            abi.encodeWithSelector(
-                EXECUTE_CANCEL_INCREASE_ORDER_METHOD,
-                requestKey,
-                isReduce,
-                withdrawAmountUsd,
-                partialFilledQuantity
-            )
-        );
+        {
+            uint256 sourceBcId_ = _sourceBcId;
+            _crossBlockchainCall(
+                sourceBcId_,
+                destChainFuturesGateways[sourceBcId_],
+                abi.encodeWithSelector(
+                    EXECUTE_CANCEL_INCREASE_ORDER_METHOD,
+                    requestKey,
+                    isReduce,
+                    withdrawAmountUsd,
+                    partialFilledQuantity,
+                    entryPrice,
+                    isLong
+                )
+            );
+        }
     }
 
     function closePosition(uint256 _sourceBcId, bytes memory _functionCall)

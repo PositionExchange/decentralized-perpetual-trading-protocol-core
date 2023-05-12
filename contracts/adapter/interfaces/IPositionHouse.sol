@@ -156,7 +156,9 @@ interface IPositionHouse {
             uint256,
             uint256,
             uint256,
-            uint256
+            uint256,
+            uint128,
+            uint8
         );
 
     function cancelAllReduceOrder(

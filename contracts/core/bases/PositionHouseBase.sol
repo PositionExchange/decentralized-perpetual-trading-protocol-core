@@ -244,18 +244,25 @@ abstract contract PositionHouseBase is
             uint256,
             uint256,
             uint256,
-            uint256
+            uint256,
+            uint128,
+            uint8
         )
     {
         onlyCounterParty();
-        (uint256 withdrawAmount, uint256 partialFilledQuantity) = _internalCancelLimitOrder(
+        (
+            uint256 withdrawAmount,
+            uint256 partialFilledQuantity,
+            uint128 pip,
+            uint8 isBuy
+        ) = _internalCancelLimitOrder(
             _positionManager,
             _orderIdx,
             _isReduce,
             _trader
         );
         // return depositAmount, fee and withdrawAmount
-        return (0, 0, withdrawAmount, partialFilledQuantity);
+        return (0, 0, withdrawAmount, partialFilledQuantity, pip, isBuy);
     }
 
     function cancelAllReduceOrder(

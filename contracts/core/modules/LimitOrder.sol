@@ -48,7 +48,7 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
         uint64 _orderIdx,
         uint8 _isReduce,
         address _trader
-    ) internal returns (uint256, uint256) {
+    ) internal returns (uint256, uint256, uint128, uint8) {
         address _pmAddress = address(_positionManager);
         // declare a pointer to reduceLimitOrders or limitOrders
         PositionLimitOrder.Data[] storage orders = _getLimitOrderPointer(
@@ -82,8 +82,9 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
                 refundMargin * order.leverage,
                 true
             );
+            uint64 orderIdx_ = _orderIdx;
             if (partialFilledQuantity != 0) {
-                orders[_orderIdx].margin = PositionMath
+                orders[orderIdx_].margin = PositionMath
                     .calculateRemainMarginInLimitOrder(
                         order.isBuy == 1,
                         order.margin,
@@ -96,10 +97,10 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
                 order.pip,
                 order.orderId
             );
-            return (refundMargin + refundFee, partialFilledQuantity);
+            return (refundMargin + refundFee, partialFilledQuantity, order.pip, order.isBuy);
         }
         emit CancelLimitOrder(_trader, _pmAddress, order.pip, order.orderId);
-        return (0, partialFilledQuantity);
+        return (0, partialFilledQuantity, order.pip, order.isBuy);
     }
 
     // use this struct as param of function "_internalOpenLimitOrder"
