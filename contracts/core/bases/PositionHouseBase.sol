@@ -753,18 +753,17 @@ abstract contract PositionHouseBase is
         address t = _trader;
 
         {
-            return 0;
-//            return
-//                PositionManagerAdapter.getClaimAmount(
-//                    a,
-//                    getAddedMargin(a, t),
-//                    getDebtPosition(a, t),
-//                    _getPositionMap(a, t),
-//                    getLimitOrders(a, t),
-//                    getReduceLimitOrders(a, t),
-//                    _getLimitOrderPremiumFraction(a, t),
-//                    getLatestCumulativePremiumFraction(a)
-//                );
+            return
+                PositionManagerAdapter.getClaimAmount(
+                    a,
+                    getAddedMargin(a, t),
+                    getDebtPosition(a, t),
+                    _getPositionMap(a, t),
+                    getLimitOrders(a, t),
+                    getReduceLimitOrders(a, t),
+                    _getLimitOrderPremiumFraction(a, t),
+                    getLatestCumulativePremiumFraction(a)
+                );
         }
     }
 
