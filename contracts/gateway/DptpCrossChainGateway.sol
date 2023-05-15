@@ -401,7 +401,10 @@ contract DptpCrossChainGateway is
             if (isLong) {
                 require(param.pip < currentPip, "must less than current pip");
             } else {
-                require(param.pip > currentPip, "must greater than current pip");
+                require(
+                    param.pip > currentPip,
+                    "must greater than current pip"
+                );
             }
         }
 
@@ -515,7 +518,7 @@ contract DptpCrossChainGateway is
                 );
             }
             isLong = positionData.quantity > 0 ? true : false;
-            emit EntryPrice(0);
+            emit EntryPrice(entryPrice);
         }
 
         (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
@@ -551,6 +554,22 @@ contract DptpCrossChainGateway is
             _functionCall,
             (bytes32, address, uint256, uint256, address)
         );
+
+        {
+            Position.Data memory position = IPositionHouse(positionHouse)
+                .getPosition(pmAddress, trader);
+            // Close order side is oposite to position side
+            bool orderSideIsLong = position.quantity < 0;
+            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
+            if (orderSideIsLong) {
+                require(pip < currentPip, "must less than current pip");
+            } else {
+                require(
+                    pip > currentPip,
+                    "must greater than current pip"
+                );
+            }
+        }
 
         (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
             .closeLimitPosition(
