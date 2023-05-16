@@ -484,10 +484,9 @@ abstract contract PositionHouseBase is
                 _pmAddress,
                 _trader
             );
-        require(
-            _positionDataWithManualMargin.quantity == 0,
-            Errors.VL_INVALID_CLAIM_FUND
-        );
+        if (_positionDataWithManualMargin.quantity != 0) {
+            return (0, 0, 0);
+        }
         int256 withdrawAmount = _internalClaimFund(
             _pmAddress,
             _trader,

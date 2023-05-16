@@ -19,4 +19,12 @@ interface ICrossChainGateway {
         uint256 _quantity,
         bool _isLong
     ) external;
+
+    function executeClaimFund(
+        uint256 _sourceBcId,
+        address _manager,
+        address _trader,
+        bool _isLong,
+        uint256 _withdrawAmount
+    ) external;
 }

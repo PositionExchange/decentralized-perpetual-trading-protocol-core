@@ -76,7 +76,7 @@ contract DptpCrossChainGateway is
         );
 
     bytes4 private constant EXECUTE_CLAIM_FUND_METHOD =
-        bytes4(keccak256("executeClaimFund(address[],address,uint256)"));
+        bytes4(keccak256("executeClaimFund(address,address,bool,uint256)"));
 
     bytes4 private constant TRIGGER_TPSL_METHOD =
         bytes4(
@@ -262,11 +262,6 @@ contract DptpCrossChainGateway is
             closeLimitPosition(_sourceBcId, functionCall);
             return;
         } else if (
-            Method(decodedEventData.functionMethodID) == Method.CLAIM_FUND
-        ) {
-            claimFund(_sourceBcId, functionCall);
-            return;
-        } else if (
             Method(decodedEventData.functionMethodID) == Method.SET_TPSL
         ) {
             setTPSL(_sourceBcId, functionCall);
@@ -369,6 +364,8 @@ contract DptpCrossChainGateway is
                 isLong
             )
         );
+
+        IOrderTracker(orderTracker).claimPendingFund();
     }
 
     function openLimitOrder(uint256 _sourceBcId, bytes memory _functionCall)
@@ -540,6 +537,8 @@ contract DptpCrossChainGateway is
                 isLong
             )
         );
+
+        IOrderTracker(orderTracker).claimPendingFund();
     }
 
     function closeLimitPosition(uint256 _sourceBcId, bytes memory _functionCall)
@@ -564,10 +563,7 @@ contract DptpCrossChainGateway is
             if (orderSideIsLong) {
                 require(pip < currentPip, "must less than current pip");
             } else {
-                require(
-                    pip > currentPip,
-                    "must greater than current pip"
-                );
+                require(pip > currentPip, "must greater than current pip");
             }
         }
 
@@ -747,40 +743,6 @@ contract DptpCrossChainGateway is
         );
     }
 
-    function claimFund(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
-        address[] memory path;
-        address pmAddress;
-        address account;
-        (path, pmAddress, account) = abi.decode(
-            _functionCall,
-            (address[], address, address)
-        );
-
-        (, , uint256 withdrawAmount) = IPositionHouse(positionHouse).claimFund(
-            IPositionManager(pmAddress),
-            account
-        );
-
-        IDPTPValidator(dptpValidator).updateTraderData(account, pmAddress);
-
-        if (withdrawAmount == 0) {
-            return;
-        }
-
-        _crossBlockchainCall(
-            _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
-            abi.encodeWithSelector(
-                EXECUTE_CLAIM_FUND_METHOD,
-                path,
-                account,
-                withdrawAmount
-            )
-        );
-    }
-
     function _executeStorePosition(
         uint256 _sourceBcId,
         bytes memory _functionCall
@@ -834,6 +796,10 @@ contract DptpCrossChainGateway is
 
     function setPositionStrategyOrder(address _address) external onlyOwner {
         positionStrategyOrder = _address;
+    }
+
+    function setOrderTracker(address _address) external onlyOwner {
+        orderTracker = _address;
     }
 
     function addDestChainFuturesGateway(
@@ -902,6 +868,26 @@ contract DptpCrossChainGateway is
         );
     }
 
+    function executeClaimFund(
+        uint256 _sourceBcId,
+        address _manager,
+        address _trader,
+        bool _isLong,
+        uint256 _withdrawAmount
+    ) external override {
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                EXECUTE_CLAIM_FUND_METHOD,
+                _manager,
+                _trader,
+                _isLong,
+                _withdrawAmount
+            )
+        );
+    }
+
     function _crossBlockchainCall(
         uint256 _destBcId,
         address _destContract,
@@ -950,4 +936,5 @@ contract DptpCrossChainGateway is
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
     uint256[49] private __gap;
+    address public orderTracker;
 }

@@ -64,6 +64,18 @@ contract OrderTracker is
         bytes _destFunctionCall
     );
 
+    event FundClaimed(
+        address manager,
+        address trader,
+        uint256 claimAmount
+    );
+
+    struct PendingClaimFund {
+        address manager;
+        address trader;
+        bool isLong;
+    }
+
     function onlyCounterParty() internal {
         require(
             AccessControllerAdapter.isGatewayOrCoreContract(
@@ -161,9 +173,7 @@ contract OrderTracker is
                     pmAddress,
                     pendingOrderDetail.trader,
                     sourceChainRequestKey,
-                    _pip,
-                    pendingOrderDetail.size,
-                    pendingOrderDetail.isBuy
+                    pendingOrderDetail.size
                 );
                 continue;
             }
@@ -264,9 +274,7 @@ contract OrderTracker is
                             address(positionManagerInterface),
                             pendingOrderDetail.trader,
                             sourceChainRequestKey,
-                            pip_,
-                            pendingOrderDetail.size,
-                            pendingOrderDetail.isBuy
+                            pendingOrderDetail.size
                         );
                     } else {
                         _executeIncreasePosition(
@@ -440,105 +448,68 @@ contract OrderTracker is
         address _manager,
         address _trader,
         bytes32 _requestKey,
-        uint128 _pip,
-        uint256 _size,
-        bool _isBuy
+        uint256 _size
     ) private {
         // TODO: Refactor this function later
         Position.Data memory positionData = IPositionHouse(positionHouse)
             .getPosition(_manager, _trader);
 
         bool isLong = positionData.quantity > 0;
-        uint256 quantityAbs = positionData.quantity > 0
+        uint256 quantityAbs = isLong
             ? uint256(positionData.quantity)
             : uint256(-positionData.quantity);
         bool isFullyClose = _size >= quantityAbs;
 
-        uint256 basisPoint = IPositionManager(_manager).getBasisPoint();
-        uint256 baseBasisPoint = IPositionManager(_manager).getBaseBasisPoint();
-
-        uint256 entryPrice = _calculateEntryPrice(
-            positionData.openNotional,
-            quantityAbs,
-            baseBasisPoint
-        );
-        uint256 openNotional = _calculateNotional(
-            entryPrice,
-            _size,
-            baseBasisPoint
-        );
-
-        uint256 closeNotional;
-        {
-            uint256 closePrice = _toPrice(_pip, baseBasisPoint, basisPoint);
-            closeNotional = _calculateNotional(
-                closePrice,
-                _size,
+        IPositionManager manager = IPositionManager(_manager);
+        uint256 baseBasisPoint = manager.getBaseBasisPoint();
+        uint256 entryPrice = isFullyClose
+            ? 0
+            : _calculateEntryPrice(
+                positionData.openNotional,
+                quantityAbs,
                 baseBasisPoint
             );
-        }
 
-        int256 amountOutUsd;
-        {
-            int256 marginOut = int256(openNotional / positionData.leverage);
-            int256 pnl = _calculatePnl(isLong, openNotional, closeNotional);
-            amountOutUsd = marginOut + pnl;
-        }
-
-        _executeDecreaseOrder(
+        ICrossChainGateway(crossChainGateway).executeDecreaseOrder(
+            421613,
             _requestKey,
-            uint256(amountOutUsd),
-            isFullyClose ? 0 : (entryPrice * (10**18)) / baseBasisPoint,
+            0,
+            0, // Temporary set fee to 0, will calculate later
+            entryPrice,
             _size,
             isLong
         );
-    }
 
-    function _executeDecreaseOrder(
-        bytes32 requestKey_,
-        uint256 amountOutUsd_,
-        uint256 entryPrice_,
-        uint256 size_,
-        bool isLong_
-    ) private {
-        ICrossChainGateway(crossChainGateway).executeDecreaseOrder(
-            421613, // TODO: Refactor later
-            requestKey_,
-            amountOutUsd_,
-            0, // Temporary set fee to 0, will calculate later
-            entryPrice_,
-            size_,
-            isLong_
-        );
-    }
-
-    function _calculatePnl(
-        bool _isLong,
-        uint256 _openNotional,
-        uint256 _closeNotional
-    ) private pure returns (int256) {
-        // LONG position
-        if (_isLong) {
-            return (int256(_closeNotional) - int256(_openNotional));
+        if (isFullyClose) {
+            PendingClaimFund memory data = PendingClaimFund(
+                _manager,
+                _trader,
+                isLong
+            );
+            pendingClaimFunds.push(data);
         }
-        // SHORT position
-        return (int256(_openNotional) - int256(_closeNotional));
     }
 
-    function _toPrice(
-        uint128 pip,
-        uint256 baseBasicPoint,
-        uint256 basisPoint
-    ) private pure returns (uint256) {
-        return (uint256(pip) * baseBasicPoint) / basisPoint;
-    }
+    function claimPendingFund() external {
+        for (uint64 i = 0; i < pendingClaimFunds.length; i++) {
+            PendingClaimFund memory data = pendingClaimFunds[i];
 
-    function _calculateNotional(
-        uint256 _price,
-        uint256 _quantity,
-        uint256 _baseBasisPoint
-    ) private pure returns (uint256) {
-        return (_quantity * _price) / _baseBasisPoint;
+            (, , uint256 claimedAmount) = IPositionHouse(positionHouse)
+                .claimFund(IPositionManager(data.manager), data.trader);
+
+            emit FundClaimed(data.manager, data.trader, claimedAmount);
+
+            if (claimedAmount > 0) {
+                ICrossChainGateway(crossChainGateway).executeClaimFund(
+                    421613,
+                    data.manager,
+                    data.trader,
+                    data.isLong,
+                    claimedAmount
+                );
+            }
+        }
+        delete pendingClaimFunds;
     }
 
     function _calculateEntryPrice(
@@ -558,4 +529,7 @@ contract OrderTracker is
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
     uint256[49] private __gap;
+    PendingClaimFund[] public pendingClaimFunds;
+    mapping(uint256 => PendingClaimFund) public pendingClaimFunds2; // TODO: Remove later
+    uint256 public endIndex; // TODO: Remove later
 }

@@ -1,5 +1,5 @@
 import { MigrationContext, MigrationDefinition } from "../types";
-import {OrderTracker} from "../../typeChain";
+import {DptpCrossChainGateway, OrderTracker} from "../../typeChain";
 import {ContractTransaction} from "ethers";
 
 const migrations: MigrationDefinition = {
@@ -17,16 +17,19 @@ const migrations: MigrationDefinition = {
           "OrderTracker"
       );
 
-      const dptpCrossChainGateway = await context.db.findAddressByKey("DptpCrossChainGateway")
+      const dptpCrossChainGateway = await context.factory.getDeployedContract<DptpCrossChainGateway>("DptpCrossChainGateway")
       const positionHouse = await context.db.findAddressByKey("PositionHouse")
 
       let tx: Promise<ContractTransaction>
 
-      tx = orderTracker.setCrossChainGateway(dptpCrossChainGateway);
-      await context.factory.waitTx(tx, "orderTracker.setCrossChainGateway")
+      // tx = orderTracker.setCrossChainGateway(dptpCrossChainGateway.address);
+      // await context.factory.waitTx(tx, "orderTracker.setCrossChainGateway")
+      //
+      // tx = orderTracker.setPositionHouse(positionHouse);
+      // await context.factory.waitTx(tx, "orderTracker.setPositionHouse")
 
-      tx = orderTracker.setPositionHouse(positionHouse);
-      await context.factory.waitTx(tx, "orderTracker.setPositionHouse")
+      tx = dptpCrossChainGateway.setOrderTracker(orderTracker.address);
+      await context.factory.waitTx(tx, "orderTracker.setOrderTracker")
     },
   }),
 };
