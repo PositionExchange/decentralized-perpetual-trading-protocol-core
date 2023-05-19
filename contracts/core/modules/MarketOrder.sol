@@ -141,7 +141,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
             pendingOpenMarketOrderQueues[_pmAddress][_param.trader] = OpenMarketEventQueue(
                 pResp.exchangedPositionSize,
                 pResp.exchangedQuoteAssetAmount,
-                param_.leverage,
+                _param.leverage,
                 pResp.entryPrice,
                 orderMargin
             );
