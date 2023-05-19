@@ -20,13 +20,13 @@ abstract contract CumulativePremiumFractions {
     //    );
 
     function payFunding(IPositionManager _positionManager) external {
-        address _pmAddress = address(_positionManager);
-        int256 premiumFraction = _positionManager.settleFunding();
-        int128 newestCumulativePremiumFraction = int128(premiumFraction) +
-            getLatestCumulativePremiumFraction(_pmAddress);
-        cumulativePremiumFractions[_pmAddress].push(
-            newestCumulativePremiumFraction
-        );
+//        address _pmAddress = address(_positionManager);
+//        int256 premiumFraction = _positionManager.settleFunding();
+//        int128 newestCumulativePremiumFraction = int128(premiumFraction) +
+//            getLatestCumulativePremiumFraction(_pmAddress);
+//        cumulativePremiumFractions[_pmAddress].push(
+//            newestCumulativePremiumFraction
+//        );
         //        emit FundingPaid(
         //            premiumFraction,
         //            newestCumulativePremiumFraction,

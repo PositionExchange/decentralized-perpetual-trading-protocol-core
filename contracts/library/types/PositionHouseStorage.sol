@@ -113,6 +113,8 @@ abstract contract PositionHouseStorage {
     mapping(address => mapping(address => int128))
         public limitOrderPremiumFraction;
 
+    uint256[49] private ___gap;
+
     struct OpenMarketEventQueue {
         int256 quantity;
         uint256 openNotional;

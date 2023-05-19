@@ -41,17 +41,17 @@ abstract contract PositionHouseBase is
     using Position for Position.LiquidatedData;
     using PositionManagerAdapter for PositionHouseBase;
 
-    event MarginAdded(
-        address trader,
-        uint256 marginAdded,
-        IPositionManager positionManager
-    );
+//    event MarginAdded(
+//        address trader,
+//        uint256 marginAdded,
+//        IPositionManager positionManager
+//    );
 
-    event MarginRemoved(
-        address trader,
-        uint256 marginRemoved,
-        IPositionManager positionManager
-    );
+//    event MarginRemoved(
+//        address trader,
+//        uint256 marginRemoved,
+//        IPositionManager positionManager
+//    );
 
     //    event FundClaimed(address pmAddress, address trader, uint256 claimedAmount);
 
@@ -559,7 +559,7 @@ abstract contract PositionHouseBase is
         // increase manual margin by amount
         _updateManualMargin(_pmAddress, _trader, int256(_amount));
 
-        emit MarginAdded(_trader, _amount, _positionManager);
+        // emit MarginAdded(_trader, _amount, _positionManager);
         // return depositAmount, fee and withdrawAmount
         return (_amount, 0, 0);
     }
@@ -592,7 +592,7 @@ abstract contract PositionHouseBase is
         // reduce manual margin by amount
         _updateManualMargin(_pmAddress, _trader, -int256(_amount));
 
-        emit MarginRemoved(_trader, _amount, _positionManager);
+        // emit MarginRemoved(_trader, _amount, _positionManager);
         // return depositAmount, fee and withdrawAmount
         return (0, 0, _amount);
     }
