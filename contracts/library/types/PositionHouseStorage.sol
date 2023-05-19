@@ -102,4 +102,16 @@ abstract contract PositionHouseStorage {
     // Mapping pending position of each trader
     // PmManager => trader
     mapping(address => mapping(address => Position.Data)) public pendingPositionMap;
+
+    struct OpenMarketEventQueue {
+        int256 quantity;
+        uint256 openNotional;
+        uint16 leverage; 
+        uint256 entryPrice;
+        uint256 margin;
+    }
+    // Mapping pending open market order of each trader
+    // Now only support 1 event at a time, due to pendingPositionMap
+    // PmManager => trader
+    mapping(address => mapping(address => OpenMarketEventQueue)) public pendingOpenMarketOrderQueues;
 }

@@ -154,6 +154,7 @@ abstract contract PositionHouseBase is
     ) external {
         onlyCounterParty();
         pendingPositionMap[pmAddress][trader].clear();
+        _affectOpenMarketEvent(pmAddress, trader, false);
     }
 
     function openLimitOrder(HouseBaseParam.OpenLimitOrderParams memory _param)
@@ -1008,6 +1009,7 @@ abstract contract PositionHouseBase is
         positionMap[_pmAddress][_trader].update(newData);
         // delete pending position
         pendingPositionMap[_pmAddress][_trader].clear();
+        _affectOpenMarketEvent(_pmAddress, _trader, true);
     }
 
     function _updateManualMargin(
