@@ -26,7 +26,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
         uint256 openNotional,
         uint16 leverage,
         uint256 entryPrice,
-        IPositionManager positionManager,
+        address positionManager,
         uint256 margin
     );
 
@@ -134,23 +134,49 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
         uint256 entryPrice = pResp.entryPrice;
         // update position state
         {
-            InternalOpenMarketPositionParam memory param_ = _param;
-            _updatePositionMap(_pmAddress, param_.trader, pResp.position, isReducePosition);
-            emit OpenMarket(
-                param_.trader,
+            // Store to the queue and then execute later
+            // !Note support multiple execute update positions
+            // To determine which order should be emited
+            // Currently only support 1 execute per pairmanager and trader, hence there is always only 1 queue event at a time
+            pendingOpenMarketOrderQueues[_pmAddress][_param.trader] = OpenMarketEventQueue(
                 pResp.exchangedPositionSize,
                 pResp.exchangedQuoteAssetAmount,
-                param_.leverage,
+                _param.leverage,
                 pResp.entryPrice,
-                param_.positionManager,
                 orderMargin
             );
+            // emit OpenMarket(
+            //     _param.trader,
+            //     pResp.exchangedPositionSize,
+            //     pResp.exchangedQuoteAssetAmount,
+            //     _param.leverage,
+            //     pResp.entryPrice,
+            //     _param.positionManager,
+            //     orderMargin
+            // );
         }
         if (pResp.marginToVault > 0) {
             return (pResp.marginToVault.abs(), pResp.fee, 0, entryPrice);
         } else {
             return (0, pResp.fee, pResp.marginToVault.abs(), entryPrice);
         }
+    }
+    
+    function _affectOpenMarketEvent(address pm, address trader, bool shouldEmit) internal {
+        if (shouldEmit) {
+          OpenMarketEventQueue memory pResp = pendingOpenMarketOrderQueues[pm][trader];
+          emit OpenMarket(
+              trader,
+              pResp.quantity,
+              pResp.openNotional,
+              pResp.leverage,
+              pResp.entryPrice,
+              pm,
+              pResp.margin
+          );
+        } 
+        // Now delete the queue
+        delete pendingOpenMarketOrderQueues[pm][trader];
     }
 
     function _internalCloseMarketPosition(

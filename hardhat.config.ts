@@ -8,6 +8,7 @@ import "@openzeppelin/hardhat-defender"
 import {task} from "hardhat/config";
 import "./scripts/deploy";
 import "hardhat-gas-reporter";
+import "hardhat-abi-exporter";
 import "solidity-coverage";
 import {
     POSI_CHAIN_MAINNET_URL,
