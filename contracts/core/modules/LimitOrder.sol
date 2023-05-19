@@ -33,15 +33,7 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
     using Quantity for int128;
     using Int256Math for int256;
     using Uint256Math for uint256;
-    // increase orders
-    mapping(address => mapping(address => PositionLimitOrder.Data[]))
-        private limitOrders;
-    // reduce orders
-    mapping(address => mapping(address => PositionLimitOrder.Data[]))
-        private reduceLimitOrders;
-
-    mapping(address => mapping(address => int128))
-        public limitOrderPremiumFraction;
+    
 
     function _internalCancelLimitOrder(
         IPositionManager _positionManager,
