@@ -80,6 +80,7 @@ interface IPositionHouse {
         returns (
             uint256,
             uint256,
+            uint256,
             uint256
         );
     function executeStorePosition(
@@ -154,7 +155,10 @@ interface IPositionHouse {
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            uint256,
+            uint128,
+            uint8
         );
 
     function cancelAllReduceOrder(

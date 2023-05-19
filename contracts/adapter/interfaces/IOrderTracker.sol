@@ -19,4 +19,6 @@ interface IOrderTracker {
         uint128 _size,
         uint256 _orderNotional
     ) external;
+
+    function claimPendingFund() external;
 }

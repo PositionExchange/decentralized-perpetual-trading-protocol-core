@@ -88,6 +88,7 @@ contract TesterGateway is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
+            ,
         ) = positionHouseInterface.openMarketPosition(param);
         _handleMarginToInsuranceFund(
             _positionManagerInterface,
@@ -122,6 +123,7 @@ contract TesterGateway is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
+            ,
         ) = positionHouseInterface.openMarketPosition(param);
         _handleMarginToInsuranceFund(
             _positionManagerInterface,
@@ -214,7 +216,7 @@ contract TesterGateway is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,,,
         ) = positionHouseInterface.cancelLimitOrder(
                 _positionManagerInterface,
                 _orderIdx,

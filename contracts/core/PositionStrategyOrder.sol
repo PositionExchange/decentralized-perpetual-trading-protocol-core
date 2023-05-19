@@ -248,6 +248,10 @@ contract PositionStrategyOrder is
         }
     }
 
+    function setPositionHouse(address _address) external onlyOwner {
+        positionHouse = IPositionHouse(_address);
+    }
+
     modifier onlyValidatedTriggerer() {
         require(
             validatedTriggerers[msg.sender],

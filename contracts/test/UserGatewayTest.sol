@@ -28,6 +28,7 @@ contract UserGatewayTest is TesterGateway {
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
+            ,
         ) = positionHouseInterface.openMarketPosition(param);
         _handleMarginToInsuranceFund(
             _positionManagerInterface,

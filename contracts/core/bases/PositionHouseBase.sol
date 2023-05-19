@@ -82,6 +82,7 @@ abstract contract PositionHouseBase is
         returns (
             uint256,
             uint256,
+            uint256,
             uint256
         )
     {
@@ -130,14 +131,15 @@ abstract contract PositionHouseBase is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
+            uint256 entryPrice
         ) = _internalOpenMarketPosition(internalOpenMarketPositionParam, false);
         _validateInitialMargin(_param.initialMargin, depositAmount);
         // return depositAmount, fee and withdrawAmount
         if (needClaim) {
-            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount);
+            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount, entryPrice);
         }
-        return (depositAmount, fee, withdrawAmount);
+        return (depositAmount, fee, withdrawAmount, entryPrice);
     }
 
     function executeStorePosition(
@@ -207,6 +209,7 @@ abstract contract PositionHouseBase is
                     _param.side == Position.Side.LONG,
                     int256(_param.initialMargin)
                 ),
+                isReduceOrder: false,
                 sourceChainRequestKey: _param.sourceChainRequestKey
             });
         }
@@ -242,18 +245,26 @@ abstract contract PositionHouseBase is
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            uint256,
+            uint128,
+            uint8
         )
     {
         onlyCounterParty();
-        uint256 withdrawAmount = _internalCancelLimitOrder(
+        (
+            uint256 withdrawAmount,
+            uint256 partialFilledQuantity,
+            uint128 pip,
+            uint8 isBuy
+        ) = _internalCancelLimitOrder(
             _positionManager,
             _orderIdx,
             _isReduce,
             _trader
         );
         // return depositAmount, fee and withdrawAmount
-        return (0, 0, withdrawAmount);
+        return (0, 0, withdrawAmount, partialFilledQuantity, pip, isBuy);
     }
 
     function cancelAllReduceOrder(
@@ -380,6 +391,7 @@ abstract contract PositionHouseBase is
             uint256 depositAmount,
             ,
             uint256 withdrawAmount
+            ,
         ) = _internalOpenMarketPosition(param, true);
         // return depositAmount, fee and withdrawAmount
         return (
@@ -435,6 +447,7 @@ abstract contract PositionHouseBase is
                 positionData: _positionDataWithManualMargin,
                 trader: _trader,
                 initialMargin: 0,
+                isReduceOrder: true,
                 sourceChainRequestKey: sourceChainRequestKey
             });
         }
@@ -472,10 +485,9 @@ abstract contract PositionHouseBase is
                 _pmAddress,
                 _trader
             );
-        require(
-            _positionDataWithManualMargin.quantity == 0,
-            Errors.VL_INVALID_CLAIM_FUND
-        );
+        if (_positionDataWithManualMargin.quantity != 0) {
+            return (0, 0, 0);
+        }
         int256 withdrawAmount = _internalClaimFund(
             _pmAddress,
             _trader,
