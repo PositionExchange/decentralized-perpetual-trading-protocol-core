@@ -103,6 +103,16 @@ abstract contract PositionHouseStorage {
     // PmManager => trader
     mapping(address => mapping(address => Position.Data)) public pendingPositionMap;
 
+    // increase orders
+    mapping(address => mapping(address => PositionLimitOrder.Data[]))
+        internal limitOrders;
+    // reduce orders
+    mapping(address => mapping(address => PositionLimitOrder.Data[]))
+        internal reduceLimitOrders;
+
+    mapping(address => mapping(address => int128))
+        public limitOrderPremiumFraction;
+
     struct OpenMarketEventQueue {
         int256 quantity;
         uint256 openNotional;
