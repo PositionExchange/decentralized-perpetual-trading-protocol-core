@@ -133,6 +133,8 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
         }
         uint256 entryPrice = pResp.entryPrice;
         // update position state
+        InternalOpenMarketPositionParam memory param_ = _param;
+        _updatePositionMap(_pmAddress, param_.trader, pResp.position, isReducePosition);
         {
             // Store to the queue and then execute later
             // !Note support multiple execute update positions
