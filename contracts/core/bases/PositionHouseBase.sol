@@ -633,12 +633,12 @@ abstract contract PositionHouseBase is
 //        accessControllerInterface = IAccessController(_accessControllerAddress);
 //    }
 
-//    function updateConfigNotionalKey(address _pmAddress, bytes32 _key)
-//        external
-//        onlyOwner
-//    {
-//        configNotionalKey[_pmAddress] = _key;
-//    }
+    function updateConfigNotionalKey(address _pmAddress, bytes32 _key)
+        external
+        onlyOwner
+    {
+        configNotionalKey[_pmAddress] = _key;
+    }
 
     // PUBLIC VIEW QUERY
 
