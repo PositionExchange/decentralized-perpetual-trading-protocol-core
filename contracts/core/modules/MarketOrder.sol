@@ -29,7 +29,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
         address positionManager,
         uint256 margin
     );
-    event MarketPositionOpened(address trader, address positionManager);
+    event MarketPositionExecuted(address trader, address positionManager, uint256 requestId);
 
     struct InternalOpenMarketPositionParam {
         IPositionManager positionManager;
@@ -141,25 +141,27 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
             // !Note support multiple execute update positions
             // To determine which order should be emited
             // Currently only support 1 execute per pairmanager and trader, hence there is always only 1 queue event at a time
+            uint256 requestId = IPositionManager(_pmAddress).getRequestId();
             pendingOpenMarketOrderQueues[_pmAddress][_param.trader] = OpenMarketEventQueue(
                 pResp.exchangedPositionSize,
                 pResp.exchangedQuoteAssetAmount,
                 _param.leverage,
                 pResp.entryPrice,
+                orderMargin,
+                requestId
+            );
+        }
+        {
+            InternalOpenMarketPositionParam memory param_ = _param;
+            emit OpenMarket(
+                param_.trader,
+                pResp.exchangedPositionSize,
+                pResp.exchangedQuoteAssetAmount,
+                param_.leverage,
+                pResp.entryPrice,
+                address(param_.positionManager),
                 orderMargin
             );
-            {
-                InternalOpenMarketPositionParam memory param_ = _param;
-                emit OpenMarket(
-                    param_.trader,
-                    pResp.exchangedPositionSize,
-                    pResp.exchangedQuoteAssetAmount,
-                    param_.leverage,
-                    pResp.entryPrice,
-                    address(param_.positionManager),
-                    orderMargin
-                );
-            }
         }
         if (pResp.marginToVault > 0) {
             return (pResp.marginToVault.abs(), pResp.fee, 0, entryPrice);
@@ -170,8 +172,8 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
     
     function _affectOpenMarketEvent(address pm, address trader, bool shouldEmit) internal {
         if (shouldEmit) {
-          // OpenMarketEventQueue memory pResp = pendingOpenMarketOrderQueues[pm][trader];
-          emit MarketPositionOpened(trader, pm);
+          OpenMarketEventQueue memory pResp = pendingOpenMarketOrderQueues[pm][trader];
+          emit MarketPositionExecuted(trader, pm, pResp.requestId);
           // emit OpenMarket(
           //     trader,
           //     pResp.quantity,

@@ -209,4 +209,5 @@ interface IPositionManager {
     ) external;
 
     function withdraw(address _trader, uint256 _amount) external;
+    function getRequestId() external view returns (uint256);
 }

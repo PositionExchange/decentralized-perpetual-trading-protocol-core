@@ -121,6 +121,7 @@ abstract contract PositionHouseStorage {
         uint16 leverage; 
         uint256 entryPrice;
         uint256 margin;
+        uint256 requestId;
     }
     // Mapping pending open market order of each trader
     // Now only support 1 event at a time, due to pendingPositionMap
