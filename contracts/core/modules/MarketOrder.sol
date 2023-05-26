@@ -148,15 +148,18 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
                 pResp.entryPrice,
                 orderMargin
             );
-            emit OpenMarket(
-                _param.trader,
-                pResp.exchangedPositionSize,
-                pResp.exchangedQuoteAssetAmount,
-                _param.leverage,
-                pResp.entryPrice,
-                address(_param.positionManager),
-                orderMargin
-            );
+            {
+                InternalOpenMarketPositionParam memory param_ = _param;
+                emit OpenMarket(
+                    param_.trader,
+                    pResp.exchangedPositionSize,
+                    pResp.exchangedQuoteAssetAmount,
+                    param_.leverage,
+                    pResp.entryPrice,
+                    address(param_.positionManager),
+                    orderMargin
+                );
+            }
         }
         if (pResp.marginToVault > 0) {
             return (pResp.marginToVault.abs(), pResp.fee, 0, entryPrice);
