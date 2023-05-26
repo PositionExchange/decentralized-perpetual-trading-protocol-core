@@ -29,6 +29,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
         address positionManager,
         uint256 margin
     );
+    event MarketPositionOpened(address trader, address positionManager);
 
     struct InternalOpenMarketPositionParam {
         IPositionManager positionManager;
@@ -147,15 +148,15 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
                 pResp.entryPrice,
                 orderMargin
             );
-            // emit OpenMarket(
-            //     _param.trader,
-            //     pResp.exchangedPositionSize,
-            //     pResp.exchangedQuoteAssetAmount,
-            //     _param.leverage,
-            //     pResp.entryPrice,
-            //     _param.positionManager,
-            //     orderMargin
-            // );
+            emit OpenMarket(
+                _param.trader,
+                pResp.exchangedPositionSize,
+                pResp.exchangedQuoteAssetAmount,
+                _param.leverage,
+                pResp.entryPrice,
+                address(_param.positionManager),
+                orderMargin
+            );
         }
         if (pResp.marginToVault > 0) {
             return (pResp.marginToVault.abs(), pResp.fee, 0, entryPrice);
@@ -166,16 +167,17 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
     
     function _affectOpenMarketEvent(address pm, address trader, bool shouldEmit) internal {
         if (shouldEmit) {
-          OpenMarketEventQueue memory pResp = pendingOpenMarketOrderQueues[pm][trader];
-          emit OpenMarket(
-              trader,
-              pResp.quantity,
-              pResp.openNotional,
-              pResp.leverage,
-              pResp.entryPrice,
-              pm,
-              pResp.margin
-          );
+          // OpenMarketEventQueue memory pResp = pendingOpenMarketOrderQueues[pm][trader];
+          emit MarketPositionOpened(trader, pm);
+          // emit OpenMarket(
+          //     trader,
+          //     pResp.quantity,
+          //     pResp.openNotional,
+          //     pResp.leverage,
+          //     pResp.entryPrice,
+          //     pm,
+          //     pResp.margin
+          // );
         } 
         // Now delete the queue
         delete pendingOpenMarketOrderQueues[pm][trader];
