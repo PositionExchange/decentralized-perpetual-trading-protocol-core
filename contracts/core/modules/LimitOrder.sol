@@ -33,7 +33,7 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
     using Quantity for int128;
     using Int256Math for int256;
     using Uint256Math for uint256;
-    
+
 
     function _internalCancelLimitOrder(
         IPositionManager _positionManager,
@@ -115,7 +115,8 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            LimitOverPricedFilled  memory
         )
     {
         PositionHouseStorage.OpenLimitResp memory openLimitResp;
@@ -160,7 +161,8 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
             (
                 openLimitResp.orderId,
                 openLimitResp.sizeOut,
-                openLimitResp.withdrawAmount
+                openLimitResp.withdrawAmount,
+                openLimitResp.limitOverPricedFilled
             ) = _openLimitOrder(openLimitOrderParam);
         }
         {
@@ -235,13 +237,14 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
                     return (
                         getNotionalAndFeeResp.depositAmount,
                         getNotionalAndFeeResp.fee,
-                        uint256(openLimitResp.withdrawAmount.kPositive())
+                        uint256(openLimitResp.withdrawAmount.kPositive()),
+                        openLimitResp.limitOverPricedFilled
                     );
                 }
             }
         }
         _internalEmitEventOpenLimit(_param, openLimitResp.orderId, quantity, 0);
-        return (0, 0, uint256(openLimitResp.withdrawAmount.kPositive()));
+        return (0, 0, uint256(openLimitResp.withdrawAmount.kPositive()),openLimitResp.limitOverPricedFilled);
     }
 
     function _internalEmitEventOpenLimit(
@@ -313,7 +316,8 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
         returns (
             uint64 orderId,
             uint256 sizeOut,
-            int256 totalReturn
+            int256 totalReturn,
+            LimitOverPricedFilled memory limitOverPricedFilled
         )
     {
         {
@@ -342,6 +346,13 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
                     );
             }
             if (sizeOut != 0) {
+                limitOverPricedFilled.entryPrice = PositionMath.calculateEntryPrice(
+                    openNotional,
+                    sizeOut,
+                    _param.positionManager.getBaseBasisPoint()
+                );
+                limitOverPricedFilled.quantity =  sizeOut;
+
                 int256 intSizeOut = _param.rawQuantity > 0
                     ? int256(sizeOut)
                     : -int256(sizeOut);
@@ -379,7 +390,7 @@ abstract contract LimitOrderManager is PositionHouseStorage, Base {
                             // TODO refactor to a flag
                             // flag to compare if (openLimitResp.sizeOut <= _uQuantity)
                             // in this case, sizeOut is just only used to compare to open the limit order
-                            return (orderId, sizeOut + 1, totalReturn);
+                            return (orderId, sizeOut + 1, totalReturn, limitOverPricedFilled);
                         }
                     }
                 }

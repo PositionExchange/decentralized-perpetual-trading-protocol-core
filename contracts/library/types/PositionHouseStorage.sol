@@ -48,10 +48,16 @@ abstract contract PositionHouseStorage {
         bytes32 sourceChainRequestKey;
     }
 
+    struct LimitOverPricedFilled {
+        uint256 entryPrice;
+        uint256 quantity;
+    }
+
     struct OpenLimitResp {
         uint64 orderId;
         uint256 sizeOut;
         int256 withdrawAmount;
+        LimitOverPricedFilled limitOverPricedFilled;
     }
 
     struct GetNotionalAndFeeResp {

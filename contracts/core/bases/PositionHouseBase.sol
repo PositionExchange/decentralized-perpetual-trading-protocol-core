@@ -23,6 +23,7 @@ import {CumulativePremiumFractions} from "../modules/CumulativePremiumFractions.
 import {LimitOrderManager} from "../modules/LimitOrder.sol";
 import {MarketOrder} from "../modules/MarketOrder.sol";
 import {Base} from "../modules/Base.sol";
+import "../../library/positions/HouseBaseParam.sol";
 
 
 abstract contract PositionHouseBase is
@@ -165,7 +166,8 @@ abstract contract PositionHouseBase is
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            LimitOverPricedFilled memory
         )
     {
         onlyCounterParty();
@@ -216,14 +218,15 @@ abstract contract PositionHouseBase is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
+            LimitOverPricedFilled memory limitOverPricedFilled
         ) = _internalOpenLimitOrder(internalOpenLimitOrderParam);
         _validateInitialMargin(_param.initialMargin, depositAmount);
         // return depositAmount, fee and withdrawAmount
         if (needClaim) {
-            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount);
+            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount, limitOverPricedFilled);
         }
-        return (depositAmount, fee, withdrawAmount);
+        return (depositAmount, fee, withdrawAmount, limitOverPricedFilled);
     }
 
     /**
@@ -419,7 +422,8 @@ abstract contract PositionHouseBase is
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            LimitOverPricedFilled memory
         )
     {
         onlyCounterParty();
@@ -454,10 +458,11 @@ abstract contract PositionHouseBase is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
+            LimitOverPricedFilled memory limitOverPricedFilled
         ) = _internalOpenLimitOrder(internalOpenLimitOrderParam);
         // return depositAmount, fee and withdrawAmount
-        return (depositAmount, fee, withdrawAmount);
+        return (depositAmount, fee, withdrawAmount, limitOverPricedFilled);
     }
 
     function clearTraderData(address _pmAddress, address _trader)
