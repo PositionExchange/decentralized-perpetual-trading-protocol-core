@@ -117,7 +117,7 @@ contract ValidatorCore is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
         ) = positionHouseInterface.openLimitOrder(param);
         revert(Errors.VL_PASS_ALL);
     }
@@ -220,7 +220,7 @@ contract ValidatorCore is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
         ) = positionHouseInterface.closeLimitPosition(
                 _positionManagerInterface,
                 _pip,

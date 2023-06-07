@@ -387,7 +387,7 @@ contract CrossChainGateway is
         (
             uint256 _depositAmount,
             uint256 _fee,
-            uint256 _withdrawAmount
+            uint256 _withdrawAmount,
         ) = positionHouse.openLimitOrder(param);
         _handleBalanceChangedEvent(
             _pmAddress,
@@ -606,7 +606,7 @@ contract CrossChainGateway is
         (
             uint256 _depositAmount,
             uint256 _fee,
-            uint256 _withdrawAmount
+            uint256 _withdrawAmount,
         ) = positionHouse.closeLimitPosition(
                 IPositionManager(_pmAddress),
                 _pip,

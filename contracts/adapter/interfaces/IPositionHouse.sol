@@ -4,6 +4,7 @@ pragma solidity ^0.8.8;
 import "../../library/positions/Position.sol";
 import "../../library/positions/PositionLimitOrder.sol";
 import "../../library/positions/HouseBaseParam.sol";
+import "../../library/types/PositionHouseStorage.sol";
 
 interface IPositionHouse {
     function getPosition(address _pmAddress, address _trader)
@@ -98,8 +99,9 @@ interface IPositionHouse {
         returns (
             uint256,
             uint256,
-            uint256
-        );
+            uint256,
+            PositionHouseStorage.LimitOverPricedFilled memory
+    );
 
     function closePosition(
         IPositionManager _positionManager,
@@ -136,7 +138,8 @@ interface IPositionHouse {
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            PositionHouseStorage.LimitOverPricedFilled memory
         );
 
     function liquidate(

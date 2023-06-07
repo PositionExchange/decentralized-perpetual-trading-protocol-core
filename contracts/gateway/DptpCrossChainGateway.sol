@@ -18,6 +18,7 @@ import {Quantity} from "../library/helpers/Quantity.sol";
 import {Errors} from "../library/helpers/Errors.sol";
 import "../adapter/interfaces/IDPTPValidator.sol";
 import "../library/positions/Position.sol";
+import "../library/types/PositionHouseStorage.sol";
 
 contract DptpCrossChainGateway is
     PausableUpgradeable,
@@ -393,19 +394,40 @@ contract DptpCrossChainGateway is
 
         validateChainIDAndManualMargin(_sourceBcId, pmAddress, param.trader, 0);
 
-        {
-            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
-            if (isLong) {
-                require(param.pip < currentPip, "must less than current pip");
-            } else {
-                require(
-                    param.pip > currentPip,
-                    "must greater than current pip"
-                );
-            }
+//        {
+//            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
+//            if (isLong) {
+//                require(param.pip < currentPip, "must less than current pip");
+//            } else {
+//                require(
+//                    param.pip > currentPip,
+//                    "must greater than current pip"
+//                );
+//            }
+//        }
+
+        (
+            ,
+            ,
+            ,
+            PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled
+        ) = IPositionHouse(positionHouse).openLimitOrder(param);
+
+        if (limitOverPricedFilled.entryPrice != 0) {
+            _crossBlockchainCall(
+                _sourceBcId,
+                destChainFuturesGateways[_sourceBcId],
+                abi.encodeWithSelector(
+                    EXECUTE_INCREASE_POSITION_METHOD,
+                    param.sourceChainRequestKey,
+                    limitOverPricedFilled.entryPrice,
+                    limitOverPricedFilled.quantity,
+                    isLong
+                )
+            );
+
         }
 
-        IPositionHouse(positionHouse).openLimitOrder(param);
 
         // store key for callback execute
         requestKeyData[param.sourceChainRequestKey] = RequestKeyData(
@@ -554,20 +576,21 @@ contract DptpCrossChainGateway is
             (bytes32, address, uint256, uint256, address)
         );
 
+        bool isLong;
         {
             Position.Data memory position = IPositionHouse(positionHouse)
                 .getPosition(pmAddress, trader);
             // Close order side is oposite to position side
-            bool orderSideIsLong = position.quantity < 0;
-            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
-            if (orderSideIsLong) {
-                require(pip < currentPip, "must less than current pip");
-            } else {
-                require(pip > currentPip, "must greater than current pip");
-            }
+            isLong = position.quantity > 0 ? true : false;
+//            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
+//            if (orderSideIsLong) {
+//                require(pip < currentPip, "must less than current pip");
+//            } else {
+//                require(pip > currentPip, "must greater than current pip");
+//            }
         }
 
-        (, uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
+        (, uint256 fee, uint256 withdrawAmount, PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled) = IPositionHouse(positionHouse)
             .closeLimitPosition(
                 IPositionManager(pmAddress),
                 uint128(pip),
@@ -575,6 +598,24 @@ contract DptpCrossChainGateway is
                 trader,
                 requestKey
             );
+
+        if (limitOverPricedFilled.entryPrice != 0) {
+
+            _crossBlockchainCall(
+                _sourceBcId,
+                destChainFuturesGateways[_sourceBcId],
+                abi.encodeWithSelector(
+                    EXECUTE_DECREASE_POSITION_METHOD,
+                    requestKey,
+                    withdrawAmount,
+                    fee,
+                    limitOverPricedFilled.entryPrice,
+                    limitOverPricedFilled.quantity,
+                    isLong
+                )
+            );
+
+        }
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
     }

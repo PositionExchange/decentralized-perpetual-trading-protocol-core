@@ -65,7 +65,8 @@ contract UserGatewayTest is TesterGateway {
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
+            PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled
         ) = positionHouseInterface.openLimitOrder(param);
         _handleMarginToInsuranceFund(
             _positionManagerInterface,

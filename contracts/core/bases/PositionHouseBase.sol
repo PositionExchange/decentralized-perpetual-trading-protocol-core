@@ -23,11 +23,10 @@ import {CumulativePremiumFractions} from "../modules/CumulativePremiumFractions.
 import {LimitOrderManager} from "../modules/LimitOrder.sol";
 import {MarketOrder} from "../modules/MarketOrder.sol";
 import {Base} from "../modules/Base.sol";
+import "../../library/positions/HouseBaseParam.sol";
 
 
 abstract contract PositionHouseBase is
-    ReentrancyGuardUpgradeable,
-    OwnableUpgradeable,
     CumulativePremiumFractions,
     LimitOrderManager,
     MarketOrder
@@ -40,6 +39,12 @@ abstract contract PositionHouseBase is
     using Position for Position.Data;
     using Position for Position.LiquidatedData;
     using PositionManagerAdapter for PositionHouseBase;
+
+    address public owner;
+    modifier onlyOwner() {
+        require(owner == msg.sender, "Only owner");
+        _;
+    }
 
 //    event MarginAdded(
 //        address trader,
@@ -62,7 +67,8 @@ abstract contract PositionHouseBase is
         IPositionHouseConfigurationProxy _positionHouseConfigurationProxy,
         IPositionNotionalConfigProxy _positionNotionalConfigProxy,
         IAccessController _accessControllerInterface
-    ) public initializer {
+    ) public {
+        owner = msg.sender;
 //        __ReentrancyGuard_init();
 //        __Ownable_init();
 //        insuranceFundInterface = IInsuranceFund(_insuranceFund);
@@ -165,7 +171,8 @@ abstract contract PositionHouseBase is
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            LimitOverPricedFilled memory
         )
     {
         onlyCounterParty();
@@ -216,14 +223,15 @@ abstract contract PositionHouseBase is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
+            LimitOverPricedFilled memory limitOverPricedFilled
         ) = _internalOpenLimitOrder(internalOpenLimitOrderParam);
         _validateInitialMargin(_param.initialMargin, depositAmount);
         // return depositAmount, fee and withdrawAmount
         if (needClaim) {
-            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount);
+            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount, limitOverPricedFilled);
         }
-        return (depositAmount, fee, withdrawAmount);
+        return (depositAmount, fee, withdrawAmount, limitOverPricedFilled);
     }
 
     /**
@@ -241,7 +249,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
-        nonReentrant
+
         returns (
             uint256,
             uint256,
@@ -272,7 +280,7 @@ abstract contract PositionHouseBase is
         address _trader
     )
         external
-        nonReentrant
+
         returns (
             uint256,
             uint256,
@@ -354,52 +362,51 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
-        nonReentrant
+
         returns (
             uint256,
             uint256,
             uint256
         )
     {
-        // TODO: Un-comment me
-//        onlyCounterParty();
-//        Position.Data
-//            memory _positionDataWithManualMargin = getPositionWithManualMargin(
-//                address(_positionManager),
-//                _trader
-//            );
-//        uint256 withdrawAmountWhenCancelOrder = _internalCancelMultiPendingOrder(
-//                _positionManager,
-//                _trader,
-//                CancelAllOption.BOTH
-//            );
-//        InternalOpenMarketPositionParam memory param;
-//        {
-//            param = InternalOpenMarketPositionParam({
-//                positionManager: _positionManager,
-//                side: _positionDataWithManualMargin.quantity > 0
-//                    ? Position.Side.SHORT
-//                    : Position.Side.LONG,
-//                quantity: _positionDataWithManualMargin.quantity.abs(),
-//                leverage: _positionDataWithManualMargin.leverage,
-//                positionData: _positionDataWithManualMargin,
-//                trader: _trader,
-//                initialMargin: 0
-//            });
-//        }
-//        // must reuse this code instead of using function _internalCloseMarketPosition
-//        (
-//            uint256 depositAmount,
-//            ,
-//            uint256 withdrawAmount
-//            ,
-//        ) = _internalOpenMarketPosition(param, true);
-//        // return depositAmount, fee and withdrawAmount
-//        return (
-//            depositAmount,
-//            0,
-//            withdrawAmount + withdrawAmountWhenCancelOrder
-//        );
+        onlyCounterParty();
+        Position.Data
+            memory _positionDataWithManualMargin = getPositionWithManualMargin(
+                address(_positionManager),
+                _trader
+            );
+        uint256 withdrawAmountWhenCancelOrder = _internalCancelMultiPendingOrder(
+                _positionManager,
+                _trader,
+                CancelAllOption.BOTH
+            );
+        InternalOpenMarketPositionParam memory param;
+        {
+            param = InternalOpenMarketPositionParam({
+                positionManager: _positionManager,
+                side: _positionDataWithManualMargin.quantity > 0
+                    ? Position.Side.SHORT
+                    : Position.Side.LONG,
+                quantity: _positionDataWithManualMargin.quantity.abs(),
+                leverage: _positionDataWithManualMargin.leverage,
+                positionData: _positionDataWithManualMargin,
+                trader: _trader,
+                initialMargin: 0
+            });
+        }
+        // must reuse this code instead of using function _internalCloseMarketPosition
+        (
+            uint256 depositAmount,
+            ,
+            uint256 withdrawAmount
+            ,
+        ) = _internalOpenMarketPosition(param, true);
+        // return depositAmount, fee and withdrawAmount
+        return (
+            depositAmount,
+            0,
+            withdrawAmount + withdrawAmountWhenCancelOrder
+        );
     }
 
     /**
@@ -420,7 +427,8 @@ abstract contract PositionHouseBase is
         returns (
             uint256,
             uint256,
-            uint256
+            uint256,
+            LimitOverPricedFilled memory
         )
     {
         onlyCounterParty();
@@ -455,15 +463,16 @@ abstract contract PositionHouseBase is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
+            uint256 withdrawAmount,
+            LimitOverPricedFilled memory limitOverPricedFilled
         ) = _internalOpenLimitOrder(internalOpenLimitOrderParam);
         // return depositAmount, fee and withdrawAmount
-        return (depositAmount, fee, withdrawAmount);
+        return (depositAmount, fee, withdrawAmount, limitOverPricedFilled);
     }
 
     function clearTraderData(address _pmAddress, address _trader)
         external
-        nonReentrant
+
     {
         onlyCounterParty();
         clearPosition(_pmAddress, _trader);
@@ -472,7 +481,7 @@ abstract contract PositionHouseBase is
     function claimFund(IPositionManager _positionManager, address _trader)
         external
         virtual
-        nonReentrant
+
         returns (
             uint256,
             uint256,
@@ -503,7 +512,7 @@ abstract contract PositionHouseBase is
         require(
             AccessControllerAdapter.isGatewayOrCoreContract(
                 accessControllerInterface,
-                _msgSender()
+                msg.sender
             ),
             Errors.VL_NOT_COUNTERPARTY
         );
@@ -539,7 +548,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
-        nonReentrant
+
         returns (
             uint256,
             uint256,
@@ -577,7 +586,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
-        nonReentrant
+
         returns (
             uint256,
             uint256,
@@ -606,18 +615,17 @@ abstract contract PositionHouseBase is
         uint256 _liquidatedAbsoluteMargin,
         uint256 _liquidatedNotional,
         int256 _liquidatedManualMargin
-    ) external nonReentrant {
-        // TODO: Un-comment me
-//        onlyCounterParty();
-//        debtPosition[_pmAddress][_trader].updateDebt(
-//            _liquidatedQuantity,
-//            _liquidatedMargin,
-//            _liquidatedAbsoluteMargin,
-//            _liquidatedNotional
-//        );
+    ) external {
+        onlyCounterParty();
+        debtPosition[_pmAddress][_trader].updateDebt(
+            _liquidatedQuantity,
+            _liquidatedMargin,
+            _liquidatedAbsoluteMargin,
+            _liquidatedNotional
+        );
 
         // reduce manual margin by liquidatedManualMargin
-//        _updateManualMargin(_pmAddress, _trader, -_liquidatedManualMargin);
+        _updateManualMargin(_pmAddress, _trader, -_liquidatedManualMargin);
     }
 
     // OWNER UPDATE VARIABLE STORAGE
@@ -1059,5 +1067,10 @@ abstract contract PositionHouseBase is
         returns (Position.LiquidatedData memory)
     {
         return debtPosition[_pmAddress][_trader];
+    }
+
+
+    function transferOwnership(address _newOwner) public onlyOwner {
+        owner = _newOwner;
     }
 }
