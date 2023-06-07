@@ -354,16 +354,13 @@ contract DptpCrossChainGateway is
         // store key for callback execute
         requestKeyData[requestKey] = RequestKeyData(pmAddress, param.trader);
 
-        _crossBlockchainCall(
+
+        executeIncreaseOrder(
             _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
-            abi.encodeWithSelector(
-                EXECUTE_INCREASE_POSITION_METHOD,
-                requestKey,
-                entryPrice,
-                param.quantity,
-                isLong
-            )
+            requestKey,
+            entryPrice,
+            param.quantity,
+            isLong
         );
 
         IOrderTracker(orderTracker).claimPendingFund();
@@ -414,18 +411,13 @@ contract DptpCrossChainGateway is
         ) = IPositionHouse(positionHouse).openLimitOrder(param);
 
         if (limitOverPricedFilled.entryPrice != 0) {
-            _crossBlockchainCall(
+            executeIncreaseOrder(
                 _sourceBcId,
-                destChainFuturesGateways[_sourceBcId],
-                abi.encodeWithSelector(
-                    EXECUTE_INCREASE_POSITION_METHOD,
-                    param.sourceChainRequestKey,
-                    limitOverPricedFilled.entryPrice,
-                    limitOverPricedFilled.quantity,
-                    isLong
-                )
+                param.sourceChainRequestKey,
+                limitOverPricedFilled.entryPrice,
+                limitOverPricedFilled.quantity,
+                isLong
             );
-
         }
 
 
@@ -871,7 +863,7 @@ contract DptpCrossChainGateway is
         uint256 _entryPrice,
         uint256 _quantity,
         bool _isLong
-    ) external override {
+    ) public override {
         _crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
