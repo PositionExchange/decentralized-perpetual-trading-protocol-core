@@ -27,8 +27,6 @@ import "../../library/positions/HouseBaseParam.sol";
 
 
 abstract contract PositionHouseBase is
-    ReentrancyGuardUpgradeable,
-    OwnableUpgradeable,
     CumulativePremiumFractions,
     LimitOrderManager,
     MarketOrder
@@ -41,6 +39,12 @@ abstract contract PositionHouseBase is
     using Position for Position.Data;
     using Position for Position.LiquidatedData;
     using PositionManagerAdapter for PositionHouseBase;
+
+    address public owner;
+    modifier onlyOwner() {
+        require(owner == msg.sender, "Only owner");
+        _;
+    }
 
 //    event MarginAdded(
 //        address trader,
@@ -63,7 +67,8 @@ abstract contract PositionHouseBase is
         IPositionHouseConfigurationProxy _positionHouseConfigurationProxy,
         IPositionNotionalConfigProxy _positionNotionalConfigProxy,
         IAccessController _accessControllerInterface
-    ) public initializer {
+    ) public {
+        owner = msg.sender;
 //        __ReentrancyGuard_init();
 //        __Ownable_init();
 //        insuranceFundInterface = IInsuranceFund(_insuranceFund);
@@ -244,7 +249,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
-        nonReentrant
+        
         returns (
             uint256,
             uint256,
@@ -275,7 +280,7 @@ abstract contract PositionHouseBase is
         address _trader
     )
         external
-        nonReentrant
+        
         returns (
             uint256,
             uint256,
@@ -357,7 +362,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
-        nonReentrant
+        
         returns (
             uint256,
             uint256,
@@ -467,7 +472,7 @@ abstract contract PositionHouseBase is
 
     function clearTraderData(address _pmAddress, address _trader)
         external
-        nonReentrant
+        
     {
         onlyCounterParty();
         clearPosition(_pmAddress, _trader);
@@ -476,7 +481,7 @@ abstract contract PositionHouseBase is
     function claimFund(IPositionManager _positionManager, address _trader)
         external
         virtual
-        nonReentrant
+        
         returns (
             uint256,
             uint256,
@@ -507,7 +512,7 @@ abstract contract PositionHouseBase is
         require(
             AccessControllerAdapter.isGatewayOrCoreContract(
                 accessControllerInterface,
-                _msgSender()
+                msg.sender
             ),
             Errors.VL_NOT_COUNTERPARTY
         );
@@ -543,7 +548,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
-        nonReentrant
+        
         returns (
             uint256,
             uint256,
@@ -581,7 +586,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
-        nonReentrant
+        
         returns (
             uint256,
             uint256,
@@ -610,7 +615,7 @@ abstract contract PositionHouseBase is
         uint256 _liquidatedAbsoluteMargin,
         uint256 _liquidatedNotional,
         int256 _liquidatedManualMargin
-    ) external nonReentrant {
+    ) external  {
         onlyCounterParty();
         debtPosition[_pmAddress][_trader].updateDebt(
             _liquidatedQuantity,
@@ -1062,5 +1067,10 @@ abstract contract PositionHouseBase is
         returns (Position.LiquidatedData memory)
     {
         return debtPosition[_pmAddress][_trader];
+    }
+
+
+    function transferOwnership(address _newOwner) public onlyOwner {
+        owner = _newOwner;
     }
 }

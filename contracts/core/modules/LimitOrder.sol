@@ -11,7 +11,7 @@ import "../../library/types/PositionHouseStorage.sol";
 import {Errors} from "../../library/helpers/Errors.sol";
 import "./Base.sol";
 
-abstract contract LimitOrderManager is PositionHouseStorage, Base {
+abstract contract   LimitOrderManager is PositionHouseStorage, Base {
     event OpenLimit(
         uint64 orderId,
         address trader,
