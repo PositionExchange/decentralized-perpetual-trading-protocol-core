@@ -369,45 +369,44 @@ abstract contract PositionHouseBase is
             uint256
         )
     {
-        // TODO: Un-comment me
-//        onlyCounterParty();
-//        Position.Data
-//            memory _positionDataWithManualMargin = getPositionWithManualMargin(
-//                address(_positionManager),
-//                _trader
-//            );
-//        uint256 withdrawAmountWhenCancelOrder = _internalCancelMultiPendingOrder(
-//                _positionManager,
-//                _trader,
-//                CancelAllOption.BOTH
-//            );
-//        InternalOpenMarketPositionParam memory param;
-//        {
-//            param = InternalOpenMarketPositionParam({
-//                positionManager: _positionManager,
-//                side: _positionDataWithManualMargin.quantity > 0
-//                    ? Position.Side.SHORT
-//                    : Position.Side.LONG,
-//                quantity: _positionDataWithManualMargin.quantity.abs(),
-//                leverage: _positionDataWithManualMargin.leverage,
-//                positionData: _positionDataWithManualMargin,
-//                trader: _trader,
-//                initialMargin: 0
-//            });
-//        }
-//        // must reuse this code instead of using function _internalCloseMarketPosition
-//        (
-//            uint256 depositAmount,
-//            ,
-//            uint256 withdrawAmount
-//            ,
-//        ) = _internalOpenMarketPosition(param, true);
-//        // return depositAmount, fee and withdrawAmount
-//        return (
-//            depositAmount,
-//            0,
-//            withdrawAmount + withdrawAmountWhenCancelOrder
-//        );
+        onlyCounterParty();
+        Position.Data
+            memory _positionDataWithManualMargin = getPositionWithManualMargin(
+                address(_positionManager),
+                _trader
+            );
+        uint256 withdrawAmountWhenCancelOrder = _internalCancelMultiPendingOrder(
+                _positionManager,
+                _trader,
+                CancelAllOption.BOTH
+            );
+        InternalOpenMarketPositionParam memory param;
+        {
+            param = InternalOpenMarketPositionParam({
+                positionManager: _positionManager,
+                side: _positionDataWithManualMargin.quantity > 0
+                    ? Position.Side.SHORT
+                    : Position.Side.LONG,
+                quantity: _positionDataWithManualMargin.quantity.abs(),
+                leverage: _positionDataWithManualMargin.leverage,
+                positionData: _positionDataWithManualMargin,
+                trader: _trader,
+                initialMargin: 0
+            });
+        }
+        // must reuse this code instead of using function _internalCloseMarketPosition
+        (
+            uint256 depositAmount,
+            ,
+            uint256 withdrawAmount
+            ,
+        ) = _internalOpenMarketPosition(param, true);
+        // return depositAmount, fee and withdrawAmount
+        return (
+            depositAmount,
+            0,
+            withdrawAmount + withdrawAmountWhenCancelOrder
+        );
     }
 
     /**
@@ -616,18 +615,17 @@ abstract contract PositionHouseBase is
         uint256 _liquidatedAbsoluteMargin,
         uint256 _liquidatedNotional,
         int256 _liquidatedManualMargin
-    ) external nonReentrant {
-        // TODO: Un-comment me
-//        onlyCounterParty();
-//        debtPosition[_pmAddress][_trader].updateDebt(
-//            _liquidatedQuantity,
-//            _liquidatedMargin,
-//            _liquidatedAbsoluteMargin,
-//            _liquidatedNotional
-//        );
+    ) external {
+        onlyCounterParty();
+        debtPosition[_pmAddress][_trader].updateDebt(
+            _liquidatedQuantity,
+            _liquidatedMargin,
+            _liquidatedAbsoluteMargin,
+            _liquidatedNotional
+        );
 
         // reduce manual margin by liquidatedManualMargin
-//        _updateManualMargin(_pmAddress, _trader, -_liquidatedManualMargin);
+        _updateManualMargin(_pmAddress, _trader, -_liquidatedManualMargin);
     }
 
     // OWNER UPDATE VARIABLE STORAGE
