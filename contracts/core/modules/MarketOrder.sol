@@ -10,7 +10,7 @@ import "../../library/types/PositionHouseStorage.sol";
 import {Errors} from "../../library/helpers/Errors.sol";
 import "./Base.sol";
 
-abstract contract MarketOrder is PositionHouseStorage, Base {
+abstract contract MarketOrder is PositionHouseStorage {
     using PositionLimitOrder for mapping(address => mapping(address => PositionLimitOrder.Data[]));
     using Quantity for int256;
     using Int256Math for int256;
@@ -86,7 +86,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
             ? int256(_param.quantity)
             : -int256(_param.quantity);
         //leverage must be greater than old position and in range of allowed leverage
-        require(
+        _require(
             _param.leverage >= _param.positionData.leverage &&
                 _param.leverage <= _param.positionManager.getLeverage() &&
                 _param.leverage > 0,
@@ -109,7 +109,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
                 param_.positionData,
                 param_.initialMargin
             );
-            require(
+            _require(
                 _checkMaxNotional(
                     pResp.exchangedQuoteAssetAmount,
                     _pmAddress,
@@ -206,7 +206,7 @@ abstract contract MarketOrder is PositionHouseStorage, Base {
                 _trader
             );
         {
-            require(
+            _require(
                 _positionDataWithManualMargin.quantity.abs() != 0,
                 Errors.VL_INVALID_CLOSE_QUANTITY
             );

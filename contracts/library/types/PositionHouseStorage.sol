@@ -7,8 +7,9 @@ import "../../adapter/interfaces/IPositionHouseConfigurationProxy.sol";
 import "../../adapter/interfaces/IPositionNotionalConfigProxy.sol";
 import "../../adapter/interfaces/IPositionStrategyOrder.sol";
 import "../../adapter/interfaces/IAccessController.sol";
+import "../../core/modules/Base.sol";
 
-abstract contract PositionHouseStorage {
+abstract contract PositionHouseStorage  is Base{
     using PositionLimitOrder for mapping(address => mapping(address => PositionLimitOrder.Data[]));
     using Quantity for int256;
     using Quantity for int128;
@@ -133,4 +134,7 @@ abstract contract PositionHouseStorage {
     // Now only support 1 event at a time, due to pendingPositionMap
     // PmManager => trader
     mapping(address => mapping(address => OpenMarketEventQueue)) public pendingOpenMarketOrderQueues;
+
+    address public owner;
+    bool internal _initialized;
 }

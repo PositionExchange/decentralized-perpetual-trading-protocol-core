@@ -40,11 +40,7 @@ abstract contract PositionHouseBase is
     using Position for Position.LiquidatedData;
     using PositionManagerAdapter for PositionHouseBase;
 
-    address public owner;
-    modifier onlyOwner() {
-        require(owner == msg.sender, "Only owner");
-        _;
-    }
+
 
 //    event MarginAdded(
 //        address trader,
@@ -68,7 +64,9 @@ abstract contract PositionHouseBase is
         IPositionNotionalConfigProxy _positionNotionalConfigProxy,
         IAccessController _accessControllerInterface
     ) public {
+        _require(!_initialized, "initialized");
         owner = msg.sender;
+        _initialized = true;
 //        __ReentrancyGuard_init();
 //        __Ownable_init();
 //        insuranceFundInterface = IInsuranceFund(_insuranceFund);
@@ -438,7 +436,7 @@ abstract contract PositionHouseBase is
                 _trader
             );
         {
-            require(
+            _require(
                 _positionDataWithManualMargin.quantity.abs() != 0,
                 Errors.VL_INVALID_CLOSE_QUANTITY
             );
@@ -509,13 +507,13 @@ abstract contract PositionHouseBase is
     }
 
     function onlyCounterParty() internal {
-        require(
-            AccessControllerAdapter.isGatewayOrCoreContract(
-                accessControllerInterface,
-                msg.sender
-            ),
-            Errors.VL_NOT_COUNTERPARTY
-        );
+
+        if (!AccessControllerAdapter.isGatewayOrCoreContract(
+            accessControllerInterface,
+            msg.sender
+        )) {
+            revert(Errors.VL_NOT_COUNTERPARTY);
+        }
     }
 
     function _internalClaimFund(
@@ -644,9 +642,9 @@ abstract contract PositionHouseBase is
 //    }
 
     function updateConfigNotionalKey(address _pmAddress, bytes32 _key)
-        external
-        onlyOwner
+        public
     {
+        onlyOwner();
         configNotionalKey[_pmAddress] = _key;
     }
 
@@ -710,7 +708,7 @@ abstract contract PositionHouseBase is
         );
         if (positionData.lastUpdatedCumulativePremiumFraction == 0) {
             positionData
-                .lastUpdatedCumulativePremiumFraction = _getLimitOrderPremiumFraction(
+                .lastUpdatedCumulativePremiumFraction = getLimitOrderPremiumFraction(
                 _pmAddress,
                 _trader
             );
@@ -771,7 +769,7 @@ abstract contract PositionHouseBase is
                     _getPositionMap(a, t),
                     getLimitOrders(a, t),
                     getReduceLimitOrders(a, t),
-                    _getLimitOrderPremiumFraction(a, t),
+                    getLimitOrderPremiumFraction(a, t),
                     getLatestCumulativePremiumFraction(a)
                 );
         }
@@ -828,13 +826,13 @@ abstract contract PositionHouseBase is
         }
     }
 
-    function getLimitOrderPremiumFraction(address _pmAddress, address _trader)
-        public
-        view
-        returns (int128)
-    {
-        return _getLimitOrderPremiumFraction(_pmAddress, _trader);
-    }
+//    function getLimitOrderPremiumFraction(address _pmAddress, address _trader)
+//        public
+//        view
+//        returns (int128)
+//    {
+//        return _getLimitOrderPremiumFraction(_pmAddress, _trader);
+//    }
 
     function getLatestCumulativePremiumFraction(address _pmAddress)
         public
@@ -1001,9 +999,9 @@ abstract contract PositionHouseBase is
         address _pmAddress,
         address _trader,
         Position.Data memory newData,
-        bool isReducePosittion
+        bool isReducePosition
     ) internal override(Base) {
-      if(isReducePosittion){
+      if(isReducePosition){
         // Update the position data directly for reducing position
         positionMap[_pmAddress][_trader].update(newData);
         return;
@@ -1070,7 +1068,13 @@ abstract contract PositionHouseBase is
     }
 
 
-    function transferOwnership(address _newOwner) public onlyOwner {
+    function transferOwnership(address _newOwner) public {
+        onlyOwner();
         owner = _newOwner;
     }
+
+    function onlyOwner() public view {
+        if (owner != msg.sender) {revert("!Owner");}
+    }
+
 }
