@@ -103,4 +103,10 @@ abstract contract Base {
         view
         virtual
         returns (Position.Data memory);
+
+
+    function _require(bool condition, string memory reason) internal pure {
+        require(condition, reason);
+    }
+
 }

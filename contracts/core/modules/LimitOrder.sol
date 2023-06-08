@@ -11,7 +11,7 @@ import "../../library/types/PositionHouseStorage.sol";
 import {Errors} from "../../library/helpers/Errors.sol";
 import "./Base.sol";
 
-abstract contract   LimitOrderManager is PositionHouseStorage, Base {
+abstract contract   LimitOrderManager is PositionHouseStorage {
     event OpenLimit(
         uint64 orderId,
         address trader,
@@ -523,8 +523,8 @@ abstract contract   LimitOrderManager is PositionHouseStorage, Base {
         }
     }
 
-    function _getLimitOrderPremiumFraction(address _pmAddress, address _trader)
-        internal
+    function getLimitOrderPremiumFraction(address _pmAddress, address _trader)
+        public
         view
         returns (int128)
     {
