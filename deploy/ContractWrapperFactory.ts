@@ -640,9 +640,10 @@ export class ContractWrapperFactory {
         const accessControllerAdapterContractAddress = await this.db.findAddressByKey(`AccessControllerAdapter`);
         console.log(`accessControllerAdapterContractAddress ${accessControllerAdapterContractAddress}`);
 
-        let dptpValidatorAddress = await this.db.findAddressByKey("DptpValidator")
+        const contractName = "DPTPValidator"
+        let dptpValidatorAddress = await this.db.findAddressByKey(contractName)
 
-        let dptpValidatorFactory = await this.hre.ethers.getContractFactory("DPTPValidator", {
+        let dptpValidatorFactory = await this.hre.ethers.getContractFactory(contractName, {
             libraries: {
                 PositionManagerAdapter: positionManagerAdapterContractAddress,
                 AccessControllerAdapter: accessControllerAdapterContractAddress
@@ -651,9 +652,9 @@ export class ContractWrapperFactory {
 
         if (dptpValidatorAddress) {
             const upgraded = await this.hre.upgrades.upgradeProxy(dptpValidatorAddress, dptpValidatorFactory, {unsafeAllowLinkedLibraries: true})
-            console.log(`Starting verify upgrade Dptp Validator`)
+            console.log(`Starting verify upgrade ${contractName}`)
             await this.verifyImplContract(upgraded.deployTransaction)
-            console.log(`Upgrade Dptp Validator`)
+            console.log(`Upgrade ${contractName}`)
         } else {
             const contractArgs = [
                 args.positionHouse,
@@ -665,9 +666,9 @@ export class ContractWrapperFactory {
             await instance.deployed()
 
             const address = instance.address.toString().toLowerCase()
-            console.log(`Dptp Validator : ${address}`)
+            console.log(`${contractName} : ${address}`)
             dptpValidatorAddress = address
-            await this.db.saveAddressByKey('DptpValidator', address)
+            await this.db.saveAddressByKey(contractName, address)
             await this.verifyProxy(address)
         }
         await this.updateValidatedStatusInAccessController(dptpValidatorAddress)

@@ -1,6 +1,7 @@
 import {MigrationContext, MigrationDefinition} from "../types";
 import {ContractWrapperFactory} from "../ContractWrapperFactory";
-import {PositionHouse} from "../../typeChain";
+import {DptpCrossChainGateway, DPTPValidator, InsuranceFund, OrderTracker, PositionHouse} from "../../typeChain";
+import {ContractTransaction} from "ethers";
 
 
 const migrations: MigrationDefinition = {
@@ -81,6 +82,30 @@ const migrations: MigrationDefinition = {
                 positionStrategyOrder: positionStrategyOrderContractAddress,
                 insuranceFund: insuranceFundContractAddress
             })
+        },
+
+        "re-config after deploy new position house": async () => {
+
+            const positionHouse = await context.factory.getDeployedContract<PositionHouse>("PositionHouse")
+
+            const orderTracker = await context.factory.getDeployedContract<OrderTracker>("OrderTracker");
+            const dptpCrossChainGateway = await context.factory.getDeployedContract<DptpCrossChainGateway>("DptpCrossChainGateway")
+            const userGateway = await context.factory.getDeployedContract<DptpCrossChainGateway>("UserGateway")
+            const dptpValidator = await context.factory.getDeployedContract<DPTPValidator>("DPTPValidator")
+
+            let tx: Promise<ContractTransaction>
+
+            tx = dptpCrossChainGateway.setPositionHouse(positionHouse.address);
+            await context.factory.waitTx(tx, "orderTracker.setCrossChainGateway")
+
+            tx = orderTracker.setPositionHouse(positionHouse.address);
+            await context.factory.waitTx(tx, "orderTracker.setPositionHouse")
+
+            tx = userGateway.setPositionHouse(positionHouse.address);
+            await context.factory.waitTx(tx, "userGateway.setPositionHouse")
+
+            tx = dptpValidator.setPositionHouse(positionHouse.address);
+            await context.factory.waitTx(tx, "dptpValidator.setPositionHouse")
         },
     })
 }

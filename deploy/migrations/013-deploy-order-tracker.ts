@@ -24,12 +24,12 @@ const migrations: MigrationDefinition = {
 
       // tx = orderTracker.setCrossChainGateway(dptpCrossChainGateway.address);
       // await context.factory.waitTx(tx, "orderTracker.setCrossChainGateway")
-      //
-      // tx = orderTracker.setPositionHouse(positionHouse);
-      // await context.factory.waitTx(tx, "orderTracker.setPositionHouse")
 
-      tx = dptpCrossChainGateway.setOrderTracker(orderTracker.address);
-      await context.factory.waitTx(tx, "orderTracker.setOrderTracker")
+      tx = orderTracker.setPositionHouse(positionHouse);
+      await context.factory.waitTx(tx, "orderTracker.setPositionHouse")
+
+      // tx = dptpCrossChainGateway.setOrderTracker(orderTracker.address);
+      // await context.factory.waitTx(tx, "orderTracker.setOrderTracker")
     },
   }),
 };
