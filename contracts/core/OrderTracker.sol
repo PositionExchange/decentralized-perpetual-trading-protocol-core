@@ -440,7 +440,8 @@ contract OrderTracker is
             _requestKey,
             entryPrice,
             _size,
-            _isBuy
+            _isBuy,
+            true
         );
     }
 
