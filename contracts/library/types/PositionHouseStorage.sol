@@ -52,6 +52,7 @@ abstract contract PositionHouseStorage  is Base{
     struct LimitOverPricedFilled {
         uint256 entryPrice;
         uint256 quantity;
+        bool isExecutedFully;
     }
 
     struct OpenLimitResp {

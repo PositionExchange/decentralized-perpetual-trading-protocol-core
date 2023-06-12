@@ -351,7 +351,8 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                     sizeOut,
                     _param.positionManager.getBaseBasisPoint()
                 );
-                limitOverPricedFilled.quantity = sizeOut == _param.rawQuantity.abs128() ? 0 : sizeOut/_param.leverage;
+                limitOverPricedFilled.quantity = sizeOut/_param.leverage;
+                limitOverPricedFilled.isExecutedFully  = sizeOut == _param.rawQuantity.abs128();
 
                 int256 intSizeOut = _param.rawQuantity > 0
                     ? int256(sizeOut)

@@ -418,7 +418,7 @@ contract DptpCrossChainGateway is
                 limitOverPricedFilled.entryPrice,
                 limitOverPricedFilled.quantity,
                 isLong,
-                limitOverPricedFilled.quantity == 0
+                limitOverPricedFilled.isExecutedFully
             );
         }
 
