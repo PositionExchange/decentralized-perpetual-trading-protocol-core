@@ -53,7 +53,7 @@ contract DptpCrossChainGateway is
 
     bytes4 private constant EXECUTE_INCREASE_POSITION_METHOD =
         bytes4(
-            keccak256("executeIncreasePosition(bytes32,uint256,uint256,bool,bool)")
+            keccak256("executeIncreasePosition(bytes32,uint256,uint256,bool,bool,uint16)")
         );
 
     bytes4 private constant EXECUTE_DECREASE_POSITION_METHOD =
@@ -361,7 +361,8 @@ contract DptpCrossChainGateway is
             entryPrice,
             param.quantity,
             isLong,
-            true
+            true,
+            param.leverage
         );
 
         IOrderTracker(orderTracker).claimPendingFund();
@@ -418,7 +419,8 @@ contract DptpCrossChainGateway is
                 limitOverPricedFilled.entryPrice,
                 limitOverPricedFilled.quantity,
                 isLong,
-                limitOverPricedFilled.isExecutedFully
+                limitOverPricedFilled.isExecutedFully,
+                limitOverPricedFilled.leverage
             );
         }
 
@@ -865,7 +867,8 @@ contract DptpCrossChainGateway is
         uint256 _entryPrice,
         uint256 _quantity,
         bool _isLong,
-        bool _isExecutedFully
+        bool _isExecutedFully,
+        uint16 _leverage
     ) public override {
         _crossBlockchainCall(
             _sourceBcId,
@@ -876,7 +879,8 @@ contract DptpCrossChainGateway is
                 _entryPrice,
                 _quantity,
                 _isLong,
-                _isExecutedFully
+                _isExecutedFully,
+                _leverage
             )
         );
     }

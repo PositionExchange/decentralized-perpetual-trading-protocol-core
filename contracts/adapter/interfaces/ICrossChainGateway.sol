@@ -8,7 +8,8 @@ interface ICrossChainGateway {
         uint256 _entryPrice,
         uint256 _quantity,
         bool _isLong,
-        bool _isExecutedFully
+        bool _isExecutedFully,
+        uint16 _leverage
     ) external;
 
     function executeDecreaseOrder(
