@@ -441,7 +441,8 @@ contract OrderTracker is
             entryPrice,
             _size,
             _isBuy,
-            true
+            true,
+            0
         );
     }
 
