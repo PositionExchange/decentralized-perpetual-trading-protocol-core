@@ -70,6 +70,9 @@ describe("OrderTracker", () => {
             orderTracker
         ] = await deployPositionHouse() as any
 
+        await userGateway.setPositionHouse(positionHouse.address)
+
+
         await positionHouseConfigurationProxy.updateInitialMarginSlippage(100)
         await positionManager.updateMaxPercentMarketMarket(2**16 - 1)
     })
@@ -177,6 +180,33 @@ describe("OrderTracker", () => {
             );
         }
     }
+
+    describe("limit over price", () => {
+        it("should", async()=>{
+
+            await openLimitPositionAndExpect({
+                limitPrice: 5100,
+                side: SIDE.SHORT,
+                leverage: 10,
+                quantity: BigNumber.from(toWei(10)),
+                _trader: trader1,
+                _positionManager: positionManager,
+                skipCheckBalance: true
+            })
+
+
+            await openLimitPositionAndExpect({
+                limitPrice: 5100,
+                side: SIDE.LONG,
+                leverage: 10,
+                quantity: BigNumber.from(toWei(10)),
+                _trader: trader1,
+                _positionManager: positionManager,
+                skipCheckBalance: true
+            })
+
+        })
+    })
 
     describe("should fill and accumulated filled order correctly", async () => {
         it("should get correct total pnl and position info", async () => {

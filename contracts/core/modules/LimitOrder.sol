@@ -346,14 +346,10 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                     );
             }
             if (sizeOut != 0) {
-                limitOverPricedFilled.entryPrice = PositionMath.calculateEntryPrice(
-                    openNotional,
-                    sizeOut,
-                    _param.positionManager.getBaseBasisPoint()
-                );
+                limitOverPricedFilled.entryPrice = (openNotional *  _param.positionManager.getBasisPoint())/sizeOut ;
                 limitOverPricedFilled.quantity = sizeOut;
                 limitOverPricedFilled.leverage = _param.leverage;
-                limitOverPricedFilled.isExecutedFully  = sizeOut == _param.rawQuantity.abs128();
+                limitOverPricedFilled.isExecutedFully = sizeOut == _param.rawQuantity.abs128();
 
                 int256 intSizeOut = _param.rawQuantity > 0
                     ? int256(sizeOut)

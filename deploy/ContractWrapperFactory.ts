@@ -13,6 +13,7 @@ import {DeployDataStore} from "./DataStore";
 import {verifyContract} from "../scripts/utils";
 import {TransactionResponse} from "@ethersproject/abstract-provider";
 import {HardhatRuntimeEnvironment} from "hardhat/types";
+// @ts-ignore
 import {HardhatDefenderUpgrades} from "@openzeppelin/hardhat-defender";
 // @ts-ignore
 import {
@@ -24,7 +25,6 @@ import {
     ValidatorGateway
 } from "../typeChain";
 import {BigNumber, ContractTransaction, ethers as ethersE} from "ethers";
-import {applyWorkaround} from "hardhat/internal/util/antlr-prototype-pollution-workaround";
 
 
 export class ContractWrapperFactory {
