@@ -65,6 +65,11 @@ contract TesterGateway is
         insuranceFundInterface = IInsuranceFund(_insuranceFundAddress);
     }
 
+    function setPositionHouse( address _positionHouseAddress) external {
+        positionHouseInterface = IPositionHouse(_positionHouseAddress);
+
+    }
+
     function openMarketPosition(
         IPositionManager _positionManagerInterface,
         Position.Side _side,

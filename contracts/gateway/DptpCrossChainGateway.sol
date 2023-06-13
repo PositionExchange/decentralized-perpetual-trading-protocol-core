@@ -413,6 +413,8 @@ contract DptpCrossChainGateway is
         ) = IPositionHouse(positionHouse).openLimitOrder(param);
 
         if (limitOverPricedFilled.entryPrice != 0) {
+            limitOverPricedFilled.entryPrice = (limitOverPricedFilled.entryPrice * WEI_DECIMAL)/IPositionManager(pmAddress).getBasisPoint();
+
             executeIncreaseOrder(
                 _sourceBcId,
                 param.sourceChainRequestKey,

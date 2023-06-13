@@ -206,7 +206,7 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
     await userGateway.initialize(positionHouse.address, positionStrategyOrder.address, positionHouseConfiguration.address, insuranceFund.address)
     await liquidatorGateway.initialize(positionHouse.address, positionHouseConfiguration.address, insuranceFund.address, 920000, 97)
     await crossChainGateway.initialize(positionHouse.address, positionStrategyOrder.address, 920000, 97, 86400)
-    await orderTracker.initialize()
+    await orderTracker.initialize(accessController.address,crossChainGateway.address,positionHouse.address )
     await crossChainGateway.setInsuranceFund(insuranceFund.address)
     await crossChainGateway.setDPTPValidator(dptpValidator.address)
     await liquidatorGateway.setDPTPValidator(dptpValidator.address)
@@ -232,7 +232,7 @@ export async function deployPositionHouse(isCoinMargin? : boolean){
         await insuranceFund.connect(trader).setCounterParty(positionManager.address);
     }
 
-    await positionHouse.setPositionStrategyOrder(positionStrategyOrder.address)
+    // await positionHouse.setPositionStrategyOrder(positionStrategyOrder.address)
 
     await positionHouse.updateConfigNotionalKey(positionManager.address, ethers.utils.formatBytes32String("TEST"))
     await positionHouse.updateConfigNotionalKey(fundingRateTest.address, ethers.utils.formatBytes32String("TEST"))
