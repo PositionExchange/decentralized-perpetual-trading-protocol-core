@@ -575,20 +575,22 @@ contract DptpCrossChainGateway is
         );
 
         bool isLong;
+        uint256 entryPrice;
         {
-            Position.Data memory position = IPositionHouse(positionHouse)
+            Position.Data memory positionData = IPositionHouse(positionHouse)
                 .getPosition(pmAddress, trader);
-            // Close order side is oposite to position side
-            isLong = position.quantity > 0 ? true : false;
-//            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
-//            if (orderSideIsLong) {
-//                require(pip < currentPip, "must less than current pip");
-//            } else {
-//                require(pip > currentPip, "must greater than current pip");
-//            }
+            uint256 quantityAbs = positionData.quantity.abs();
+            if (quantity >= quantityAbs) {
+                entryPrice = 0;
+            } else {
+                entryPrice = positionData.openNotional.mul(WEI_DECIMAL).div(
+                    quantityAbs
+                );
+            }
+            isLong = positionData.quantity > 0 ? true : false;
+            emit EntryPrice(entryPrice);
         }
-
-        (, uint256 fee, uint256 withdrawAmount, PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled) = IPositionHouse(positionHouse)
+        (, , uint256 withdrawAmount, PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled) = IPositionHouse(positionHouse)
             .closeLimitPosition(
                 IPositionManager(pmAddress),
                 uint128(pip),
@@ -598,7 +600,7 @@ contract DptpCrossChainGateway is
             );
 
         if (limitOverPricedFilled.entryPrice != 0) {
-
+            limitOverPricedFilled.entryPrice = entryPrice;
             _crossBlockchainCall(
                 _sourceBcId,
                 destChainFuturesGateways[_sourceBcId],
@@ -606,7 +608,7 @@ contract DptpCrossChainGateway is
                     EXECUTE_DECREASE_POSITION_METHOD,
                     requestKey,
                     withdrawAmount,
-                    fee,
+                    limitOverPricedFilled.closeFee,
                     limitOverPricedFilled.entryPrice,
                     limitOverPricedFilled.quantity,
                     isLong
