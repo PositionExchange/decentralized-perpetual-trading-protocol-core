@@ -588,17 +588,20 @@ contract DptpCrossChainGateway is
         );
 
         bool isLong;
+        uint256 entryPrice;
         {
-            Position.Data memory position = IPositionHouse(positionHouse)
-                .getPosition(pmAddress, trader);
-            // Close order side is oposite to position side
-            isLong = position.quantity > 0 ? true : false;
-//            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
-//            if (orderSideIsLong) {
-//                require(pip < currentPip, "must less than current pip");
-//            } else {
-//                require(pip > currentPip, "must greater than current pip");
-//            }
+            Position.Data memory positionData = IPositionHouse(positionHouse)
+            .getPosition(pmAddress, trader);
+            uint256 quantityAbs = positionData.quantity.abs();
+            if (quantity >= quantityAbs) {
+                entryPrice = 0;
+            } else {
+                entryPrice = positionData.openNotional.mul(WEI_DECIMAL).div(
+                    quantityAbs
+                );
+            }
+            isLong = positionData.quantity > 0 ? true : false;
+            emit EntryPrice(entryPrice);
         }
         (, , uint256 withdrawAmount, PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled) = IPositionHouse(positionHouse)
             .closeLimitPosition(
@@ -609,21 +612,33 @@ contract DptpCrossChainGateway is
                 requestKey
             );
 
-        if (limitOverPricedFilled.entryPrice != 0) {
+        if (limitOverPricedFilled.entryPrice != 0)
+        {
             limitOverPricedFilled.entryPrice = entryPrice;
-            _crossBlockchainCall(
+            executeDecreaseOrder(
                 _sourceBcId,
-                destChainFuturesGateways[_sourceBcId],
-                abi.encodeWithSelector(
-                    EXECUTE_DECREASE_POSITION_METHOD,
-                    requestKey,
-                    withdrawAmount,
-                    limitOverPricedFilled.closeFee,
-                    limitOverPricedFilled.entryPrice,
-                    limitOverPricedFilled.quantity,
-                    isLong
-                )
+                requestKey,
+                withdrawAmount,
+                limitOverPricedFilled.closeFee,
+                limitOverPricedFilled.entryPrice,
+                limitOverPricedFilled.quantity,
+                isLong,
+                limitOverPricedFilled.isExecutedFully
             );
+
+//            _crossBlockchainCall(
+//                _sourceBcId,
+//                destChainFuturesGateways[_sourceBcId],
+//                abi.encodeWithSelector(
+//                    EXECUTE_DECREASE_POSITION_METHOD,
+//                    requestKey,
+//                    withdrawAmount,
+//                    limitOverPricedFilled.closeFee,
+//                    limitOverPricedFilled.entryPrice,
+//                    limitOverPricedFilled.quantity,
+//                    isLong
+//                )
+//            );
 
         }
 
