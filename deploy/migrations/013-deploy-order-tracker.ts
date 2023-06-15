@@ -22,8 +22,8 @@ const migrations: MigrationDefinition = {
 
       let tx: Promise<ContractTransaction>
 
-      // tx = orderTracker.setCrossChainGateway(dptpCrossChainGateway.address);
-      // await context.factory.waitTx(tx, "orderTracker.setCrossChainGateway")
+      tx = orderTracker.setCrossChainGateway(dptpCrossChainGateway.address);
+      await context.factory.waitTx(tx, "orderTracker.setCrossChainGateway")
 
       tx = orderTracker.setPositionHouse(positionHouse);
       await context.factory.waitTx(tx, "orderTracker.setPositionHouse")

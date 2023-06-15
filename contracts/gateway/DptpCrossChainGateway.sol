@@ -59,7 +59,8 @@ contract DptpCrossChainGateway is
     bytes4 private constant EXECUTE_DECREASE_POSITION_METHOD =
         bytes4(
             keccak256(
-                "executeDecreasePosition(bytes32,uint256,uint256,uint256,uint256,bool)"
+                //uint256 _sourceBcId, bytes32 _requestKey, uint256 _withdrawAmount, uint256 _fee, uint256 _entryPrice, uint256 _quantity, bool _isLong, bool _isExecutedFully
+                "executeDecreasePosition(bytes32,uint256,uint256,uint256,uint256,bool,bool)"
             )
         );
 
@@ -317,7 +318,8 @@ contract DptpCrossChainGateway is
     }
 
     function openMarketPosition(uint256 _sourceBcId, bytes memory _functionCall)
-        internal {
+        internal
+    {
         bytes32 requestKey;
         address pmAddress;
         bool isLong;
@@ -543,19 +545,31 @@ contract DptpCrossChainGateway is
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
 
         uint256 sourceBcId = _sourceBcId;
-        _crossBlockchainCall(
+
+        executeDecreaseOrder(
             sourceBcId,
-            destChainFuturesGateways[sourceBcId],
-            abi.encodeWithSelector(
-                EXECUTE_DECREASE_POSITION_METHOD,
-                requestKey,
-                withdrawAmount,
-                fee,
-                entryPrice,
-                quantity,
-                isLong
-            )
+            requestKey,
+            withdrawAmount,
+            fee,
+            entryPrice,
+            quantity,
+            isLong,
+            true
         );
+//        _crossBlockchainCall(
+//            sourceBcId,
+//            destChainFuturesGateways[sourceBcId],
+//            abi.encodeWithSelector(
+//                EXECUTE_DECREASE_POSITION_METHOD,
+//                requestKey,
+//                withdrawAmount,
+//                fee,
+//                entryPrice,
+//                quantity,
+//                isLong,
+//                true
+//            )
+//        );
 
         IOrderTracker(orderTracker).claimPendingFund();
     }
@@ -577,7 +591,7 @@ contract DptpCrossChainGateway is
         uint256 entryPrice;
         {
             Position.Data memory positionData = IPositionHouse(positionHouse)
-                .getPosition(pmAddress, trader);
+            .getPosition(pmAddress, trader);
             uint256 quantityAbs = positionData.quantity.abs();
             if (quantity >= quantityAbs) {
                 entryPrice = 0;
@@ -598,21 +612,33 @@ contract DptpCrossChainGateway is
                 requestKey
             );
 
-        if (limitOverPricedFilled.entryPrice != 0) {
+        if (limitOverPricedFilled.entryPrice != 0)
+        {
             limitOverPricedFilled.entryPrice = entryPrice;
-            _crossBlockchainCall(
+            executeDecreaseOrder(
                 _sourceBcId,
-                destChainFuturesGateways[_sourceBcId],
-                abi.encodeWithSelector(
-                    EXECUTE_DECREASE_POSITION_METHOD,
-                    requestKey,
-                    withdrawAmount,
-                    limitOverPricedFilled.closeFee,
-                    limitOverPricedFilled.entryPrice,
-                    limitOverPricedFilled.quantity,
-                    isLong
-                )
+                requestKey,
+                withdrawAmount,
+                limitOverPricedFilled.closeFee,
+                limitOverPricedFilled.entryPrice,
+                limitOverPricedFilled.quantity,
+                isLong,
+                limitOverPricedFilled.isExecutedFully
             );
+
+//            _crossBlockchainCall(
+//                _sourceBcId,
+//                destChainFuturesGateways[_sourceBcId],
+//                abi.encodeWithSelector(
+//                    EXECUTE_DECREASE_POSITION_METHOD,
+//                    requestKey,
+//                    withdrawAmount,
+//                    limitOverPricedFilled.closeFee,
+//                    limitOverPricedFilled.entryPrice,
+//                    limitOverPricedFilled.quantity,
+//                    isLong
+//                )
+//            );
 
         }
 
@@ -895,8 +921,9 @@ contract DptpCrossChainGateway is
         uint256 _fee,
         uint256 _entryPrice,
         uint256 _quantity,
-        bool _isLong
-    ) external override {
+        bool _isLong,
+        bool _isExecutedFully
+    ) public override {
         _crossBlockchainCall(
             _sourceBcId,
             destChainFuturesGateways[_sourceBcId],
@@ -907,7 +934,8 @@ contract DptpCrossChainGateway is
                 _fee,
                 _entryPrice,
                 _quantity,
-                _isLong
+                _isLong,
+                _isExecutedFully
             )
         );
     }

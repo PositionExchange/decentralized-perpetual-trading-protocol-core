@@ -19,7 +19,8 @@ interface ICrossChainGateway {
         uint256 _fee,
         uint256 _entryPrice,
         uint256 _quantity,
-        bool _isLong
+        bool _isLong,
+        bool _isExecutedFully
     ) external;
 
     function executeClaimFund(

@@ -466,11 +466,10 @@ contract OrderTracker is
         uint256 baseBasisPoint = manager.getBaseBasisPoint();
         uint256 entryPrice = isFullyClose
             ? 0
-            : _calculateEntryPrice(
+            : (_calculateEntryPrice(
                 positionData.openNotional,
                 quantityAbs,
-                baseBasisPoint
-            );
+                baseBasisPoint) * 10** 18)/baseBasisPoint;
 
         ICrossChainGateway(crossChainGateway).executeDecreaseOrder(
             421613,
@@ -479,7 +478,8 @@ contract OrderTracker is
             0, // Temporary set fee to 0, will calculate later
             entryPrice,
             _size,
-            isLong
+            isLong,
+            isFullyClose
         );
 
         if (isFullyClose) {
