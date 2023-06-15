@@ -317,8 +317,7 @@ contract DptpCrossChainGateway is
     }
 
     function openMarketPosition(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+        internal {
         bytes32 requestKey;
         address pmAddress;
         bool isLong;
