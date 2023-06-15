@@ -53,6 +53,8 @@ abstract contract PositionHouseStorage  is Base{
         uint256 entryPrice;
         uint256 quantity;
         uint16 leverage;
+        /// Used for close with limit over price
+        uint256 closeFee;
         bool isExecutedFully;
     }
 

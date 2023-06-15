@@ -414,6 +414,8 @@ contract DptpCrossChainGateway is
         ) = IPositionHouse(positionHouse).openLimitOrder(param);
 
         if (limitOverPricedFilled.entryPrice != 0) {
+            limitOverPricedFilled.entryPrice = (limitOverPricedFilled.entryPrice * WEI_DECIMAL)/IPositionManager(pmAddress).getBasisPoint();
+
             executeIncreaseOrder(
                 _sourceBcId,
                 param.sourceChainRequestKey,
@@ -598,8 +600,7 @@ contract DptpCrossChainGateway is
 //                require(pip > currentPip, "must greater than current pip");
 //            }
         }
-
-        (, uint256 fee, uint256 withdrawAmount, PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled) = IPositionHouse(positionHouse)
+        (, , uint256 withdrawAmount, PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled) = IPositionHouse(positionHouse)
             .closeLimitPosition(
                 IPositionManager(pmAddress),
                 uint128(pip),
@@ -609,18 +610,20 @@ contract DptpCrossChainGateway is
             );
 
         if (limitOverPricedFilled.entryPrice != 0) {
-
-            executeDecreaseOrder(
+            limitOverPricedFilled.entryPrice = entryPrice;
+            _crossBlockchainCall(
                 _sourceBcId,
-                requestKey,
-                withdrawAmount,
-                fee,
-                limitOverPricedFilled.entryPrice,
-                limitOverPricedFilled.quantity,
-                isLong,
-                limitOverPricedFilled.isExecutedFully
+                destChainFuturesGateways[_sourceBcId],
+                abi.encodeWithSelector(
+                    EXECUTE_DECREASE_POSITION_METHOD,
+                    requestKey,
+                    withdrawAmount,
+                    limitOverPricedFilled.closeFee,
+                    limitOverPricedFilled.entryPrice,
+                    limitOverPricedFilled.quantity,
+                    isLong
+                )
             );
-
 
         }
 
