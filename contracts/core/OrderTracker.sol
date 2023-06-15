@@ -478,7 +478,8 @@ contract OrderTracker is
             0, // Temporary set fee to 0, will calculate later
             entryPrice,
             _size,
-            isLong
+            isLong,
+            isFullyClose
         );
 
         if (isFullyClose) {
