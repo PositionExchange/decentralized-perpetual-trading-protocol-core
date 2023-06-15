@@ -321,7 +321,7 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
         )
     {
         {
-            address _pmAddress = address(_param.positionManager);
+//            address _pmAddress = address(_param.positionManager);
             {
                 require(
                     _param.leverage >= _param.positionData.leverage &&
@@ -369,22 +369,22 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                                 _param.positionData
                             );
                         // total return when partial
-                        uint256 closedFee = _param.positionManager.calcTakerFee(
+                        limitOverPricedFilled.closeFee = _param.positionManager.calcTakerFee(
                             openNotional,
                             false
                         );
                         totalReturn =
                             int256(reducedMargin) +
                             realizedPnl -
-                            int256(closedFee);
+                            int256(limitOverPricedFilled.closeFee);
                         // if new limit order is not same side with old position, sizeOut == _param.positionData.quantity
                         // => close all position and clear position, return sizeOut + 1 mean closed position
                         if (sizeOut == _param.positionData.quantity.abs()) {
                             totalReturn =
                                 realizedPnl +
-                                _getClaimAmount(_pmAddress, _param.trader) -
-                                int256(closedFee);
-                            clearPosition(_pmAddress, _param.trader);
+                                _getClaimAmount(address(_param.positionManager), _param.trader) -
+                                int256(limitOverPricedFilled.closeFee);
+                            clearPosition(address(_param.positionManager), _param.trader);
                             // TODO refactor to a flag
                             // flag to compare if (openLimitResp.sizeOut <= _uQuantity)
                             // in this case, sizeOut is just only used to compare to open the limit order
@@ -404,11 +404,12 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                         openNotional,
                         intSizeOut,
                         _param.leverage,
-                        _pmAddress,
+                        address(_param.positionManager),
                         _param.trader,
                         _param.initialMargin != 0
                             ? filledInitialMargin.abs()
-                            : (openNotional / _param.leverage)
+                            : (openNotional / _param.leverage),
+                        _param.isReduce
                     );
                 }
             }
@@ -449,7 +450,8 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
         uint16 _leverage,
         address _pmAddress,
         address _trader,
-        uint256 _depositedMargin
+        uint256 _depositedMargin,
+        bool isReduce
     ) internal {
         {
             int256 manualAddedMargin = getAddedMargin(_pmAddress, _trader);
@@ -479,7 +481,7 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                     ? int256(_depositedMargin)
                     : -int256(_depositedMargin)
             );
-            _updatePositionMap(_pmAddress, _trader, newData, false);
+            _updatePositionMap(_pmAddress, _trader, newData, isReduce);
         }
     }
 
