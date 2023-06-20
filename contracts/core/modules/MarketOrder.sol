@@ -29,7 +29,11 @@ abstract contract MarketOrder is PositionHouseStorage {
         address positionManager,
         uint256 margin
     );
-    event MarketPositionExecuted(address trader, address positionManager, uint256 requestId);
+    event MarketPositionExecuted(
+        address trader,
+        address positionManager,
+        uint256 requestId
+    );
 
     struct InternalOpenMarketPositionParam {
         IPositionManager positionManager;
@@ -44,15 +48,7 @@ abstract contract MarketOrder is PositionHouseStorage {
     function _internalOpenMarketPosition(
         InternalOpenMarketPositionParam memory _param,
         bool isReducePosition
-    )
-        internal
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    ) internal returns (uint256, uint256, uint256, uint256) {
         address _pmAddress = address(_param.positionManager);
         {
             // @notice
@@ -135,14 +131,21 @@ abstract contract MarketOrder is PositionHouseStorage {
         uint256 entryPrice = pResp.entryPrice;
         // update position state
         InternalOpenMarketPositionParam memory param_ = _param;
-        _updatePositionMap(_pmAddress, param_.trader, pResp.position, isReducePosition);
+        _updatePositionMap(
+            _pmAddress,
+            param_.trader,
+            pResp.position,
+            isReducePosition
+        );
         {
             // Store to the queue and then execute later
             // !Note support multiple execute update positions
             // To determine which order should be emited
             // Currently only support 1 execute per pairmanager and trader, hence there is always only 1 queue event at a time
             uint256 requestId = IPositionManager(_pmAddress).getRequestId();
-            pendingOpenMarketOrderQueues[_pmAddress][_param.trader] = OpenMarketEventQueue(
+            pendingOpenMarketOrderQueues[_pmAddress][
+                _param.trader
+            ] = OpenMarketEventQueue(
                 pResp.exchangedPositionSize,
                 pResp.exchangedQuoteAssetAmount,
                 _param.leverage,
@@ -169,21 +172,27 @@ abstract contract MarketOrder is PositionHouseStorage {
             return (0, pResp.fee, pResp.marginToVault.abs(), entryPrice);
         }
     }
-    
-    function _affectOpenMarketEvent(address pm, address trader, bool shouldEmit) internal {
+
+    function _affectOpenMarketEvent(
+        address pm,
+        address trader,
+        bool shouldEmit
+    ) internal {
         if (shouldEmit) {
-          OpenMarketEventQueue memory pResp = pendingOpenMarketOrderQueues[pm][trader];
-          emit MarketPositionExecuted(trader, pm, pResp.requestId);
-          // emit OpenMarket(
-          //     trader,
-          //     pResp.quantity,
-          //     pResp.openNotional,
-          //     pResp.leverage,
-          //     pResp.entryPrice,
-          //     pm,
-          //     pResp.margin
-          // );
-        } 
+            OpenMarketEventQueue memory pResp = pendingOpenMarketOrderQueues[
+                pm
+            ][trader];
+            emit MarketPositionExecuted(trader, pm, pResp.requestId);
+            // emit OpenMarket(
+            //     trader,
+            //     pResp.quantity,
+            //     pResp.openNotional,
+            //     pResp.leverage,
+            //     pResp.entryPrice,
+            //     pm,
+            //     pResp.margin
+            // );
+        }
         // Now delete the queue
         delete pendingOpenMarketOrderQueues[pm][trader];
     }
@@ -192,14 +201,7 @@ abstract contract MarketOrder is PositionHouseStorage {
         address _pmAddress,
         address _trader,
         uint256 _quantity
-    )
-        internal
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    ) internal returns (uint256, uint256, uint256) {
         Position.Data
             memory _positionDataWithManualMargin = getPositionWithManualMargin(
                 _pmAddress,
@@ -228,8 +230,8 @@ abstract contract MarketOrder is PositionHouseStorage {
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
-            ,
+            uint256 withdrawAmount,
+
         ) = _internalOpenMarketPosition(param, true);
         return (depositAmount, fee, withdrawAmount);
     }

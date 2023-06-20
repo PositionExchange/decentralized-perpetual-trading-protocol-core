@@ -8,35 +8,29 @@ import "../../library/types/PositionHouseStorage.sol";
 import {Errors} from "../../library/helpers/Errors.sol";
 
 abstract contract Base {
-    function getDebtPosition(address _pmAddress, address _trader)
-        public
-        view
-        virtual
-        returns (Position.LiquidatedData memory);
+    function getDebtPosition(
+        address _pmAddress,
+        address _trader
+    ) public view virtual returns (Position.LiquidatedData memory);
 
-    function getPositionWithManualMargin(address _pmAddress, address _trader)
-        public
-        view
-        virtual
-        returns (Position.Data memory);
+    function getPositionWithManualMargin(
+        address _pmAddress,
+        address _trader
+    ) public view virtual returns (Position.Data memory);
 
-    function getPosition(address _pmAddress, address _trader)
-        public
-        view
-        virtual
-        returns (Position.Data memory);
+    function getPosition(
+        address _pmAddress,
+        address _trader
+    ) public view virtual returns (Position.Data memory);
 
-    function getAddedMargin(address _positionManager, address _trader)
-        public
-        view
-        virtual
-        returns (int256);
+    function getAddedMargin(
+        address _positionManager,
+        address _trader
+    ) public view virtual returns (int256);
 
-    function getLatestCumulativePremiumFraction(address _pmAddress)
-        public
-        view
-        virtual
-        returns (int128);
+    function getLatestCumulativePremiumFraction(
+        address _pmAddress
+    ) public view virtual returns (int128);
 
     //    function getManualMargin(address _pmAddress, address _trader)
     //        public
@@ -64,11 +58,10 @@ abstract contract Base {
         CancelAllOption _option
     ) internal virtual returns (uint256);
 
-    function _getClaimAmount(address _pmAddress, address _trader)
-        internal
-        view
-        virtual
-        returns (int256);
+    function _getClaimAmount(
+        address _pmAddress,
+        address _trader
+    ) internal view virtual returns (int256);
 
     function _updatePositionMap(
         address _pmAddress,
@@ -88,9 +81,10 @@ abstract contract Base {
         address _trader
     ) internal virtual;
 
-    function clearPosition(address _pmAddress, address _trader)
-        internal
-        virtual;
+    function clearPosition(
+        address _pmAddress,
+        address _trader
+    ) internal virtual;
 
     function _checkMaxNotional(
         uint256 _notional,
@@ -98,15 +92,12 @@ abstract contract Base {
         uint16 _leverage
     ) internal virtual returns (bool);
 
-    function _getPositionMap(address _pmAddress, address _trader)
-        internal
-        view
-        virtual
-        returns (Position.Data memory);
-
+    function _getPositionMap(
+        address _pmAddress,
+        address _trader
+    ) internal view virtual returns (Position.Data memory);
 
     function _require(bool condition, string memory reason) internal pure {
         require(condition, reason);
     }
-
 }

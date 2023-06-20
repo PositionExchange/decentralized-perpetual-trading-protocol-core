@@ -65,27 +65,24 @@ contract UserGateway is
         insuranceFundInterface = IInsuranceFund(_insuranceFundAddress);
     }
 
-    function payFunding(IPositionManager _positionManagerInterface)
-        public
-        nonReentrant
-    {
+    function payFunding(
+        IPositionManager _positionManagerInterface
+    ) public nonReentrant {
         positionHouseInterface.payFunding(_positionManagerInterface);
     }
 
-    function getTPSLDetail(address _pmAddress, address _trader)
-        public
-        view
-        returns (uint120 lowerPip, uint120 higherPip)
-    {
+    function getTPSLDetail(
+        address _pmAddress,
+        address _trader
+    ) public view returns (uint120 lowerPip, uint120 higherPip) {
         return
             positionStrategyOrderInterface.getTPSLDetail(_pmAddress, _trader);
     }
 
-    function getClaimAmount(address _pmAddress, address _trader)
-        public
-        view
-        returns (int256 totalClaimableAmount)
-    {
+    function getClaimAmount(
+        address _pmAddress,
+        address _trader
+    ) public view returns (int256 totalClaimableAmount) {
         return
             PositionManagerAdapter.getClaimAmount(
                 _pmAddress,
@@ -107,11 +104,10 @@ contract UserGateway is
             );
     }
 
-    function getListOrderPending(address _pmAddress, address _trader)
-        public
-        view
-        returns (PositionHouseStorage.LimitOrderPending[] memory)
-    {
+    function getListOrderPending(
+        address _pmAddress,
+        address _trader
+    ) public view returns (PositionHouseStorage.LimitOrderPending[] memory) {
         return
             PositionManagerAdapter.getListOrderPending(
                 _pmAddress,
@@ -121,27 +117,22 @@ contract UserGateway is
             );
     }
 
-    function getNextFundingTime(IPositionManager _positionManagerInterface)
-        external
-        view
-        returns (uint256)
-    {
+    function getNextFundingTime(
+        IPositionManager _positionManagerInterface
+    ) external view returns (uint256) {
         return _positionManagerInterface.getNextFundingTime();
     }
 
-    function getCurrentFundingRate(IPositionManager _positionManagerInterface)
-        external
-        view
-        returns (int256)
-    {
+    function getCurrentFundingRate(
+        IPositionManager _positionManagerInterface
+    ) external view returns (int256) {
         return _positionManagerInterface.getCurrentFundingRate();
     }
 
-    function getAddedMargin(address _pmAddress, address _trader)
-        public
-        view
-        returns (int256)
-    {
+    function getAddedMargin(
+        address _pmAddress,
+        address _trader
+    ) public view returns (int256) {
         return positionHouseInterface.getAddedMargin(_pmAddress, _trader);
     }
 
@@ -268,22 +259,19 @@ contract UserGateway is
         );
     }
 
-    function getLatestCumulativePremiumFraction(address _pmAddress)
-        public
-        view
-        returns (int128)
-    {
+    function getLatestCumulativePremiumFraction(
+        address _pmAddress
+    ) public view returns (int128) {
         return
             positionHouseInterface.getLatestCumulativePremiumFraction(
                 _pmAddress
             );
     }
 
-    function getPosition(address _pmAddress, address _trader)
-        public
-        view
-        returns (Position.Data memory positionData)
-    {
+    function getPosition(
+        address _pmAddress,
+        address _trader
+    ) public view returns (Position.Data memory positionData) {
         positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
         positionData.margin =
             positionData.margin.absInt() +
@@ -291,20 +279,18 @@ contract UserGateway is
     }
 
     // only for client use, return margin is unsigned
-    function getPositionWithoutManualMargin(address _pmAddress, address _trader)
-        public
-        view
-        returns (Position.Data memory positionData)
-    {
+    function getPositionWithoutManualMargin(
+        address _pmAddress,
+        address _trader
+    ) public view returns (Position.Data memory positionData) {
         positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
         positionData.margin = positionData.margin.absInt();
     }
 
-    function getRemainingBusdBonusAccepted(address _pmAddress, address _trader)
-        public
-        view
-        returns (uint256)
-    {
+    function getRemainingBusdBonusAccepted(
+        address _pmAddress,
+        address _trader
+    ) public view returns (uint256) {
         return
             insuranceFundInterface.getRemainingBusdBonusAccepted(
                 _pmAddress,
@@ -426,12 +412,11 @@ contract UserGateway is
         }
     }
 
-    function _formatBaseBasisPriceToWei(uint256 _price, uint256 _baseBasisPoint)
-        internal
-        view
-        returns (uint256)
-    {
-        return (_price * 10**18) / _baseBasisPoint;
+    function _formatBaseBasisPriceToWei(
+        uint256 _price,
+        uint256 _baseBasisPoint
+    ) internal view returns (uint256) {
+        return (_price * 10 ** 18) / _baseBasisPoint;
     }
 
     function setPositionStrategyOrder(address _strategyOrderAddress) public {
@@ -441,9 +426,7 @@ contract UserGateway is
     }
 
     function setPositionHouse(address _address) public {
-        positionHouseInterface = IPositionHouse(
-            _address
-        );
+        positionHouseInterface = IPositionHouse(_address);
     }
 
     /**

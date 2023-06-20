@@ -26,8 +26,8 @@ interface IPositionHouseViewer {
         Position.Data memory _positionData
     ) external view returns (uint256 positionNotional, int256 unrealizedPnl);
 
-    function getPosition(address _pmAddress, address _trader)
-        external
-        view
-        returns (Position.Data memory positionData);
+    function getPosition(
+        address _pmAddress,
+        address _trader
+    ) external view returns (Position.Data memory positionData);
 }

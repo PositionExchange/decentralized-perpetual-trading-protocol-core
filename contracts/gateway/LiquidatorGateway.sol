@@ -244,9 +244,9 @@ contract LiquidatorGateway is
                             positionHouseInterface.getLimitOrders(a, t),
                             positionHouseInterface.getReduceLimitOrders(a, t),
                             positionHouseInterface.getLimitOrderPremiumFraction(
-                                    a,
-                                    t
-                                ),
+                                a,
+                                t
+                            ),
                             positionHouseInterface
                                 .getLatestCumulativePremiumFraction(a)
                         );
@@ -281,7 +281,7 @@ contract LiquidatorGateway is
                 liquidationPenalty,
                 feeToLiquidator
             );
-            dptpValidator.updateTraderData(_trader,_pmAddress);
+            dptpValidator.updateTraderData(_trader, _pmAddress);
             insuranceFundInterface.withdraw(
                 _pmAddress,
                 _liquidator,
@@ -447,19 +447,17 @@ contract LiquidatorGateway is
         );
     }
 
-    function _getAddedMargin(address _pmAddress, address _trader)
-        internal
-        view
-        returns (int256)
-    {
+    function _getAddedMargin(
+        address _pmAddress,
+        address _trader
+    ) internal view returns (int256) {
         return positionHouseInterface.getAddedMargin(_pmAddress, _trader);
     }
 
-    function getPositionWithIntMargin(address _pmAddress, address _trader)
-        internal
-        view
-        returns (Position.Data memory positionData)
-    {
+    function getPositionWithIntMargin(
+        address _pmAddress,
+        address _trader
+    ) internal view returns (Position.Data memory positionData) {
         positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
         int256 manualAddedMargin = positionHouseInterface.getAddedMargin(
             _pmAddress,
@@ -472,22 +470,20 @@ contract LiquidatorGateway is
         );
     }
 
-    function getPosition(address _pmAddress, address _trader)
-        internal
-        view
-        returns (Position.Data memory positionData)
-    {
+    function getPosition(
+        address _pmAddress,
+        address _trader
+    ) internal view returns (Position.Data memory positionData) {
         positionData = getPositionWithoutManualMargin(_pmAddress, _trader);
         positionData.margin =
             positionData.margin.absInt() +
             _getAddedMargin(_pmAddress, _trader);
     }
 
-    function getPositionWithoutManualMargin(address _pmAddress, address _trader)
-        internal
-        view
-        returns (Position.Data memory positionData)
-    {
+    function getPositionWithoutManualMargin(
+        address _pmAddress,
+        address _trader
+    ) internal view returns (Position.Data memory positionData) {
         positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
     }
 

@@ -7,7 +7,7 @@ import {PositionManagerAdapter} from "../../adapter/PositionManagerAdapter.sol";
 
 abstract contract CumulativePremiumFractions {
     // avoid calling to position manager
-    int256 private constant PREMIUM_FRACTION_DENOMINATOR = 10**10;
+    int256 private constant PREMIUM_FRACTION_DENOMINATOR = 10 ** 10;
     // Cumulative premium fraction
     mapping(address => int128[]) private cumulativePremiumFractions;
 
@@ -20,13 +20,13 @@ abstract contract CumulativePremiumFractions {
     //    );
 
     function payFunding(IPositionManager _positionManager) external {
-//        address _pmAddress = address(_positionManager);
-//        int256 premiumFraction = _positionManager.settleFunding();
-//        int128 newestCumulativePremiumFraction = int128(premiumFraction) +
-//            getLatestCumulativePremiumFraction(_pmAddress);
-//        cumulativePremiumFractions[_pmAddress].push(
-//            newestCumulativePremiumFraction
-//        );
+        //        address _pmAddress = address(_positionManager);
+        //        int256 premiumFraction = _positionManager.settleFunding();
+        //        int128 newestCumulativePremiumFraction = int128(premiumFraction) +
+        //            getLatestCumulativePremiumFraction(_pmAddress);
+        //        cumulativePremiumFractions[_pmAddress].push(
+        //            newestCumulativePremiumFraction
+        //        );
         //        emit FundingPaid(
         //            premiumFraction,
         //            newestCumulativePremiumFraction,
@@ -36,12 +36,9 @@ abstract contract CumulativePremiumFractions {
         //        );
     }
 
-    function getLatestCumulativePremiumFraction(address _positionManager)
-        public
-        view
-        virtual
-        returns (int128)
-    {
+    function getLatestCumulativePremiumFraction(
+        address _positionManager
+    ) public view virtual returns (int128) {
         // save gas
         int128[] memory _fractions = cumulativePremiumFractions[
             _positionManager

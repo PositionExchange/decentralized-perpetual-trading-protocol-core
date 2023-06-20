@@ -315,10 +315,9 @@ contract ValidatorGateway is
         }
     }
 
-    function updateValidateCoreAddress(address _newValidatorCore)
-        external
-        onlyOwner
-    {
+    function updateValidateCoreAddress(
+        address _newValidatorCore
+    ) external onlyOwner {
         validatorCore = IValidatorCore(_newValidatorCore);
     }
 

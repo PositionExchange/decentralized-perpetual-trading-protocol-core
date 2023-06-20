@@ -26,18 +26,18 @@ contract PositionInsuranceReserveFunds is AccessControl {
         );
     }
 
-    function secureFund(IERC20 token, uint256 amount)
-        public
-        onlyRole(MULTI_SIGN_OPERATOR)
-    {
+    function secureFund(
+        IERC20 token,
+        uint256 amount
+    ) public onlyRole(MULTI_SIGN_OPERATOR) {
         // Transfer from insuranceFund
         token.transferFrom(insuranceFund, address(this), amount);
     }
 
-    function returnFund(IERC20 token, uint256 amount)
-        public
-        onlyRole(MULTI_SIGN_OPERATOR)
-    {
+    function returnFund(
+        IERC20 token,
+        uint256 amount
+    ) public onlyRole(MULTI_SIGN_OPERATOR) {
         // Transfer to insuranceFund
         token.transfer(insuranceFund, amount);
     }

@@ -53,7 +53,9 @@ contract DptpCrossChainGateway is
 
     bytes4 private constant EXECUTE_INCREASE_POSITION_METHOD =
         bytes4(
-            keccak256("executeIncreasePosition(bytes32,uint256,uint256,bool,bool,uint16)")
+            keccak256(
+                "executeIncreasePosition(bytes32,uint256,uint256,bool,bool,uint16)"
+            )
         );
 
     bytes4 private constant EXECUTE_DECREASE_POSITION_METHOD =
@@ -87,7 +89,7 @@ contract DptpCrossChainGateway is
             )
         );
 
-    uint256 private constant WEI_DECIMAL = 10**18;
+    uint256 private constant WEI_DECIMAL = 10 ** 18;
 
     struct RequestKeyData {
         address pm;
@@ -317,9 +319,10 @@ contract DptpCrossChainGateway is
         }
     }
 
-    function openMarketPosition(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+    function openMarketPosition(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
         bytes32 requestKey;
         address pmAddress;
         bool isLong;
@@ -355,7 +358,6 @@ contract DptpCrossChainGateway is
         // store key for callback execute
         requestKeyData[requestKey] = RequestKeyData(pmAddress, param.trader);
 
-
         executeIncreaseOrder(
             _sourceBcId,
             requestKey,
@@ -369,9 +371,10 @@ contract DptpCrossChainGateway is
         IOrderTracker(orderTracker).claimPendingFund();
     }
 
-    function openLimitOrder(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+    function openLimitOrder(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
         address pmAddress;
         bool isLong;
         HouseBaseParam.OpenLimitOrderParams memory param;
@@ -394,27 +397,30 @@ contract DptpCrossChainGateway is
 
         validateChainIDAndManualMargin(_sourceBcId, pmAddress, param.trader, 0);
 
-//        {
-//            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
-//            if (isLong) {
-//                require(param.pip < currentPip, "must less than current pip");
-//            } else {
-//                require(
-//                    param.pip > currentPip,
-//                    "must greater than current pip"
-//                );
-//            }
-//        }
+        //        {
+        //            uint128 currentPip = IPositionManager(pmAddress).getCurrentPip();
+        //            if (isLong) {
+        //                require(param.pip < currentPip, "must less than current pip");
+        //            } else {
+        //                require(
+        //                    param.pip > currentPip,
+        //                    "must greater than current pip"
+        //                );
+        //            }
+        //        }
 
         (
             ,
             ,
             ,
-            PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled
+            PositionHouseStorage.LimitOverPricedFilled
+                memory limitOverPricedFilled
         ) = IPositionHouse(positionHouse).openLimitOrder(param);
 
         if (limitOverPricedFilled.entryPrice != 0) {
-            limitOverPricedFilled.entryPrice = (limitOverPricedFilled.entryPrice * WEI_DECIMAL)/IPositionManager(pmAddress).getBasisPoint();
+            limitOverPricedFilled.entryPrice =
+                (limitOverPricedFilled.entryPrice * WEI_DECIMAL) /
+                IPositionManager(pmAddress).getBasisPoint();
 
             executeIncreaseOrder(
                 _sourceBcId,
@@ -427,7 +433,6 @@ contract DptpCrossChainGateway is
             );
         }
 
-
         // store key for callback execute
         requestKeyData[param.sourceChainRequestKey] = RequestKeyData(
             pmAddress,
@@ -435,9 +440,10 @@ contract DptpCrossChainGateway is
         );
     }
 
-    function cancelLimitOrder(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+    function cancelLimitOrder(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
         (
             bytes32 requestKey,
             address pmAddress,
@@ -510,9 +516,10 @@ contract DptpCrossChainGateway is
         }
     }
 
-    function closePosition(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+    function closePosition(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
         bytes32 requestKey;
         address pmAddress;
         uint256 quantity;
@@ -556,27 +563,28 @@ contract DptpCrossChainGateway is
             isLong,
             true
         );
-//        _crossBlockchainCall(
-//            sourceBcId,
-//            destChainFuturesGateways[sourceBcId],
-//            abi.encodeWithSelector(
-//                EXECUTE_DECREASE_POSITION_METHOD,
-//                requestKey,
-//                withdrawAmount,
-//                fee,
-//                entryPrice,
-//                quantity,
-//                isLong,
-//                true
-//            )
-//        );
+        //        _crossBlockchainCall(
+        //            sourceBcId,
+        //            destChainFuturesGateways[sourceBcId],
+        //            abi.encodeWithSelector(
+        //                EXECUTE_DECREASE_POSITION_METHOD,
+        //                requestKey,
+        //                withdrawAmount,
+        //                fee,
+        //                entryPrice,
+        //                quantity,
+        //                isLong,
+        //                true
+        //            )
+        //        );
 
         IOrderTracker(orderTracker).claimPendingFund();
     }
 
-    function closeLimitPosition(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+    function closeLimitPosition(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
         bytes32 requestKey;
         address pmAddress;
         uint256 pip;
@@ -591,7 +599,7 @@ contract DptpCrossChainGateway is
         uint256 entryPrice;
         {
             Position.Data memory positionData = IPositionHouse(positionHouse)
-            .getPosition(pmAddress, trader);
+                .getPosition(pmAddress, trader);
             uint256 quantityAbs = positionData.quantity.abs();
             if (quantity >= quantityAbs) {
                 entryPrice = 0;
@@ -603,8 +611,13 @@ contract DptpCrossChainGateway is
             isLong = positionData.quantity > 0 ? true : false;
             emit EntryPrice(entryPrice);
         }
-        (, , uint256 withdrawAmount, PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled) = IPositionHouse(positionHouse)
-            .closeLimitPosition(
+        (
+            ,
+            ,
+            uint256 withdrawAmount,
+            PositionHouseStorage.LimitOverPricedFilled
+                memory limitOverPricedFilled
+        ) = IPositionHouse(positionHouse).closeLimitPosition(
                 IPositionManager(pmAddress),
                 uint128(pip),
                 quantity,
@@ -612,8 +625,7 @@ contract DptpCrossChainGateway is
                 requestKey
             );
 
-        if (limitOverPricedFilled.entryPrice != 0)
-        {
+        if (limitOverPricedFilled.entryPrice != 0) {
             limitOverPricedFilled.entryPrice = entryPrice;
             executeDecreaseOrder(
                 _sourceBcId,
@@ -626,28 +638,28 @@ contract DptpCrossChainGateway is
                 limitOverPricedFilled.isExecutedFully
             );
 
-//            _crossBlockchainCall(
-//                _sourceBcId,
-//                destChainFuturesGateways[_sourceBcId],
-//                abi.encodeWithSelector(
-//                    EXECUTE_DECREASE_POSITION_METHOD,
-//                    requestKey,
-//                    withdrawAmount,
-//                    limitOverPricedFilled.closeFee,
-//                    limitOverPricedFilled.entryPrice,
-//                    limitOverPricedFilled.quantity,
-//                    isLong
-//                )
-//            );
-
+            //            _crossBlockchainCall(
+            //                _sourceBcId,
+            //                destChainFuturesGateways[_sourceBcId],
+            //                abi.encodeWithSelector(
+            //                    EXECUTE_DECREASE_POSITION_METHOD,
+            //                    requestKey,
+            //                    withdrawAmount,
+            //                    limitOverPricedFilled.closeFee,
+            //                    limitOverPricedFilled.entryPrice,
+            //                    limitOverPricedFilled.quantity,
+            //                    isLong
+            //                )
+            //            );
         }
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
     }
 
-    function removeMargin(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+    function removeMargin(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
         (
             bytes32 requestKey,
             address pmAddress,
@@ -691,9 +703,10 @@ contract DptpCrossChainGateway is
         }
     }
 
-    function addMargin(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+    function addMargin(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
         (
             bytes32 key,
             address pmAddress,
@@ -743,9 +756,10 @@ contract DptpCrossChainGateway is
         );
     }
 
-    function unsetTPAndSL(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+    function unsetTPAndSL(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
         address _pmAddress;
         address _trader;
         (_pmAddress, _trader) = abi.decode(_functionCall, (address, address));
@@ -756,9 +770,10 @@ contract DptpCrossChainGateway is
         );
     }
 
-    function unsetTPOrSL(uint256 _sourceBcId, bytes memory _functionCall)
-        internal
-    {
+    function unsetTPOrSL(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
         address _pmAddress;
         address _trader;
         bool _isHigherPrice;
@@ -875,10 +890,9 @@ contract DptpCrossChainGateway is
         destChainFuturesGateways[_destChainId] = _destFuturesGateway;
     }
 
-    function removeDestChainFuturesGateway(uint256 _destChainId)
-        external
-        onlyOwner
-    {
+    function removeDestChainFuturesGateway(
+        uint256 _destChainId
+    ) external onlyOwner {
         delete destChainFuturesGateways[_destChainId];
     }
 

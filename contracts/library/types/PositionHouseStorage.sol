@@ -9,7 +9,7 @@ import "../../adapter/interfaces/IPositionStrategyOrder.sol";
 import "../../adapter/interfaces/IAccessController.sol";
 import "../../core/modules/Base.sol";
 
-abstract contract PositionHouseStorage  is Base{
+abstract contract PositionHouseStorage is Base {
     using PositionLimitOrder for mapping(address => mapping(address => PositionLimitOrder.Data[]));
     using Quantity for int256;
     using Quantity for int128;
@@ -112,7 +112,8 @@ abstract contract PositionHouseStorage  is Base{
     uint256[49] private __gap;
     // Mapping pending position of each trader
     // PmManager => trader
-    mapping(address => mapping(address => Position.Data)) public pendingPositionMap;
+    mapping(address => mapping(address => Position.Data))
+        public pendingPositionMap;
 
     // increase orders
     mapping(address => mapping(address => PositionLimitOrder.Data[]))
@@ -129,7 +130,7 @@ abstract contract PositionHouseStorage  is Base{
     struct OpenMarketEventQueue {
         int256 quantity;
         uint256 openNotional;
-        uint16 leverage; 
+        uint16 leverage;
         uint256 entryPrice;
         uint256 margin;
         uint256 requestId;
@@ -137,7 +138,8 @@ abstract contract PositionHouseStorage  is Base{
     // Mapping pending open market order of each trader
     // Now only support 1 event at a time, due to pendingPositionMap
     // PmManager => trader
-    mapping(address => mapping(address => OpenMarketEventQueue)) public pendingOpenMarketOrderQueues;
+    mapping(address => mapping(address => OpenMarketEventQueue))
+        public pendingOpenMarketOrderQueues;
 
     address public owner;
     bool internal _initialized;

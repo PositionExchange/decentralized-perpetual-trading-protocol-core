@@ -50,7 +50,6 @@ contract ValidatorCore is
             Errors.VL_INVALID_INPUT
         );
 
-
         positionHouseInterface = IPositionHouse(_positionHouseAddress);
         positionStrategyOrderInterface = IPositionStrategyOrder(
             _positionStrategyOrderAddress
@@ -85,8 +84,8 @@ contract ValidatorCore is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
-            ,
+            uint256 withdrawAmount,
+
         ) = positionHouseInterface.openMarketPosition(param);
         revert(Errors.VL_PASS_ALL);
     }
@@ -119,6 +118,7 @@ contract ValidatorCore is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount,
+
         ) = positionHouseInterface.openLimitOrder(param);
         revert(Errors.VL_PASS_ALL);
     }
@@ -132,7 +132,10 @@ contract ValidatorCore is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount,,,
+            uint256 withdrawAmount,
+            ,
+            ,
+
         ) = positionHouseInterface.cancelLimitOrder(
                 _positionManagerInterface,
                 _orderIdx,
@@ -222,6 +225,7 @@ contract ValidatorCore is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount,
+
         ) = positionHouseInterface.closeLimitPosition(
                 _positionManagerInterface,
                 _pip,
@@ -252,6 +256,7 @@ contract ValidatorCore is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount,
+
         ) = positionStrategyOrderInterface.triggerTPSL(_pmAddress, _trader);
         revert(Errors.VL_PASS_ALL);
     }

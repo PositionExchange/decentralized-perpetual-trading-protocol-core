@@ -120,8 +120,9 @@ contract CrossChainGateway is
             uint256 _depositAmount,
             uint256 _fee,
             uint256 _withdrawAmount,
+
         ) = positionStrategyOrderInterface.triggerTPSL(_pmAddress, _trader);
-        dptpValidator.updateTraderData(_trader,_pmAddress);
+        dptpValidator.updateTraderData(_trader, _pmAddress);
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -291,9 +292,10 @@ contract CrossChainGateway is
         revert("CGW-01");
     }
 
-    function openMarketPosition(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function openMarketPosition(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         uint8 _side;
         HouseBaseParam.OpenMarketOrderParams memory param;
@@ -326,8 +328,8 @@ contract CrossChainGateway is
             (
                 uint256 _depositAmount,
                 uint256 _fee,
-                uint256 _withdrawAmount
-                ,
+                uint256 _withdrawAmount,
+
             ) = positionHouse.openMarketPosition(param);
             _handleBalanceChangedEvent(
                 _pmAddress,
@@ -341,9 +343,10 @@ contract CrossChainGateway is
         }
     }
 
-    function openLimitOrder(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function openLimitOrder(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         uint8 _side;
         HouseBaseParam.OpenLimitOrderParams memory param;
@@ -388,6 +391,7 @@ contract CrossChainGateway is
             uint256 _depositAmount,
             uint256 _fee,
             uint256 _withdrawAmount,
+
         ) = positionHouse.openLimitOrder(param);
         _handleBalanceChangedEvent(
             _pmAddress,
@@ -400,9 +404,10 @@ contract CrossChainGateway is
         );
     }
 
-    function cancelLimitOrder(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function cancelLimitOrder(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         uint64 _orderIdx;
         uint8 _isReduce;
@@ -417,17 +422,17 @@ contract CrossChainGateway is
         (
             uint256 _depositAmount,
             uint256 _fee,
-            uint256 _withdrawAmount,,,
+            uint256 _withdrawAmount,
+            ,
+            ,
+
         ) = positionHouse.cancelLimitOrder(
                 IPositionManager(_pmAddress),
                 _orderIdx,
                 _isReduce,
                 _trader
             );
-        dptpValidator.updateTraderData(
-            _trader,
-            _pmAddress
-        );
+        dptpValidator.updateTraderData(_trader, _pmAddress);
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -439,9 +444,10 @@ contract CrossChainGateway is
         );
     }
 
-    function addMargin(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function addMargin(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         uint256 _amount;
         uint256 _busdBonusAmount;
@@ -482,9 +488,10 @@ contract CrossChainGateway is
         );
     }
 
-    function removeMargin(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function removeMargin(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         uint256 _amount;
         address _trader;
@@ -515,9 +522,10 @@ contract CrossChainGateway is
         );
     }
 
-    function closePosition(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function closePosition(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         uint256 _quantity;
         address _trader;
@@ -536,10 +544,7 @@ contract CrossChainGateway is
                 _quantity,
                 _trader
             );
-        dptpValidator.updateTraderData(
-            _trader,
-            _pmAddress
-        );
+        dptpValidator.updateTraderData(_trader, _pmAddress);
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -574,10 +579,7 @@ contract CrossChainGateway is
                 _quantity,
                 _trader
             );
-        dptpValidator.updateTraderData(
-            _trader,
-            _pmAddress
-        );
+        dptpValidator.updateTraderData(_trader, _pmAddress);
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -589,9 +591,10 @@ contract CrossChainGateway is
         );
     }
 
-    function closeLimitPosition(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function closeLimitPosition(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         uint128 _pip;
         uint256 _quantity;
@@ -607,6 +610,7 @@ contract CrossChainGateway is
             uint256 _depositAmount,
             uint256 _fee,
             uint256 _withdrawAmount,
+
         ) = positionHouse.closeLimitPosition(
                 IPositionManager(_pmAddress),
                 _pip,
@@ -614,10 +618,7 @@ contract CrossChainGateway is
                 _trader,
                 0
             );
-        dptpValidator.updateTraderData(
-            _trader,
-            _pmAddress
-        );
+        dptpValidator.updateTraderData(_trader, _pmAddress);
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -629,9 +630,10 @@ contract CrossChainGateway is
         );
     }
 
-    function claimFund(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function claimFund(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         address _trader;
         (_pmAddress, _trader) = abi.decode(_functionCall, (address, address));
@@ -643,10 +645,7 @@ contract CrossChainGateway is
             uint256 _fee,
             uint256 _withdrawAmount
         ) = positionHouse.claimFund(IPositionManager(_pmAddress), _trader);
-        dptpValidator.updateTraderData(
-            _trader,
-            _pmAddress
-        );
+        dptpValidator.updateTraderData(_trader, _pmAddress);
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -679,9 +678,10 @@ contract CrossChainGateway is
         );
     }
 
-    function unsetTPAndSL(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function unsetTPAndSL(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         address _trader;
         (_pmAddress, _trader) = abi.decode(_functionCall, (address, address));
@@ -689,9 +689,10 @@ contract CrossChainGateway is
         positionStrategyOrderInterface.unsetTPAndSL(_pmAddress, _trader);
     }
 
-    function unsetTPOrSL(bytes memory _functionCall, uint256 _sourceBcId)
-        internal
-    {
+    function unsetTPOrSL(
+        bytes memory _functionCall,
+        uint256 _sourceBcId
+    ) internal {
         address _pmAddress;
         address _trader;
         bool _isHigherPrice;

@@ -21,7 +21,7 @@ library PositionMath {
     using Int256Math for int256;
     using PipConversionMath for uint128;
 
-    int256 private constant PREMIUM_FRACTION_DENOMINATOR = 10**10;
+    int256 private constant PREMIUM_FRACTION_DENOMINATOR = 10 ** 10;
 
     function blockNumber() internal view returns (uint64) {
         return uint64(block.number);
@@ -106,11 +106,10 @@ library PositionMath {
         return partialLiquidateQuantity;
     }
 
-    function floorQuantity(int256 _quantity, int256 _stepBaseSize)
-        public
-        pure
-        returns (int256)
-    {
+    function floorQuantity(
+        int256 _quantity,
+        int256 _stepBaseSize
+    ) public pure returns (int256) {
         return (_quantity / _stepBaseSize) * _stepBaseSize;
     }
 
@@ -374,11 +373,7 @@ library PositionMath {
     )
         public
         view
-        returns (
-            int256 remainMargin,
-            uint256 badDebt,
-            int256 fundingPayment
-        )
+        returns (int256 remainMargin, uint256 badDebt, int256 fundingPayment)
     {
         // calculate fundingPayment
         if (_positionData.quantity != 0) {
@@ -444,11 +439,10 @@ library PositionMath {
         return _positionMargin - _manualMargin;
     }
 
-    function getInitialMarginBasedOnSide(bool _isBuy, int256 _initialMargin)
-        external
-        pure
-        returns (int256)
-    {
+    function getInitialMarginBasedOnSide(
+        bool _isBuy,
+        int256 _initialMargin
+    ) external pure returns (int256) {
         if (_isBuy) {
             return _initialMargin;
         }

@@ -15,7 +15,9 @@ library LimitOrder {
         bytes32 sourceChainRequestKey;
     }
 
-    function getData(LimitOrder.Data storage _self)
+    function getData(
+        LimitOrder.Data storage _self
+    )
         internal
         view
         returns (
@@ -58,20 +60,17 @@ library LimitOrder {
         _self.partialFilled += (_self.size - _self.partialFilled - _remainSize);
     }
 
-    function updateWhenClose(LimitOrder.Data storage _self)
-        internal
-        returns (uint256)
-    {
+    function updateWhenClose(
+        LimitOrder.Data storage _self
+    ) internal returns (uint256) {
         _self.size -= _self.partialFilled;
         _self.partialFilled = 0;
         return (uint256(_self.size));
     }
 
-    function getPartialFilled(LimitOrder.Data storage _self)
-        internal
-        view
-        returns (bool isPartial, uint256 remainingSize)
-    {
+    function getPartialFilled(
+        LimitOrder.Data storage _self
+    ) internal view returns (bool isPartial, uint256 remainingSize) {
         remainingSize = _self.size - _self.partialFilled;
         isPartial = remainingSize > 0;
     }

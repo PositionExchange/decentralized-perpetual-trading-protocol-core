@@ -21,11 +21,9 @@ contract AccessController is
         __Pausable_init();
     }
 
-    function isGatewayOrCoreContract(address _contractAddress)
-        public
-        view
-        returns (bool)
-    {
+    function isGatewayOrCoreContract(
+        address _contractAddress
+    ) public view returns (bool) {
         return validatedContract[_contractAddress];
     }
 

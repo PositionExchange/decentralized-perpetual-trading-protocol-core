@@ -65,9 +65,8 @@ contract TesterGateway is
         insuranceFundInterface = IInsuranceFund(_insuranceFundAddress);
     }
 
-    function setPositionHouse( address _positionHouseAddress) external {
+    function setPositionHouse(address _positionHouseAddress) external {
         positionHouseInterface = IPositionHouse(_positionHouseAddress);
-
     }
 
     function openMarketPosition(
@@ -92,8 +91,8 @@ contract TesterGateway is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
-            ,
+            uint256 withdrawAmount,
+
         ) = positionHouseInterface.openMarketPosition(param);
         _handleMarginToInsuranceFund(
             _positionManagerInterface,
@@ -127,8 +126,8 @@ contract TesterGateway is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount
-            ,
+            uint256 withdrawAmount,
+
         ) = positionHouseInterface.openMarketPosition(param);
         _handleMarginToInsuranceFund(
             _positionManagerInterface,
@@ -165,7 +164,8 @@ contract TesterGateway is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount,
-            PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled
+            PositionHouseStorage.LimitOverPricedFilled
+                memory limitOverPricedFilled
         ) = positionHouseInterface.openLimitOrder(param);
         _handleMarginToInsuranceFund(
             _positionManagerInterface,
@@ -203,7 +203,8 @@ contract TesterGateway is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount,
-            PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled
+            PositionHouseStorage.LimitOverPricedFilled
+                memory limitOverPricedFilled
         ) = positionHouseInterface.openLimitOrder(param);
         _handleMarginToInsuranceFund(
             _positionManagerInterface,
@@ -223,7 +224,10 @@ contract TesterGateway is
         (
             uint256 depositAmount,
             uint256 fee,
-            uint256 withdrawAmount,,,
+            uint256 withdrawAmount,
+            ,
+            ,
+
         ) = positionHouseInterface.cancelLimitOrder(
                 _positionManagerInterface,
                 _orderIdx,
@@ -267,8 +271,11 @@ contract TesterGateway is
         uint256 _amount
     ) external nonReentrant {
         address _trader = msg.sender;
-        (uint256 depositAmount, uint256 fee, uint256 withdrawAmount) = positionHouseInterface
-            .addMargin(
+        (
+            uint256 depositAmount,
+            uint256 fee,
+            uint256 withdrawAmount
+        ) = positionHouseInterface.addMargin(
                 _positionManagerInterface,
                 _amount,
                 // busd bonus amount
@@ -363,7 +370,8 @@ contract TesterGateway is
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount,
-            PositionHouseStorage.LimitOverPricedFilled memory limitOverPricedFilled
+            PositionHouseStorage.LimitOverPricedFilled
+                memory limitOverPricedFilled
         ) = positionHouseInterface.closeLimitPosition(
                 _positionManagerInterface,
                 _pip,
@@ -380,10 +388,9 @@ contract TesterGateway is
         );
     }
 
-    function claimFund(IPositionManager _positionManagerInterface)
-        public
-        nonReentrant
-    {
+    function claimFund(
+        IPositionManager _positionManagerInterface
+    ) public nonReentrant {
         address _trader = msg.sender;
         (
             uint256 depositAmount,
@@ -402,14 +409,15 @@ contract TesterGateway is
         );
     }
 
-    function triggerTPSL(address _pmAddress, address _trader)
-        external
-        nonReentrant
-    {
+    function triggerTPSL(
+        address _pmAddress,
+        address _trader
+    ) external nonReentrant {
         (
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount,
+
         ) = positionStrategyOrderInterface.triggerTPSL(_pmAddress, _trader);
         _handleMarginToInsuranceFund(
             IPositionManager(_pmAddress),
@@ -443,10 +451,10 @@ contract TesterGateway is
         positionStrategyOrderInterface.unsetTPAndSL(_pmAddress, _trader);
     }
 
-    function unsetTPOrSL(address _pmAddress, bool _isHigherPrice)
-        external
-        nonReentrant
-    {
+    function unsetTPOrSL(
+        address _pmAddress,
+        bool _isHigherPrice
+    ) external nonReentrant {
         address _trader = msg.sender;
         positionStrategyOrderInterface.unsetTPOrSL(
             _pmAddress,
@@ -455,27 +463,24 @@ contract TesterGateway is
         );
     }
 
-    function payFunding(IPositionManager _positionManagerInterface)
-        public
-        nonReentrant
-    {
+    function payFunding(
+        IPositionManager _positionManagerInterface
+    ) public nonReentrant {
         positionHouseInterface.payFunding(_positionManagerInterface);
     }
 
-    function getTPSLDetail(address _pmAddress, address _trader)
-        public
-        view
-        returns (uint120 lowerPip, uint120 higherPip)
-    {
+    function getTPSLDetail(
+        address _pmAddress,
+        address _trader
+    ) public view returns (uint120 lowerPip, uint120 higherPip) {
         return
             positionStrategyOrderInterface.getTPSLDetail(_pmAddress, _trader);
     }
 
-    function getClaimAmount(address _pmAddress, address _trader)
-        public
-        view
-        returns (int256 totalClaimableAmount)
-    {
+    function getClaimAmount(
+        address _pmAddress,
+        address _trader
+    ) public view returns (int256 totalClaimableAmount) {
         return
             PositionManagerAdapter.getClaimAmount(
                 _pmAddress,
@@ -497,11 +502,10 @@ contract TesterGateway is
             );
     }
 
-    function getListOrderPending(address _pmAddress, address _trader)
-        public
-        view
-        returns (PositionHouseStorage.LimitOrderPending[] memory)
-    {
+    function getListOrderPending(
+        address _pmAddress,
+        address _trader
+    ) public view returns (PositionHouseStorage.LimitOrderPending[] memory) {
         return
             PositionManagerAdapter.getListOrderPending(
                 _pmAddress,
@@ -511,27 +515,22 @@ contract TesterGateway is
             );
     }
 
-    function getNextFundingTime(IPositionManager _positionManagerInterface)
-        external
-        view
-        returns (uint256)
-    {
+    function getNextFundingTime(
+        IPositionManager _positionManagerInterface
+    ) external view returns (uint256) {
         return _positionManagerInterface.getNextFundingTime();
     }
 
-    function getCurrentFundingRate(IPositionManager _positionManagerInterface)
-        external
-        view
-        returns (int256)
-    {
+    function getCurrentFundingRate(
+        IPositionManager _positionManagerInterface
+    ) external view returns (int256) {
         return _positionManagerInterface.getCurrentFundingRate();
     }
 
-    function getAddedMargin(address _pmAddress, address _trader)
-        public
-        view
-        returns (int256)
-    {
+    function getAddedMargin(
+        address _pmAddress,
+        address _trader
+    ) public view returns (int256) {
         return positionHouseInterface.getAddedMargin(_pmAddress, _trader);
     }
 
@@ -658,33 +657,29 @@ contract TesterGateway is
         );
     }
 
-    function getLatestCumulativePremiumFraction(address _pmAddress)
-        public
-        view
-        returns (int128)
-    {
+    function getLatestCumulativePremiumFraction(
+        address _pmAddress
+    ) public view returns (int128) {
         return
             positionHouseInterface.getLatestCumulativePremiumFraction(
                 _pmAddress
             );
     }
 
-    function getPosition(address _pmAddress, address _trader)
-        public
-        view
-        returns (Position.Data memory positionData)
-    {
+    function getPosition(
+        address _pmAddress,
+        address _trader
+    ) public view returns (Position.Data memory positionData) {
         positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
         positionData.margin =
             positionData.margin.absInt() +
             positionHouseInterface.getAddedMargin(_pmAddress, _trader);
     }
 
-    function getPositionWithoutManualMargin(address _pmAddress, address _trader)
-        public
-        view
-        returns (Position.Data memory positionData)
-    {
+    function getPositionWithoutManualMargin(
+        address _pmAddress,
+        address _trader
+    ) public view returns (Position.Data memory positionData) {
         positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
         positionData.margin = positionData.margin.absInt();
     }
@@ -803,12 +798,11 @@ contract TesterGateway is
         }
     }
 
-    function _formatBaseBasisPriceToWei(uint256 _price, uint256 _baseBasisPoint)
-        internal
-        view
-        returns (uint256)
-    {
-        return (_price * 10**18) / _baseBasisPoint;
+    function _formatBaseBasisPriceToWei(
+        uint256 _price,
+        uint256 _baseBasisPoint
+    ) internal view returns (uint256) {
+        return (_price * 10 ** 18) / _baseBasisPoint;
     }
 
     function updatePositionStrategyOrder(address _strategyOrderAddress) public {

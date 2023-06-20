@@ -9,10 +9,10 @@ contract PositionNotionalConfigProxyTest is Initializable {
     bytes32 constant POSI_BUSD = "POSI_BUSD";
     bytes32 constant TEST = "TEST";
 
-    function getMaxNotional(bytes32 key, uint16 leverage)
-        external
-        returns (uint256)
-    {
+    function getMaxNotional(
+        bytes32 key,
+        uint16 leverage
+    ) external returns (uint256) {
         if (key == BTC_BUSD) {
             //BTC_BUSD hash
             if (leverage == 1) {

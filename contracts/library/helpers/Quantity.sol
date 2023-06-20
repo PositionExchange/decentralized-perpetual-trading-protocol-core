@@ -35,11 +35,10 @@ library Quantity {
 
     // TODO write unit test
     /// @dev return the value of Quantity minus amount
-    function subAmount(int256 _quantity, uint256 _amount)
-        internal
-        pure
-        returns (int256)
-    {
+    function subAmount(
+        int256 _quantity,
+        uint256 _amount
+    ) internal pure returns (int256) {
         return
             _quantity < 0
                 ? _quantity + int256(_amount)
@@ -50,19 +49,17 @@ library Quantity {
         return uint128(abs(_quantity));
     }
 
-    function sumWithUint256(int256 a, uint256 b)
-        internal
-        pure
-        returns (int256)
-    {
+    function sumWithUint256(
+        int256 a,
+        uint256 b
+    ) internal pure returns (int256) {
         return a >= 0 ? a + int256(b) : a - int256(b);
     }
 
-    function minusWithUint256(int256 a, uint256 b)
-        internal
-        pure
-        returns (int256)
-    {
+    function minusWithUint256(
+        int256 a,
+        uint256 b
+    ) internal pure returns (int256) {
         return a >= 0 ? a - int256(b) : a + int256(b);
     }
 }

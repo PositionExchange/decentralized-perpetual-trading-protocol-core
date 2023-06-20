@@ -25,7 +25,6 @@ import {MarketOrder} from "../modules/MarketOrder.sol";
 import {Base} from "../modules/Base.sol";
 import "../../library/positions/HouseBaseParam.sol";
 
-
 abstract contract PositionHouseBase is
     CumulativePremiumFractions,
     LimitOrderManager,
@@ -40,19 +39,17 @@ abstract contract PositionHouseBase is
     using Position for Position.LiquidatedData;
     using PositionManagerAdapter for PositionHouseBase;
 
+    //    event MarginAdded(
+    //        address trader,
+    //        uint256 marginAdded,
+    //        IPositionManager positionManager
+    //    );
 
-
-//    event MarginAdded(
-//        address trader,
-//        uint256 marginAdded,
-//        IPositionManager positionManager
-//    );
-
-//    event MarginRemoved(
-//        address trader,
-//        uint256 marginRemoved,
-//        IPositionManager positionManager
-//    );
+    //    event MarginRemoved(
+    //        address trader,
+    //        uint256 marginRemoved,
+    //        IPositionManager positionManager
+    //    );
 
     //    event FundClaimed(address pmAddress, address trader, uint256 claimedAmount);
 
@@ -67,12 +64,12 @@ abstract contract PositionHouseBase is
         _require(!_initialized, "initialized");
         owner = msg.sender;
         _initialized = true;
-//        __ReentrancyGuard_init();
-//        __Ownable_init();
-//        insuranceFundInterface = IInsuranceFund(_insuranceFund);
-//        positionHouseConfigurationProxy = _positionHouseConfigurationProxy;
-//        positionNotionalConfigProxy = _positionNotionalConfigProxy;
-//        accessControllerInterface = _accessControllerInterface;
+        //        __ReentrancyGuard_init();
+        //        __Ownable_init();
+        //        insuranceFundInterface = IInsuranceFund(_insuranceFund);
+        //        positionHouseConfigurationProxy = _positionHouseConfigurationProxy;
+        //        positionNotionalConfigProxy = _positionNotionalConfigProxy;
+        //        accessControllerInterface = _accessControllerInterface;
     }
 
     /**
@@ -80,16 +77,7 @@ abstract contract PositionHouseBase is
      */
     function openMarketPosition(
         HouseBaseParam.OpenMarketOrderParams memory _param
-    )
-        external
-        virtual
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    ) external virtual returns (uint256, uint256, uint256, uint256) {
         onlyCounterParty();
         address _pmAddress = address(_param.positionManager);
         insuranceFundInterface.validateOrderBusdBonusAmount(
@@ -141,37 +129,36 @@ abstract contract PositionHouseBase is
         _validateInitialMargin(_param.initialMargin, depositAmount);
         // return depositAmount, fee and withdrawAmount
         if (needClaim) {
-            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount, entryPrice);
+            return (
+                depositAmount,
+                fee,
+                claimableAmount.abs() + withdrawAmount,
+                entryPrice
+            );
         }
         return (depositAmount, fee, withdrawAmount, entryPrice);
     }
 
-    function executeStorePosition(
-      address pmAddress,
-      address trader
-    ) external {
+    function executeStorePosition(address pmAddress, address trader) external {
         onlyCounterParty();
         _executeUpdatePositionMap(pmAddress, trader);
     }
 
     function clearStorePendingPosition(
-      address pmAddress,
-      address trader
+        address pmAddress,
+        address trader
     ) external {
         onlyCounterParty();
         pendingPositionMap[pmAddress][trader].clear();
         _affectOpenMarketEvent(pmAddress, trader, false);
     }
 
-    function openLimitOrder(HouseBaseParam.OpenLimitOrderParams memory _param)
+    function openLimitOrder(
+        HouseBaseParam.OpenLimitOrderParams memory _param
+    )
         external
         virtual
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            LimitOverPricedFilled memory
-        )
+        returns (uint256, uint256, uint256, LimitOverPricedFilled memory)
     {
         onlyCounterParty();
         address _pmAddress = address(_param.positionManager);
@@ -227,7 +214,12 @@ abstract contract PositionHouseBase is
         _validateInitialMargin(_param.initialMargin, depositAmount);
         // return depositAmount, fee and withdrawAmount
         if (needClaim) {
-            return (depositAmount, fee, claimableAmount.abs() + withdrawAmount, limitOverPricedFilled);
+            return (
+                depositAmount,
+                fee,
+                claimableAmount.abs() + withdrawAmount,
+                limitOverPricedFilled
+            );
         }
         return (depositAmount, fee, withdrawAmount, limitOverPricedFilled);
     }
@@ -247,15 +239,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
-
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            uint256,
-            uint128,
-            uint8
-        )
+        returns (uint256, uint256, uint256, uint256, uint128, uint8)
     {
         onlyCounterParty();
         (
@@ -264,11 +248,11 @@ abstract contract PositionHouseBase is
             uint128 pip,
             uint8 isBuy
         ) = _internalCancelLimitOrder(
-            _positionManager,
-            _orderIdx,
-            _isReduce,
-            _trader
-        );
+                _positionManager,
+                _orderIdx,
+                _isReduce,
+                _trader
+            );
         // return depositAmount, fee and withdrawAmount
         return (0, 0, withdrawAmount, partialFilledQuantity, pip, isBuy);
     }
@@ -276,15 +260,7 @@ abstract contract PositionHouseBase is
     function cancelAllReduceOrder(
         IPositionManager _positionManager,
         address _trader
-    )
-        external
-
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    ) external returns (uint256, uint256, uint256) {
         onlyCounterParty();
         _internalCancelMultiPendingOrder(
             _positionManager,
@@ -304,21 +280,17 @@ abstract contract PositionHouseBase is
         IPositionManager _positionManager,
         uint256 _quantity,
         address _trader
-    )
-        external
-        virtual
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    ) external virtual returns (uint256, uint256, uint256) {
         onlyCounterParty();
         (
             uint256 depositAmount,
             uint256 fee,
             uint256 withdrawAmount
-        ) = _internalCloseMarketPosition(address(_positionManager), _trader, _quantity);
+        ) = _internalCloseMarketPosition(
+                address(_positionManager),
+                _trader,
+                _quantity
+            );
         // return depositAmount, fee and withdrawAmount
         return (depositAmount, fee, withdrawAmount);
     }
@@ -357,16 +329,7 @@ abstract contract PositionHouseBase is
     function triggerClosePosition(
         IPositionManager _positionManager,
         address _trader
-    )
-        external
-        virtual
-
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    ) external virtual returns (uint256, uint256, uint256) {
         onlyCounterParty();
         Position.Data
             memory _positionDataWithManualMargin = getPositionWithManualMargin(
@@ -396,8 +359,8 @@ abstract contract PositionHouseBase is
         (
             uint256 depositAmount,
             ,
-            uint256 withdrawAmount
-            ,
+            uint256 withdrawAmount,
+
         ) = _internalOpenMarketPosition(param, true);
         // return depositAmount, fee and withdrawAmount
         return (
@@ -422,12 +385,7 @@ abstract contract PositionHouseBase is
     )
         public
         virtual
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            LimitOverPricedFilled memory
-        )
+        returns (uint256, uint256, uint256, LimitOverPricedFilled memory)
     {
         onlyCounterParty();
         Position.Data
@@ -468,24 +426,15 @@ abstract contract PositionHouseBase is
         return (depositAmount, fee, withdrawAmount, limitOverPricedFilled);
     }
 
-    function clearTraderData(address _pmAddress, address _trader)
-        external
-
-    {
+    function clearTraderData(address _pmAddress, address _trader) external {
         onlyCounterParty();
         clearPosition(_pmAddress, _trader);
     }
 
-    function claimFund(IPositionManager _positionManager, address _trader)
-        external
-        virtual
-
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    function claimFund(
+        IPositionManager _positionManager,
+        address _trader
+    ) external virtual returns (uint256, uint256, uint256) {
         onlyCounterParty();
         address _pmAddress = address(_positionManager);
         Position.Data
@@ -507,11 +456,12 @@ abstract contract PositionHouseBase is
     }
 
     function onlyCounterParty() internal {
-
-        if (!AccessControllerAdapter.isGatewayOrCoreContract(
-            accessControllerInterface,
-            msg.sender
-        )) {
+        if (
+            !AccessControllerAdapter.isGatewayOrCoreContract(
+                accessControllerInterface,
+                msg.sender
+            )
+        ) {
             revert(Errors.VL_NOT_COUNTERPARTY);
         }
     }
@@ -543,16 +493,7 @@ abstract contract PositionHouseBase is
         uint256 _amount,
         uint256 _busdBonusAmount,
         address _trader
-    )
-        external
-        virtual
-
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    ) external virtual returns (uint256, uint256, uint256) {
         onlyCounterParty();
         address _pmAddress = address(_positionManager);
         insuranceFundInterface.validateAddMarginBusdBonusAmount(
@@ -581,16 +522,7 @@ abstract contract PositionHouseBase is
         IPositionManager _positionManager,
         uint256 _amount,
         address _trader
-    )
-        external
-        virtual
-
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    ) external virtual returns (uint256, uint256, uint256) {
         onlyCounterParty();
         address _pmAddress = address(_positionManager);
 
@@ -628,22 +560,20 @@ abstract contract PositionHouseBase is
 
     // OWNER UPDATE VARIABLE STORAGE
 
-//    function setPositionStrategyOrder(
-//        IPositionStrategyOrder _positionStrategyOrder
-//    ) external onlyOwner {
-//        positionStrategyOrder = _positionStrategyOrder;
-//    }
+    //    function setPositionStrategyOrder(
+    //        IPositionStrategyOrder _positionStrategyOrder
+    //    ) external onlyOwner {
+    //        positionStrategyOrder = _positionStrategyOrder;
+    //    }
 
-//    function updateAccessControllerInterface(address _accessControllerAddress)
-//        external
-//        onlyOwner
-//    {
-//        accessControllerInterface = IAccessController(_accessControllerAddress);
-//    }
+    //    function updateAccessControllerInterface(address _accessControllerAddress)
+    //        external
+    //        onlyOwner
+    //    {
+    //        accessControllerInterface = IAccessController(_accessControllerAddress);
+    //    }
 
-    function updateConfigNotionalKey(address _pmAddress, bytes32 _key)
-        public
-    {
+    function updateConfigNotionalKey(address _pmAddress, bytes32 _key) public {
         onlyOwner();
         configNotionalKey[_pmAddress] = _key;
     }
@@ -654,12 +584,10 @@ abstract contract PositionHouseBase is
     //        return configNotionalKey[_pmAddress];
     //    }
 
-    function getAddedMargin(address _positionManager, address _trader)
-        public
-        view
-        override(Base)
-        returns (int256)
-    {
+    function getAddedMargin(
+        address _positionManager,
+        address _trader
+    ) public view override(Base) returns (int256) {
         return manualMargin[_positionManager][_trader];
     }
 
@@ -685,12 +613,10 @@ abstract contract PositionHouseBase is
             );
     }
 
-    function getPosition(address _pmAddress, address _trader)
-        public
-        view
-        override(Base)
-        returns (Position.Data memory positionData)
-    {
+    function getPosition(
+        address _pmAddress,
+        address _trader
+    ) public view override(Base) returns (Position.Data memory positionData) {
         positionData = _getPositionMap(_pmAddress, _trader);
         PositionLimitOrder.Data[] memory _limitOrders = getLimitOrders(
             _pmAddress,
@@ -731,7 +657,10 @@ abstract contract PositionHouseBase is
         }
     }
 
-    function getPositionWithManualMargin(address _pmAddress, address _trader)
+    function getPositionWithManualMargin(
+        address _pmAddress,
+        address _trader
+    )
         public
         view
         override(
@@ -751,12 +680,10 @@ abstract contract PositionHouseBase is
         return _positionData;
     }
 
-    function _getClaimAmount(address _pmAddress, address _trader)
-        internal
-        view
-        override(Base)
-        returns (int256)
-    {
+    function _getClaimAmount(
+        address _pmAddress,
+        address _trader
+    ) internal view override(Base) returns (int256) {
         address a = _pmAddress;
         address t = _trader;
 
@@ -826,20 +753,17 @@ abstract contract PositionHouseBase is
         }
     }
 
-//    function getLimitOrderPremiumFraction(address _pmAddress, address _trader)
-//        public
-//        view
-//        returns (int128)
-//    {
-//        return _getLimitOrderPremiumFraction(_pmAddress, _trader);
-//    }
+    //    function getLimitOrderPremiumFraction(address _pmAddress, address _trader)
+    //        public
+    //        view
+    //        returns (int128)
+    //    {
+    //        return _getLimitOrderPremiumFraction(_pmAddress, _trader);
+    //    }
 
-    function getLatestCumulativePremiumFraction(address _pmAddress)
-        public
-        view
-        override(CumulativePremiumFractions, Base)
-        returns (int128)
-    {
+    function getLatestCumulativePremiumFraction(
+        address _pmAddress
+    ) public view override(CumulativePremiumFractions, Base) returns (int128) {
         return
             CumulativePremiumFractions.getLatestCumulativePremiumFraction(
                 _pmAddress
@@ -935,10 +859,10 @@ abstract contract PositionHouseBase is
         return 0;
     }
 
-    function clearPosition(address _pmAddress, address _trader)
-        internal
-        override(Base)
-    {
+    function clearPosition(
+        address _pmAddress,
+        address _trader
+    ) internal override(Base) {
         positionStrategyOrder.unsetTPAndSLWhenClosePosition(
             _pmAddress,
             _trader
@@ -975,7 +899,7 @@ abstract contract PositionHouseBase is
         return
             _notional <=
             (positionNotionalConfigProxy.getMaxNotional(_key, _leverage) *
-                10**18);
+                10 ** 18);
     }
 
     function _validateInitialMargin(
@@ -1001,22 +925,22 @@ abstract contract PositionHouseBase is
         Position.Data memory newData,
         bool isReducePosition
     ) internal override(Base) {
-      if(isReducePosition){
-        // Update the position data directly for reducing position
-        positionMap[_pmAddress][_trader].update(newData);
-        return;
-      }
-      // Currently we only allow one pending update position for each trader
-      // For safety reason, we do not allow to update to a pending update position
-      // TODO need to support multiple pending update positions in the future (cover more pending cases)
-      require(
-        pendingPositionMap[_pmAddress][_trader].quantity == 0,
-        "PendingUpdatePositionExists"
-      );
-      // now we update to the pending position map
-      // then wait for source chain transaction success
-      // then update to the position map
-      pendingPositionMap[_pmAddress][_trader].update(newData);
+        if (isReducePosition) {
+            // Update the position data directly for reducing position
+            positionMap[_pmAddress][_trader].update(newData);
+            return;
+        }
+        // Currently we only allow one pending update position for each trader
+        // For safety reason, we do not allow to update to a pending update position
+        // TODO need to support multiple pending update positions in the future (cover more pending cases)
+        require(
+            pendingPositionMap[_pmAddress][_trader].quantity == 0,
+            "PendingUpdatePositionExists"
+        );
+        // now we update to the pending position map
+        // then wait for source chain transaction success
+        // then update to the position map
+        pendingPositionMap[_pmAddress][_trader].update(newData);
     }
 
     function _executeUpdatePositionMap(
@@ -1040,12 +964,10 @@ abstract contract PositionHouseBase is
         manualMargin[_pmAddress][_trader] += _changedAmount;
     }
 
-    function _getPositionMap(address _pmAddress, address _trader)
-        internal
-        view
-        override(Base)
-        returns (Position.Data memory)
-    {
+    function _getPositionMap(
+        address _pmAddress,
+        address _trader
+    ) internal view override(Base) returns (Position.Data memory) {
         return positionMap[_pmAddress][_trader];
     }
 
@@ -1058,15 +980,12 @@ abstract contract PositionHouseBase is
     //        return manualMargin[_pmAddress][_trader];
     //    }
 
-    function getDebtPosition(address _pmAddress, address _trader)
-        public
-        view
-        override(Base)
-        returns (Position.LiquidatedData memory)
-    {
+    function getDebtPosition(
+        address _pmAddress,
+        address _trader
+    ) public view override(Base) returns (Position.LiquidatedData memory) {
         return debtPosition[_pmAddress][_trader];
     }
-
 
     function transferOwnership(address _newOwner) public {
         onlyOwner();
@@ -1074,7 +993,8 @@ abstract contract PositionHouseBase is
     }
 
     function onlyOwner() public view {
-        if (owner != msg.sender) {revert("!Owner");}
+        if (owner != msg.sender) {
+            revert("!Owner");
+        }
     }
-
 }

@@ -4,7 +4,6 @@ import "../../adapter/interfaces/IPositionHouse.sol";
 import "../../adapter/interfaces/IAccessController.sol";
 import "../positions/Position.sol";
 
-
 abstract contract PositionStrategyOrderStorage {
     using Position for Position.Data;
 

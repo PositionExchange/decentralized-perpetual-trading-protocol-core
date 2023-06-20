@@ -9,9 +9,5 @@ interface IDPTPValidator {
         uint256 _amount
     ) external;
 
-    function updateTraderData(
-        address _trader,
-        address _pmAddress
-    ) external;
-
+    function updateTraderData(address _trader, address _pmAddress) external;
 }
