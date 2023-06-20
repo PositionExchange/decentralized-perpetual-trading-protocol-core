@@ -63,9 +63,10 @@ library Position {
         _self.leverage = _newPosition.leverage;
     }
 
-    function updateMargin(Position.Data storage _self, int256 _newMargin)
-        internal
-    {
+    function updateMargin(
+        Position.Data storage _self,
+        int256 _newMargin
+    ) internal {
         _self.margin = _newMargin;
     }
 
@@ -101,11 +102,9 @@ library Position {
         _self.__dummy = 1;
     }
 
-    function side(Position.Data memory _self)
-        internal
-        view
-        returns (Position.Side)
-    {
+    function side(
+        Position.Data memory _self
+    ) internal view returns (Position.Side) {
         return _self.quantity > 0 ? Position.Side.LONG : Position.Side.SHORT;
     }
 

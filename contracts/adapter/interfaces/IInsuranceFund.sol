@@ -55,8 +55,8 @@ interface IInsuranceFund {
         address _trader
     ) external view returns (uint256);
 
-    function getBusdBonusBalances(address _pmAddress, address _trader)
-        external
-        view
-        returns (uint256);
+    function getBusdBonusBalances(
+        address _pmAddress,
+        address _trader
+    ) external view returns (uint256);
 }

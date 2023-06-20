@@ -9,14 +9,12 @@ contract PositionNotionalConfigProxy is Initializable {
     bytes32 constant ETH_BUSD = "ETH_BUSD";
     bytes32 constant SOL_BUSD = "SOL_BUSD";
 
-
     function initialize() public initializer {}
 
-    function getMaxNotional(bytes32 key, uint16 leverage)
-        external
-        view
-        returns (uint256)
-    {
+    function getMaxNotional(
+        bytes32 key,
+        uint16 leverage
+    ) external view returns (uint256) {
         if (key == BTC_BUSD) {
             //BTC_BUSD hash
             if (leverage == 1) {

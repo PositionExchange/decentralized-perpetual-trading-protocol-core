@@ -26,21 +26,15 @@ contract FundingRateTest is PositionManager {
         mockTwapPrice = twapPrice * getBaseBasisPoint();
     }
 
-    function getUnderlyingTwapPrice(uint256 _intervalInSeconds)
-        public
-        view
-        override
-        returns (uint256)
-    {
+    function getUnderlyingTwapPrice(
+        uint256 _intervalInSeconds
+    ) public view override returns (uint256) {
         return mockUnderlyingPrice;
     }
 
-    function getTwapPrice(uint256 _intervalInSeconds)
-        public
-        view
-        override
-        returns (uint256)
-    {
+    function getTwapPrice(
+        uint256 _intervalInSeconds
+    ) public view override returns (uint256) {
         return mockTwapPrice;
     }
 

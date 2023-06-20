@@ -13,11 +13,9 @@ library LiquidityBitmap {
     /// @param _pip The bip index for computing the position
     /// @return mapIndex the index in the map
     /// @return bitPos the position in the bitmap
-    function position(uint128 _pip)
-        private
-        pure
-        returns (uint128 mapIndex, uint8 bitPos)
-    {
+    function position(
+        uint128 _pip
+    ) private pure returns (uint128 mapIndex, uint8 bitPos) {
         mapIndex = _pip >> 8;
         bitPos = uint8((_pip) & 0xff);
         // % 256
@@ -257,15 +255,7 @@ library LiquidityBitmap {
         uint128 _index,
         uint256 _dataLength,
         bool _lte
-    )
-        internal
-        view
-        returns (
-            uint128[] memory,
-            uint128,
-            uint256
-        )
-    {
+    ) internal view returns (uint128[] memory, uint128, uint256) {
         while (_dataLength != 0) {
             _next = findHasLiquidityInOneWords(
                 _self,

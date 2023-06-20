@@ -64,11 +64,7 @@ contract OrderTracker is
         bytes _destFunctionCall
     );
 
-    event FundClaimed(
-        address manager,
-        address trader,
-        uint256 claimAmount
-    );
+    event FundClaimed(address manager, address trader, uint256 claimAmount);
 
     struct PendingClaimFund {
         address manager;
@@ -233,9 +229,7 @@ contract OrderTracker is
                 isFullFilled = false;
             }
 
-            if (
-                pendingOrderDetail.trader != mmAddress
-            ) {
+            if (pendingOrderDetail.trader != mmAddress) {
                 uint256 filledSize_ = filledSize;
                 uint128 pip_ = _pip;
 
@@ -367,11 +361,9 @@ contract OrderTracker is
         return totalPnl;
     }
 
-    function getTotalPnlBatch(address[] memory _pmAddress)
-        external
-        view
-        returns (int256[] memory)
-    {
+    function getTotalPnlBatch(
+        address[] memory _pmAddress
+    ) external view returns (int256[] memory) {
         int256[] memory pnls = new int256[](_pmAddress.length);
         for (uint256 i = 0; i < _pmAddress.length; i++) {
             pnls[i] = getTotalPnl(_pmAddress[i]);
@@ -379,10 +371,9 @@ contract OrderTracker is
         return pnls;
     }
 
-    function updateAccessControllerInterface(address _accessControllerAddress)
-        external
-        onlyOwner
-    {
+    function updateAccessControllerInterface(
+        address _accessControllerAddress
+    ) external onlyOwner {
         accessControllerInterface = IAccessController(_accessControllerAddress);
     }
 
@@ -431,10 +422,9 @@ contract OrderTracker is
         uint256 _size,
         bool _isBuy
     ) private {
-
-        if ( _requestKey == bytes32(0x00)) return;
+        if (_requestKey == bytes32(0x00)) return;
         uint256 basisPoint = _positionManagerInterface.getBasisPoint();
-        uint256 entryPrice = (uint256(_pip) * (10**18)) / basisPoint;
+        uint256 entryPrice = (uint256(_pip) * (10 ** 18)) / basisPoint;
 
         ICrossChainGateway(crossChainGateway).executeIncreaseOrder(
             421613, // TODO: Refactor later
@@ -454,7 +444,7 @@ contract OrderTracker is
         uint256 _size
     ) private {
         // TODO: Refactor this function later
-        if ( _requestKey == bytes32(0x00)) return;
+        if (_requestKey == bytes32(0x00)) return;
 
         Position.Data memory positionData = IPositionHouse(positionHouse)
             .getPosition(_manager, _trader);
@@ -472,7 +462,8 @@ contract OrderTracker is
             : (_calculateEntryPrice(
                 positionData.openNotional,
                 quantityAbs,
-                baseBasisPoint) * 10** 18)/baseBasisPoint;
+                baseBasisPoint
+            ) * 10 ** 18) / baseBasisPoint;
 
         ICrossChainGateway(crossChainGateway).executeDecreaseOrder(
             421613,

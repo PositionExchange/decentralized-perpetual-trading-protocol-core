@@ -47,16 +47,10 @@ contract PositionStrategyOrder is
         accessControllerInterface = _accessControllerInterface;
     }
 
-    function triggerTPSL(address _pmAddress, address _trader)
-        external
-        nonReentrant
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            bool
-        )
-    {
+    function triggerTPSL(
+        address _pmAddress,
+        address _trader
+    ) external nonReentrant returns (uint256, uint256, uint256, bool) {
         IPositionManager positionManager = IPositionManager(_pmAddress);
         uint128 currentPip = positionManager.getCurrentPip();
         TPSLCondition memory condition = TPSLMap[_pmAddress][_trader];
@@ -71,18 +65,16 @@ contract PositionStrategyOrder is
         emit TPSLTriggered(_pmAddress, _trader, triggeredHigherPip);
         TPSLMap[_pmAddress][_trader].lowerPip = 0;
         TPSLMap[_pmAddress][_trader].higherPip = 0;
-        (uint256 depositAmount, uint256 fee, uint256 withdrawAmount) =
-            PositionHouseAdapter.triggerClosePosition(
+        (
+            uint256 depositAmount,
+            uint256 fee,
+            uint256 withdrawAmount
+        ) = PositionHouseAdapter.triggerClosePosition(
                 positionHouse,
                 positionManager,
                 _trader
             );
-        return (
-        depositAmount,
-            fee,
-            withdrawAmount,
-            triggeredHigherPip
-        );
+        return (depositAmount, fee, withdrawAmount, triggeredHigherPip);
     }
 
     function setTPSL(
@@ -149,10 +141,10 @@ contract PositionStrategyOrder is
         emit TPOrSlCanceled(_pmAddress, _trader, _isHigherPrice);
     }
 
-    function unsetTPAndSL(address _pmAddress, address _trader)
-        external
-        nonReentrant
-    {
+    function unsetTPAndSL(
+        address _pmAddress,
+        address _trader
+    ) external nonReentrant {
         require(
             PositionHouseAdapter.hasPosition(
                 positionHouse,
@@ -164,9 +156,10 @@ contract PositionStrategyOrder is
         _internalUnsetTPAndSL(_pmAddress, _trader);
     }
 
-    function unsetTPAndSLWhenClosePosition(address _pmAddress, address _trader)
-        external
-    {
+    function unsetTPAndSLWhenClosePosition(
+        address _pmAddress,
+        address _trader
+    ) external {
         onlyCounterParty();
         if (hasTPOrSL(_pmAddress, _trader)) {
             _internalUnsetTPAndSL(_pmAddress, _trader);
@@ -180,21 +173,19 @@ contract PositionStrategyOrder is
         validatedTriggerers[_triggerer] = _isValidated;
     }
 
-    function getTPSLDetail(address _pmAddress, address _trader)
-        public
-        view
-        returns (uint120 lowerPip, uint120 higherPip)
-    {
+    function getTPSLDetail(
+        address _pmAddress,
+        address _trader
+    ) public view returns (uint120 lowerPip, uint120 higherPip) {
         TPSLCondition memory condition = TPSLMap[_pmAddress][_trader];
         lowerPip = condition.lowerPip;
         higherPip = condition.higherPip;
     }
 
-    function hasTPOrSL(address _pmAddress, address _trader)
-        public
-        view
-        returns (bool)
-    {
+    function hasTPOrSL(
+        address _pmAddress,
+        address _trader
+    ) public view returns (bool) {
         TPSLCondition memory condition = TPSLMap[_pmAddress][_trader];
         return condition.lowerPip != 0 || condition.higherPip != 0;
     }
@@ -209,19 +200,20 @@ contract PositionStrategyOrder is
         );
     }
 
-    function _internalUnsetTPAndSL(address _pmAddress, address _trader)
-        internal
-    {
+    function _internalUnsetTPAndSL(
+        address _pmAddress,
+        address _trader
+    ) internal {
         TPSLMap[_pmAddress][_trader].lowerPip = 0;
         TPSLMap[_pmAddress][_trader].higherPip = 0;
         emit TPAndSLCanceled(_pmAddress, _trader);
     }
 
     // REQUIRE FUNCTION
-    function reachTPSL(TPSLCondition memory condition, uint128 currentPip)
-        internal
-        returns (bool)
-    {
+    function reachTPSL(
+        TPSLCondition memory condition,
+        uint128 currentPip
+    ) internal returns (bool) {
         return
             (condition.lowerPip != 0 && currentPip <= condition.lowerPip) ||
             (currentPip >= condition.higherPip && condition.higherPip != 0);

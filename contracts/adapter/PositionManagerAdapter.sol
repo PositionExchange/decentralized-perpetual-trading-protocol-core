@@ -16,7 +16,7 @@ import "../library/types/PositionHouseStorage.sol";
 import "hardhat/console.sol";
 
 library PositionManagerAdapter {
-    int256 private constant PREMIUM_FRACTION_DENOMINATOR = 10**10;
+    int256 private constant PREMIUM_FRACTION_DENOMINATOR = 10 ** 10;
     using PositionLimitOrder for mapping(address => mapping(address => PositionLimitOrder.Data[]));
     using Position for Position.Data;
     using Position for Position.LiquidatedData;

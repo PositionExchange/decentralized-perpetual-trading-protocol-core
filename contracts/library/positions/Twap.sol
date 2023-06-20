@@ -45,10 +45,10 @@ library Twap {
     /// @param _time The time of the twap initialization, via block.timestamp truncated to uint32
     /// @return cardinality The number of populated elements in the twap array
     /// @return cardinalityNext The new length of the twap array, independent of population
-    function initialize(Observation[65535] storage _self, uint32 _time)
-        internal
-        returns (uint16 cardinality, uint16 cardinalityNext)
-    {
+    function initialize(
+        Observation[65535] storage _self,
+        uint32 _time
+    ) internal returns (uint16 cardinality, uint16 cardinalityNext) {
         _self[0] = Observation({
             blockTimestamp: _time,
             pipCumulative: 0,
@@ -127,8 +127,8 @@ library Twap {
         // if there hasn't been overflow, no need to adjust
         if (_a <= _time && _b <= _time) return _a <= _b;
 
-        uint256 aAdjusted = _a > _time ? _a : _a + 2**32;
-        uint256 bAdjusted = _b > _time ? _b : _b + 2**32;
+        uint256 aAdjusted = _a > _time ? _a : _a + 2 ** 32;
+        uint256 bAdjusted = _b > _time ? _b : _b + 2 ** 32;
 
         return aAdjusted <= bAdjusted;
     }

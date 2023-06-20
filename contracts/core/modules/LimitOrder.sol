@@ -11,7 +11,7 @@ import "../../library/types/PositionHouseStorage.sol";
 import {Errors} from "../../library/helpers/Errors.sol";
 import "./Base.sol";
 
-abstract contract   LimitOrderManager is PositionHouseStorage {
+abstract contract LimitOrderManager is PositionHouseStorage {
     event OpenLimit(
         uint64 orderId,
         address trader,
@@ -33,7 +33,6 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
     using Quantity for int128;
     using Int256Math for int256;
     using Uint256Math for uint256;
-
 
     function _internalCancelLimitOrder(
         IPositionManager _positionManager,
@@ -89,7 +88,12 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                 order.pip,
                 order.orderId
             );
-            return (refundMargin + refundFee, partialFilledQuantity, order.pip, order.isBuy);
+            return (
+                refundMargin + refundFee,
+                partialFilledQuantity,
+                order.pip,
+                order.isBuy
+            );
         }
         emit CancelLimitOrder(_trader, _pmAddress, order.pip, order.orderId);
         return (0, partialFilledQuantity, order.pip, order.isBuy);
@@ -110,14 +114,11 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
         bytes32 sourceChainRequestKey;
     }
 
-    function _internalOpenLimitOrder(InternalOpenLimitOrderParam memory _param)
+    function _internalOpenLimitOrder(
+        InternalOpenLimitOrderParam memory _param
+    )
         internal
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            LimitOverPricedFilled  memory
-        )
+        returns (uint256, uint256, uint256, LimitOverPricedFilled memory)
     {
         PositionHouseStorage.OpenLimitResp memory openLimitResp;
         address pmAddress = address(_param.positionManager);
@@ -126,12 +127,12 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
             bool isReduceOrder,
             uint256 remainClosableQuantity
         ) = _requireOrderSideAndQuantity(
-            pmAddress,
-            _param.trader,
-            _param.side,
-            _param.uQuantity,
-            _param.positionData.quantity
-        );
+                pmAddress,
+                _param.trader,
+                _param.side,
+                _param.uQuantity,
+                _param.positionData.quantity
+            );
         if (isReduceOrder && remainClosableQuantity < _param.uQuantity) {
             _param.uQuantity = remainClosableQuantity;
         }
@@ -244,7 +245,12 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
             }
         }
         _internalEmitEventOpenLimit(_param, openLimitResp.orderId, quantity, 0);
-        return (0, 0, uint256(openLimitResp.withdrawAmount.kPositive()),openLimitResp.limitOverPricedFilled);
+        return (
+            0,
+            0,
+            uint256(openLimitResp.withdrawAmount.kPositive()),
+            openLimitResp.limitOverPricedFilled
+        );
     }
 
     function _internalEmitEventOpenLimit(
@@ -311,7 +317,9 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
         bytes32 sourceChainRequestKey;
     }
 
-    function _openLimitOrder(OpenLimitOrderParam memory _param)
+    function _openLimitOrder(
+        OpenLimitOrderParam memory _param
+    )
         private
         returns (
             uint64 orderId,
@@ -321,7 +329,7 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
         )
     {
         {
-//            address _pmAddress = address(_param.positionManager);
+            //            address _pmAddress = address(_param.positionManager);
             {
                 require(
                     _param.leverage >= _param.positionData.leverage &&
@@ -346,10 +354,13 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                     );
             }
             if (sizeOut != 0) {
-                limitOverPricedFilled.entryPrice = (openNotional *  _param.positionManager.getBasisPoint())/sizeOut ;
+                limitOverPricedFilled.entryPrice =
+                    (openNotional * _param.positionManager.getBasisPoint()) /
+                    sizeOut;
                 limitOverPricedFilled.quantity = sizeOut;
                 limitOverPricedFilled.leverage = _param.leverage;
-                limitOverPricedFilled.isExecutedFully = sizeOut == _param.rawQuantity.abs128();
+                limitOverPricedFilled.isExecutedFully =
+                    sizeOut == _param.rawQuantity.abs128();
 
                 int256 intSizeOut = _param.rawQuantity > 0
                     ? int256(sizeOut)
@@ -369,10 +380,9 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                                 _param.positionData
                             );
                         // total return when partial
-                        limitOverPricedFilled.closeFee = _param.positionManager.calcTakerFee(
-                            openNotional,
-                            false
-                        );
+                        limitOverPricedFilled.closeFee = _param
+                            .positionManager
+                            .calcTakerFee(openNotional, false);
                         totalReturn =
                             int256(reducedMargin) +
                             realizedPnl -
@@ -382,13 +392,24 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                         if (sizeOut == _param.positionData.quantity.abs()) {
                             totalReturn =
                                 realizedPnl +
-                                _getClaimAmount(address(_param.positionManager), _param.trader) -
+                                _getClaimAmount(
+                                    address(_param.positionManager),
+                                    _param.trader
+                                ) -
                                 int256(limitOverPricedFilled.closeFee);
-                            clearPosition(address(_param.positionManager), _param.trader);
+                            clearPosition(
+                                address(_param.positionManager),
+                                _param.trader
+                            );
                             // TODO refactor to a flag
                             // flag to compare if (openLimitResp.sizeOut <= _uQuantity)
                             // in this case, sizeOut is just only used to compare to open the limit order
-                            return (orderId, sizeOut + 1, totalReturn, limitOverPricedFilled);
+                            return (
+                                orderId,
+                                sizeOut + 1,
+                                totalReturn,
+                                limitOverPricedFilled
+                            );
                         }
                     }
                 }
@@ -427,19 +448,17 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
                 : limitOrders[_pmAddress][_trader];
     }
 
-    function getLimitOrders(address _pmAddress, address _trader)
-        public
-        view
-        returns (PositionLimitOrder.Data[] memory)
-    {
+    function getLimitOrders(
+        address _pmAddress,
+        address _trader
+    ) public view returns (PositionLimitOrder.Data[] memory) {
         return limitOrders[_pmAddress][_trader];
     }
 
-    function getReduceLimitOrders(address _pmAddress, address _trader)
-        public
-        view
-        returns (PositionLimitOrder.Data[] memory)
-    {
+    function getReduceLimitOrders(
+        address _pmAddress,
+        address _trader
+    ) public view returns (PositionLimitOrder.Data[] memory) {
         return reduceLimitOrders[_pmAddress][_trader];
     }
 
@@ -501,9 +520,10 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
         reduceLimitOrders[_pmAddress][_trader].push(order);
     }
 
-    function _setLimitOrderPremiumFraction(address _pmAddress, address _trader)
-        internal
-    {
+    function _setLimitOrderPremiumFraction(
+        address _pmAddress,
+        address _trader
+    ) internal {
         limitOrderPremiumFraction[_pmAddress][
             _trader
         ] = getLatestCumulativePremiumFraction(_pmAddress);
@@ -515,19 +535,19 @@ abstract contract   LimitOrderManager is PositionHouseStorage {
         }
     }
 
-    function _emptyReduceLimitOrders(address _pmAddress, address _trader)
-        internal
-    {
+    function _emptyReduceLimitOrders(
+        address _pmAddress,
+        address _trader
+    ) internal {
         if (getReduceLimitOrders(_pmAddress, _trader).length > 0) {
             delete reduceLimitOrders[_pmAddress][_trader];
         }
     }
 
-    function getLimitOrderPremiumFraction(address _pmAddress, address _trader)
-        public
-        view
-        returns (int128)
-    {
+    function getLimitOrderPremiumFraction(
+        address _pmAddress,
+        address _trader
+    ) public view returns (int128) {
         return limitOrderPremiumFraction[_pmAddress][_trader];
     }
 

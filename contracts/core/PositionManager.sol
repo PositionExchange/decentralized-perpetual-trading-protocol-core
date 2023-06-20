@@ -36,8 +36,8 @@ contract PositionManager is
     using AccessControllerAdapter for PositionManager;
 
     // IMPORTANT this digit must be the same to TOKEN_DIGIT in ChainLinkPriceFeed
-    uint256 private constant PRICE_FEED_TOKEN_DIGIT = 10**18;
-    int256 private constant PREMIUM_FRACTION_DENOMINATOR = 10**10;
+    uint256 private constant PRICE_FEED_TOKEN_DIGIT = 10 ** 18;
+    int256 private constant PREMIUM_FRACTION_DENOMINATOR = 10 ** 10;
     // EVENT
 
     // Events that supports building order book
@@ -163,16 +163,19 @@ contract PositionManager is
         //        emit ReserveSnapshotted(_pip, _now());
     }
 
-    function updatePartialFilledOrder(uint128 _pip, uint64 _orderId)
-        external
-        whenNotPaused
-    {
+    function updatePartialFilledOrder(
+        uint128 _pip,
+        uint64 _orderId
+    ) external whenNotPaused {
         onlyCounterParty();
         uint256 newSize = tickPosition[_pip].updateOrderWhenClose(_orderId);
         emit LimitOrderUpdated(_orderId, _pip, newSize);
     }
 
-    function cancelLimitOrder(uint128 _pip, uint64 _orderId)
+    function cancelLimitOrder(
+        uint128 _pip,
+        uint64 _orderId
+    )
         external
         whenNotPaused
         returns (uint256 remainingSize, uint256 partialFilled)
@@ -186,10 +189,9 @@ contract PositionManager is
         return _internalCancelLimitOrder(_tickPosition, _pip, _orderId);
     }
 
-    function marketMakerRemove(MarketMaker.MMCancelOrder[] memory _orders)
-        external
-        whenNotPaused
-    {
+    function marketMakerRemove(
+        MarketMaker.MMCancelOrder[] memory _orders
+    ) external whenNotPaused {
         onlyCounterParty();
         address _validatedMarketMaker = validatedMarketMaker;
         for (uint256 i = 0; i < _orders.length; i++) {
@@ -201,7 +203,11 @@ contract PositionManager is
             ) {
                 if (
                     _tickPosition.orderQueue[_order.orderId].trader ==
-                    validatedMarketMaker
+                    validatedMarketMaker ||
+                    _tickPosition
+                        .orderQueue[_order.orderId]
+                        .sourceChainRequestKey ==
+                    bytes32(0x00)
                 ) {
                     _internalCancelLimitOrder(
                         _tickPosition,
@@ -386,11 +392,7 @@ contract PositionManager is
     )
         external
         whenNotPaused
-        returns (
-            uint64 orderId,
-            uint256 sizeOut,
-            uint256 openNotional
-        )
+        returns (uint64 orderId, uint256 sizeOut, uint256 openNotional)
     {
         onlyCounterParty();
         require(_size != 0, Errors.VL_INVALID_SIZE);
@@ -641,11 +643,9 @@ contract PositionManager is
         return nextFundingTime;
     }
 
-    function getTickPositionIndexes(uint128 _pip)
-        public
-        view
-        returns (uint64 filledIndex, uint64 currentIndex)
-    {
+    function getTickPositionIndexes(
+        uint128 _pip
+    ) public view returns (uint64 filledIndex, uint64 currentIndex) {
         return (
             tickPosition[_pip].filledIndex,
             tickPosition[_pip].currentIndex
@@ -657,7 +657,7 @@ contract PositionManager is
     }
 
     function priceToWei(uint256 _price) public view returns (uint256) {
-        return (_price * 10**18) / BASE_BASIC_POINT;
+        return (_price * 10 ** 18) / BASE_BASIC_POINT;
     }
 
     function getLiquidityInCurrentPip() public view returns (uint128) {
@@ -667,11 +667,9 @@ contract PositionManager is
                 : 0;
     }
 
-    function getLiquidityInMultiplePip(uint128[] memory _arrPip)
-        external
-        view
-        returns (uint128[] memory)
-    {
+    function getLiquidityInMultiplePip(
+        uint128[] memory _arrPip
+    ) external view returns (uint128[] memory) {
         uint128[] memory arrLiquidity = new uint128[](_arrPip.length);
         for (uint256 i = 0; i < _arrPip.length; i++) {
             if (hasLiquidity(_arrPip[i])) {
@@ -687,17 +685,15 @@ contract PositionManager is
         return liquidityBitmap.hasLiquidity(_pip);
     }
 
-    function getPendingOrderDetail(uint128 _pip, uint64 _orderId)
+    function getPendingOrderDetail(
+        uint128 _pip,
+        uint64 _orderId
+    )
         public
         view
-        returns (
-            bool isFilled,
-            bool isBuy,
-            uint256 size,
-            uint256 partialFilled
-        )
+        returns (bool isFilled, bool isBuy, uint256 size, uint256 partialFilled)
     {
-        (isFilled, isBuy, size, partialFilled, , ,) = tickPosition[_pip]
+        (isFilled, isBuy, size, partialFilled, , , ) = tickPosition[_pip]
             .getQueueOrder(_orderId);
 
         if (!liquidityBitmap.hasLiquidity(_pip)) {
@@ -708,7 +704,10 @@ contract PositionManager is
         }
     }
 
-    function getPendingOrderDetailFull(uint128 _pip, uint64 _orderId)
+    function getPendingOrderDetailFull(
+        uint128 _pip,
+        uint64 _orderId
+    )
         public
         view
         returns (
@@ -721,8 +720,15 @@ contract PositionManager is
             bytes32 sourceChainRequestKey
         )
     {
-        (isFilled, isBuy, size, partialFilled, trader, isReduce, sourceChainRequestKey) = tickPosition[_pip]
-            .getQueueOrder(_orderId);
+        (
+            isFilled,
+            isBuy,
+            size,
+            partialFilled,
+            trader,
+            isReduce,
+            sourceChainRequestKey
+        ) = tickPosition[_pip].getQueueOrder(_orderId);
 
         if (!liquidityBitmap.hasLiquidity(_pip)) {
             isFilled = true;
@@ -736,15 +742,7 @@ contract PositionManager is
         uint256 _pQuantity,
         uint128 _pip,
         uint16 _leverage
-    )
-        public
-        view
-        returns (
-            uint256 notional,
-            uint256 margin,
-            uint256 fee
-        )
-    {
+    ) public view returns (uint256 notional, uint256 margin, uint256 fee) {
         notional = PositionMath.calculateNotional(
             pipToPrice(_pip),
             _pQuantity,
@@ -762,11 +760,10 @@ contract PositionManager is
      * @param _isOpen order is open or close position
      * @return fee total tx fee
      */
-    function calcMakerFee(uint256 _positionNotional, bool _isOpen)
-        public
-        view
-        returns (uint256 fee)
-    {
+    function calcMakerFee(
+        uint256 _positionNotional,
+        bool _isOpen
+    ) public view returns (uint256 fee) {
         TollRatio memory _tollRatio = tollsRatio;
         if (_isOpen) {
             return
@@ -786,11 +783,10 @@ contract PositionManager is
      * @param _isOpen order is open or close position
      * @return fee total tx fee
      */
-    function calcTakerFee(uint256 _positionNotional, bool _isOpen)
-        public
-        view
-        returns (uint256 fee)
-    {
+    function calcTakerFee(
+        uint256 _positionNotional,
+        bool _isOpen
+    ) public view returns (uint256 fee) {
         TollRatio memory _tollRatio = tollsRatio;
         if (_isOpen) {
             return
@@ -808,11 +804,10 @@ contract PositionManager is
      * @param _positionNotional quote asset amount
      * @return total tx fee
      */
-    function _internalCalcFee(uint256 _positionNotional, uint64 _tollRatio)
-        internal
-        view
-        returns (uint256)
-    {
+    function _internalCalcFee(
+        uint256 _positionNotional,
+        uint64 _tollRatio
+    ) internal view returns (uint256) {
         if (_tollRatio != 0) {
             return _positionNotional / uint256(_tollRatio);
         }
@@ -840,12 +835,9 @@ contract PositionManager is
      * @notice get underlying twap price provided by oracle
      * @return underlying price
      */
-    function getUnderlyingTwapPrice(uint256 _intervalInSeconds)
-        public
-        view
-        virtual
-        returns (uint256)
-    {
+    function getUnderlyingTwapPrice(
+        uint256 _intervalInSeconds
+    ) public view virtual returns (uint256) {
         return
             _formatPriceFeedToBaseBasisPoint(
                 priceFeed.getTwapPrice(priceFeedKey, _intervalInSeconds)
@@ -855,12 +847,9 @@ contract PositionManager is
     /**
      * @notice get twap price
      */
-    function getTwapPrice(uint256 _intervalInSeconds)
-        public
-        view
-        virtual
-        returns (uint256)
-    {
+    function getTwapPrice(
+        uint256 _intervalInSeconds
+    ) public view virtual returns (uint256) {
         TwapPriceCalcParams memory params;
         params.snapshotIndex = reserveSnapshots.length - 1;
         return calcTwap(params, _intervalInSeconds);
@@ -927,10 +916,9 @@ contract PositionManager is
     // ONLY OWNER FUNCTIONS
     //******************************************************************************************************************
 
-    function updateMaxPercentMarketMarket(uint16 newMarketMakerSlipage)
-        public
-        onlyOwner
-    {
+    function updateMaxPercentMarketMarket(
+        uint16 newMarketMakerSlipage
+    ) public onlyOwner {
         maxMarketMakerSlipage = newMarketMakerSlipage;
     }
 
@@ -942,17 +930,15 @@ contract PositionManager is
         validatedMarketMaker = _marketMaker;
     }
 
-    function updateAccessControllerInterface(address _accessControllerAddress)
-        public
-        onlyOwner
-    {
+    function updateAccessControllerInterface(
+        address _accessControllerAddress
+    ) public onlyOwner {
         accessControllerInterface = IAccessController(_accessControllerAddress);
     }
 
-    function updateOrderTrackerInterface(address _orderTrackerAddress)
-        public
-        onlyOwner
-    {
+    function updateOrderTrackerInterface(
+        address _orderTrackerAddress
+    ) public onlyOwner {
         orderTrackerInterface = IOrderTracker(_orderTrackerAddress);
     }
 
@@ -983,10 +969,9 @@ contract PositionManager is
         _unpause();
     }
 
-    function updateMaxFindingWordsIndex(uint128 _newMaxFindingWordsIndex)
-        public
-        onlyOwner
-    {
+    function updateMaxFindingWordsIndex(
+        uint128 _newMaxFindingWordsIndex
+    ) public onlyOwner {
         maxFindingWordsIndex = _newMaxFindingWordsIndex;
         // emit UpdateMaxFindingWordsIndex(_newMaxFindingWordsIndex);
     }
@@ -1339,12 +1324,9 @@ contract PositionManager is
         require(pass, Errors.VL_MARKET_ORDER_MUST_CLOSE_TO_INDEX_PRICE);
     }
 
-    function _getPriceWithSpecificSnapshot(TwapPriceCalcParams memory _params)
-        internal
-        view
-        virtual
-        returns (uint256)
-    {
+    function _getPriceWithSpecificSnapshot(
+        TwapPriceCalcParams memory _params
+    ) internal view virtual returns (uint256) {
         return pipToPrice(reserveSnapshots[_params.snapshotIndex].pip);
     }
 
@@ -1356,12 +1338,9 @@ contract PositionManager is
         return uint64(block.number);
     }
 
-    function _formatPriceFeedToBaseBasisPoint(uint256 _price)
-        internal
-        view
-        virtual
-        returns (uint256)
-    {
+    function _formatPriceFeedToBaseBasisPoint(
+        uint256 _price
+    ) internal view virtual returns (uint256) {
         return (_price * BASE_BASIC_POINT) / PRICE_FEED_TOKEN_DIGIT;
     }
 

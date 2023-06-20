@@ -4,14 +4,10 @@ pragma solidity ^0.8.8;
 import "../../library/types/PositionStrategyOrderStorage.sol";
 
 interface IPositionStrategyOrder {
-    function triggerTPSL(address _pmAddress, address _trader)
-        external
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            bool
-        );
+    function triggerTPSL(
+        address _pmAddress,
+        address _trader
+    ) external returns (uint256, uint256, uint256, bool);
 
     function setTPSL(
         address _pmAddress,
@@ -30,16 +26,18 @@ interface IPositionStrategyOrder {
         bool _isHigherPrice
     ) external;
 
-    function unsetTPAndSLWhenClosePosition(address _pmAddress, address _trader)
-        external;
+    function unsetTPAndSLWhenClosePosition(
+        address _pmAddress,
+        address _trader
+    ) external;
 
-    function getTPSLDetail(address _pmAddress, address _trader)
-        external
-        view
-        returns (uint120, uint120);
+    function getTPSLDetail(
+        address _pmAddress,
+        address _trader
+    ) external view returns (uint120, uint120);
 
-    function hasTPOrSL(address _pmAddress, address _trader)
-        external
-        view
-        returns (bool);
+    function hasTPOrSL(
+        address _pmAddress,
+        address _trader
+    ) external view returns (bool);
 }

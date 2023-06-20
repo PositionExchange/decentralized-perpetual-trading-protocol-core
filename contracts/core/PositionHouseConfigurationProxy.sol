@@ -44,10 +44,9 @@ contract PositionHouseConfigurationProxy is Initializable, OwnableUpgradeable {
     }
 
     // OWNER UPDATE VARIABLE STORAGE
-    function updatePartialLiquidationRatio(uint256 _partialLiquidationRatio)
-        external
-        onlyOwner
-    {
+    function updatePartialLiquidationRatio(
+        uint256 _partialLiquidationRatio
+    ) external onlyOwner {
         emit PartialLiquidationRatioUpdated(
             partialLiquidationRatio,
             _partialLiquidationRatio
@@ -55,10 +54,9 @@ contract PositionHouseConfigurationProxy is Initializable, OwnableUpgradeable {
         partialLiquidationRatio = _partialLiquidationRatio;
     }
 
-    function updateLiquidationPenaltyRatio(uint256 _liquidationPenaltyRatio)
-        external
-        onlyOwner
-    {
+    function updateLiquidationPenaltyRatio(
+        uint256 _liquidationPenaltyRatio
+    ) external onlyOwner {
         emit LiquidationPenaltyRatioUpdated(
             liquidationPenaltyRatio,
             _liquidationPenaltyRatio
@@ -66,10 +64,9 @@ contract PositionHouseConfigurationProxy is Initializable, OwnableUpgradeable {
         liquidationPenaltyRatio = _liquidationPenaltyRatio;
     }
 
-    function updateInitialMarginSlippage(uint256 _newSlippage)
-        external
-        onlyOwner
-    {
+    function updateInitialMarginSlippage(
+        uint256 _newSlippage
+    ) external onlyOwner {
         emit InitialMarginSlippagePercentUpdated(
             initialMarginSlippagePercent,
             _newSlippage

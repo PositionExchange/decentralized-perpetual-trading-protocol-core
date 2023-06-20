@@ -81,10 +81,9 @@ contract InsuranceFund is
         );
     }
 
-    function initialize(IAccessController _accessControllerInterface)
-        public
-        initializer
-    {
+    function initialize(
+        IAccessController _accessControllerInterface
+    ) public initializer {
         __ReentrancyGuard_init();
         __Ownable_init();
 
@@ -212,11 +211,10 @@ contract InsuranceFund is
         }
     }
 
-    function getBusdBonusBalances(address _pmAddress, address _trader)
-        external
-        view
-        returns (uint256)
-    {
+    function getBusdBonusBalances(
+        address _pmAddress,
+        address _trader
+    ) external view returns (uint256) {
         return busdBonusBalances[_pmAddress][_trader];
     }
 
@@ -465,10 +463,9 @@ contract InsuranceFund is
         );
     }
 
-    function updateAccessController(address _accessController)
-        public
-        onlyOwner
-    {
+    function updateAccessController(
+        address _accessController
+    ) public onlyOwner {
         accessControllerInterface = IAccessController(_accessController);
     }
 
@@ -482,10 +479,10 @@ contract InsuranceFund is
         maximumBUSDBonusAccepted = _newMaximumBUSDBonusAccepted;
     }
 
-    function updateWhitelistManager(address _positionManager, bool _isWhitelist)
-        external
-        onlyOwner
-    {
+    function updateWhitelistManager(
+        address _positionManager,
+        bool _isWhitelist
+    ) external onlyOwner {
         if (_isWhitelist) {
             _setWhitelistManager(_positionManager);
         } else {
@@ -494,26 +491,23 @@ contract InsuranceFund is
         emit WhitelistManagerUpdated(_positionManager, _isWhitelist);
     }
 
-    function updatePosiAddress(IERC20Upgradeable _newPosiAddress)
-        public
-        onlyOwner
-    {
+    function updatePosiAddress(
+        IERC20Upgradeable _newPosiAddress
+    ) public onlyOwner {
         posi = _newPosiAddress;
         emit PosiChanged(address(_newPosiAddress));
     }
 
-    function updateRouterAddress(IUniswapV2Router02 _newRouterAddress)
-        public
-        onlyOwner
-    {
+    function updateRouterAddress(
+        IUniswapV2Router02 _newRouterAddress
+    ) public onlyOwner {
         router = _newRouterAddress;
         emit RouterChanged(address(_newRouterAddress));
     }
 
-    function updateFactoryAddress(IUniswapV2Factory _newFactory)
-        public
-        onlyOwner
-    {
+    function updateFactoryAddress(
+        IUniswapV2Factory _newFactory
+    ) public onlyOwner {
         factory = _newFactory;
         emit FactoryChanged(address(_newFactory));
     }
@@ -553,10 +547,9 @@ contract InsuranceFund is
         );
     }
 
-    function setBUSDBonusAddress(IERC20Upgradeable _newBUSDBonusAddress)
-        public
-        onlyOwner
-    {
+    function setBUSDBonusAddress(
+        IERC20Upgradeable _newBUSDBonusAddress
+    ) public onlyOwner {
         busdBonus = _newBUSDBonusAddress;
     }
 
@@ -580,21 +573,17 @@ contract InsuranceFund is
     // VIEW FUNCTIONS
     //******************************************************************************************************************
 
-    function getTokenToPosiRoute(address token)
-        private
-        view
-        returns (address[] memory paths)
-    {
+    function getTokenToPosiRoute(
+        address token
+    ) private view returns (address[] memory paths) {
         paths = new address[](2);
         paths[0] = token;
         paths[1] = address(posi);
     }
 
-    function getPosiToTokenRoute(address token)
-        private
-        view
-        returns (address[] memory paths)
-    {
+    function getPosiToTokenRoute(
+        address token
+    ) private view returns (address[] memory paths) {
         paths = new address[](2);
         paths[0] = address(posi);
         paths[1] = token;
@@ -660,10 +649,10 @@ contract InsuranceFund is
         return (_withdrawAmount - _busdBonusBalance, _busdBonusBalance, 0);
     }
 
-    function updateMaxLeverageAcceptBonus(address _pmAddress, uint256 _leverage)
-        external
-        onlyOwner
-    {
+    function updateMaxLeverageAcceptBonus(
+        address _pmAddress,
+        uint256 _leverage
+    ) external onlyOwner {
         maxLeverageAcceptBonus[_pmAddress] = _leverage;
     }
 

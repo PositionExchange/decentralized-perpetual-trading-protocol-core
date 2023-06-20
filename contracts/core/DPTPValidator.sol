@@ -38,8 +38,9 @@ contract DPTPValidator is
     ) public initializer {
         require(
             _positionHouseAddress != address(0) &&
-            _accessControllerAddress != address(0)
-        , Errors.VL_INVALID_INPUT);
+                _accessControllerAddress != address(0),
+            Errors.VL_INVALID_INPUT
+        );
         __ReentrancyGuard_init();
         __Ownable_init();
         __Pausable_init();
@@ -61,7 +62,9 @@ contract DPTPValidator is
         positionHouse = IPositionHouse(_positionHouseAddress);
     }
 
-    function setAccessController(address _accessControllerAddress) public onlyOwner {
+    function setAccessController(
+        address _accessControllerAddress
+    ) public onlyOwner {
         accessController = IAccessController(_accessControllerAddress);
     }
 
@@ -76,44 +79,45 @@ contract DPTPValidator is
         if (_currentChainID != 0 && _currentChainID != _chainID) {
             revert("Cannot have positions on different chains");
         }
-//        if (_amount != 0) {
-//            Position.Data memory  _positionData = positionHouse.getPosition(_pmAddress, _trader);
-//            _positionData.margin = _positionData.margin.absInt() + positionHouse.getAddedMargin(_pmAddress, _trader);
-//            if (_positionData.margin.abs()+ _amount > _positionData.openNotional) {
-//                revert("Invalid added margin amount");
-//            }
-//        }
-        traderData[_trader][_pmAddress]=_chainID;
+        //        if (_amount != 0) {
+        //            Position.Data memory  _positionData = positionHouse.getPosition(_pmAddress, _trader);
+        //            _positionData.margin = _positionData.margin.absInt() + positionHouse.getAddedMargin(_pmAddress, _trader);
+        //            if (_positionData.margin.abs()+ _amount > _positionData.openNotional) {
+        //                revert("Invalid added margin amount");
+        //            }
+        //        }
+        traderData[_trader][_pmAddress] = _chainID;
     }
 
-    function updateTraderData(address _trader,address _pmAddress) external {
+    function updateTraderData(address _trader, address _pmAddress) external {
         onlyCounterParty();
         int256 _claimAmount = 0;
-//        int256 _claimAmount = PositionManagerAdapter.getClaimAmount(
-//            _pmAddress,
-//            positionHouse.getAddedMargin(_pmAddress, _trader),
-//            positionHouse.getDebtPosition(_pmAddress, _trader),
-//            positionHouse.positionMap(_pmAddress, _trader),
-//            positionHouse.getLimitOrders(_pmAddress, _trader),
-//            positionHouse.getReduceLimitOrders(
-//                _pmAddress,
-//                _trader
-//            ),
-//            positionHouse.getLimitOrderPremiumFraction(
-//                _pmAddress,
-//                _trader
-//            ),
-//            positionHouse.getLatestCumulativePremiumFraction(
-//                _pmAddress
-//            )
-//        );
+        //        int256 _claimAmount = PositionManagerAdapter.getClaimAmount(
+        //            _pmAddress,
+        //            positionHouse.getAddedMargin(_pmAddress, _trader),
+        //            positionHouse.getDebtPosition(_pmAddress, _trader),
+        //            positionHouse.positionMap(_pmAddress, _trader),
+        //            positionHouse.getLimitOrders(_pmAddress, _trader),
+        //            positionHouse.getReduceLimitOrders(
+        //                _pmAddress,
+        //                _trader
+        //            ),
+        //            positionHouse.getLimitOrderPremiumFraction(
+        //                _pmAddress,
+        //                _trader
+        //            ),
+        //            positionHouse.getLatestCumulativePremiumFraction(
+        //                _pmAddress
+        //            )
+        //        );
 
-        PositionHouseStorage.LimitOrderPending[] memory _pendingOrders = PositionManagerAdapter.getListOrderPending(
-            _pmAddress,
-            _trader,
-            positionHouse.getLimitOrders(_pmAddress, _trader),
-            positionHouse.getReduceLimitOrders(_pmAddress, _trader)
-        );
+        PositionHouseStorage.LimitOrderPending[]
+            memory _pendingOrders = PositionManagerAdapter.getListOrderPending(
+                _pmAddress,
+                _trader,
+                positionHouse.getLimitOrders(_pmAddress, _trader),
+                positionHouse.getReduceLimitOrders(_pmAddress, _trader)
+            );
 
         if (_claimAmount == 0 && _pendingOrders.length == 0) {
             delete traderData[_trader][_pmAddress];

@@ -11,8 +11,9 @@ interface IPositionManager {
 
     function unpause() external;
 
-    function updateMaxFindingWordsIndex(uint128 _newMaxFindingWordsIndex)
-        external;
+    function updateMaxFindingWordsIndex(
+        uint128 _newMaxFindingWordsIndex
+    ) external;
 
     function updateMaxWordRangeForLimitOrder(
         uint128 _newMaxWordRangeForLimitOrder
@@ -28,8 +29,9 @@ interface IPositionManager {
 
     function updateTollRatio(uint256 _newTollRatio) external;
 
-    function updateSpotPriceTwapInterval(uint256 _spotPriceTwapInterval)
-        external;
+    function updateSpotPriceTwapInterval(
+        uint256 _spotPriceTwapInterval
+    ) external;
 
     function getBasisPointFactors()
         external
@@ -66,39 +68,39 @@ interface IPositionManager {
 
     function getPremiumFraction() external view returns (int256, uint256);
 
-    function getTickPositionIndexes(uint128 _pip)
-        external
-        view
-        returns (uint64 filledIndex, uint64 currentIndex);
+    function getTickPositionIndexes(
+        uint128 _pip
+    ) external view returns (uint64 filledIndex, uint64 currentIndex);
 
-    function calcMakerFee(uint256 _positionNotional, bool _isOpen)
-        external
-        view
-        returns (uint256);
+    function calcMakerFee(
+        uint256 _positionNotional,
+        bool _isOpen
+    ) external view returns (uint256);
 
-    function calcTakerFee(uint256 _positionNotional, bool _isOpen)
-        external
-        view
-        returns (uint256);
+    function calcTakerFee(
+        uint256 _positionNotional,
+        bool _isOpen
+    ) external view returns (uint256);
 
     function updatePartialFilledOrder(uint128 pip, uint64 orderId) external;
 
-    function getUnderlyingTwapPrice(uint256 _intervalInSeconds)
-        external
-        view
-        returns (uint256);
+    function getUnderlyingTwapPrice(
+        uint256 _intervalInSeconds
+    ) external view returns (uint256);
 
-    function getTwapPrice(uint256 _intervalInSeconds)
-        external
-        view
-        returns (uint256);
+    function getTwapPrice(
+        uint256 _intervalInSeconds
+    ) external view returns (uint256);
 
     function calcTwap(
         PositionManagerStorage.TwapPriceCalcParams memory _params,
         uint256 _intervalInSeconds
     ) external view returns (uint256);
 
-    function getPendingOrderDetail(uint128 pip, uint64 orderId)
+    function getPendingOrderDetail(
+        uint128 pip,
+        uint64 orderId
+    )
         external
         view
         returns (
@@ -108,7 +110,10 @@ interface IPositionManager {
             uint256 partialFilled
         );
 
-    function getPendingOrderDetailFull(uint128 pip, uint64 orderId)
+    function getPendingOrderDetailFull(
+        uint128 pip,
+        uint64 orderId
+    )
         external
         view
         returns (
@@ -125,14 +130,7 @@ interface IPositionManager {
         uint256 _pQuantity,
         uint128 _pip,
         uint16 _leverage
-    )
-        external
-        view
-        returns (
-            uint256 notional,
-            uint256 margin,
-            uint256 fee
-        );
+    ) external view returns (uint256 notional, uint256 margin, uint256 fee);
 
     function getMarketMakerAddress() external view returns (address);
 
@@ -144,8 +142,9 @@ interface IPositionManager {
 
     function getLiquidityInPip(uint128 _pip) external view returns (uint128);
 
-    function marketMakerRemove(MarketMaker.MMCancelOrder[] memory _orders)
-        external;
+    function marketMakerRemove(
+        MarketMaker.MMCancelOrder[] memory _orders
+    ) external;
 
     function marketMakerSupply(
         address _marketMakerAddress,
@@ -171,13 +170,7 @@ interface IPositionManager {
         bool isBuy,
         bool isReduce,
         bytes32 sourceChainRequestKey
-    )
-        external
-        returns (
-            uint64 orderId,
-            uint256 sizeOut,
-            uint256 openNotional
-        );
+    ) external returns (uint64 orderId, uint256 sizeOut, uint256 openNotional);
 
     function openMarketPosition(
         address trader,
@@ -194,20 +187,18 @@ interface IPositionManager {
 
     function getCurrentFundingRate() external view returns (int256 fundingRate);
 
-    function cancelLimitOrder(uint128 pip, uint64 orderId)
-        external
-        returns (uint256 refundSize, uint256 partialFilled);
+    function cancelLimitOrder(
+        uint128 pip,
+        uint64 orderId
+    ) external returns (uint256 refundSize, uint256 partialFilled);
 
     function settleFunding() external returns (int256 premiumFraction);
 
     function updateLeverage(uint128 _newLeverage) external;
 
-    function deposit(
-        address _trader,
-        uint256 _amount,
-        uint256 _fee
-    ) external;
+    function deposit(address _trader, uint256 _amount, uint256 _fee) external;
 
     function withdraw(address _trader, uint256 _amount) external;
+
     function getRequestId() external view returns (uint256);
 }

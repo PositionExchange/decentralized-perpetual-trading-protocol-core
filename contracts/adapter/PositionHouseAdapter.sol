@@ -23,7 +23,9 @@ library PositionHouseAdapter {
         uint64 basisPoint;
     }
 
-    function getMaintenanceDetail(GetMaintenanceDetailParam memory _param)
+    function getMaintenanceDetail(
+        GetMaintenanceDetailParam memory _param
+    )
         public
         view
         returns (
@@ -78,14 +80,7 @@ library PositionHouseAdapter {
         IPositionHouse _positionHouseInterface,
         IPositionManager _positionManagerInterface,
         address _trader
-    )
-        external
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
+    ) external returns (uint256, uint256, uint256) {
         return
             _positionHouseInterface.triggerClosePosition(
                 _positionManagerInterface,
