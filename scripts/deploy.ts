@@ -24,6 +24,8 @@ const DATA_STORE_FILE = {
     'dev': './deployData_future_v2_posi_devnet.db',
     'test': './deployData_future_v2_posi_testnet.db',
     'production': './deployData_future_v2_posi_mainnet.db',
+    'prod-futurX': './deployData_futurX_posi_mainnet.db',
+
 }
 
 
@@ -37,6 +39,10 @@ task('deploy', 'deploy contracts', async (taskArgs: {stage: Stage, task: string,
         dataStoreFileName = DATA_STORE_FILE['test']
     } else if (taskArgs.stage == 'dev') {
         dataStoreFileName = DATA_STORE_FILE['dev']
+    } else if (taskArgs.stage == 'prod-futurX') {
+        dataStoreFileName = DATA_STORE_FILE['prod-futurX']
+
+
     }
     // TODO update db file when deploy coin-m
     const db = new DeployDataStore(dataStoreFileName)

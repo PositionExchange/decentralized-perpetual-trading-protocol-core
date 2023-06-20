@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.8;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
@@ -8,6 +8,9 @@ contract PositionNotionalConfigProxy is Initializable {
     bytes32 constant BNB_BUSD = "BNB_BUSD";
     bytes32 constant ETH_BUSD = "ETH_BUSD";
     bytes32 constant SOL_BUSD = "SOL_BUSD";
+
+
+    function initialize() public initializer {}
 
     function getMaxNotional(bytes32 key, uint16 leverage)
         external

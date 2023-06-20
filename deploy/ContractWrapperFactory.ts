@@ -366,7 +366,7 @@ export class ContractWrapperFactory {
         const PositionNotionalConfigProxy = await this.hre.ethers.getContractFactory("PositionNotionalConfigProxy");
         const positionNotionalConfigProxyContractAddress = await this.db.findAddressByKey('PositionNotionalConfigProxy');
         if(positionNotionalConfigProxyContractAddress){
-            const upgraded = await this.hre.upgrades.upgradeProxy(positionNotionalConfigProxyContractAddress, PositionNotionalConfigProxy, {unsafeAllowLinkedLibraries: true});
+            const upgraded = await this.hre.upgrades.upgradeProxy(positionNotionalConfigProxyContractAddress, PositionNotionalConfigProxy, );
             console.log(`Starting verify upgrade PositionNotionalConfigProxy`)
             await this.verifyImplContract(upgraded.deployTransaction)
             console.log(`Upgrade PositionNotionalConfigProxy`)
@@ -581,6 +581,7 @@ export class ContractWrapperFactory {
     }
 
     async createValidatorCore(args: CreateUserGateway){
+        console.log("args: ", args);
         const ValidatorCore = await this.hre.ethers.getContractFactory("ValidatorCore");
         let validatorCoreContractAddress = await this.db.findAddressByKey(`ValidatorCore`);
         if (validatorCoreContractAddress) {
@@ -595,7 +596,7 @@ export class ContractWrapperFactory {
                 args.positionHouseConfigurationProxy,
                 args.insuranceFund
             ]
-            const instance = await this.hre.upgrades.deployProxy(ValidatorCore, contractArgs, {unsafeAllowLinkedLibraries: true});
+            const instance = await this.hre.upgrades.deployProxy(ValidatorCore, contractArgs);
             console.log("wait for deploy validator core");
             await instance.deployed();
             const address = instance.address.toString().toLowerCase();
@@ -705,6 +706,8 @@ export class ContractWrapperFactory {
                 crossChainGateway,
                 positionHouse
             ];
+
+            console.log("contractArgs: ", contractArgs);
 
             const instance = await this.hre.upgrades.deployProxy(orderTrackerFactory, contractArgs, {unsafeAllowLinkedLibraries: true})
             console.log("wait for deploy")

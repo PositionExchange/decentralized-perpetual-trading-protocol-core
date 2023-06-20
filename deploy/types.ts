@@ -11,7 +11,7 @@ export interface MigrationDefinition {
     }
 }
 
-export type Stage = "production" | "staging" | "test" | "dev"
+export type Stage = "production" | "staging" | "test" | "dev" | "prod-futurX"
 export type Network = "bsc_testnet" | "bsc_mainnet"
 export type FutureType = "usd-m" | "coin-m"
 
