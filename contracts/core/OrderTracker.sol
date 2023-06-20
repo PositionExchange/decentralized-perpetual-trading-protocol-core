@@ -234,8 +234,7 @@ contract OrderTracker is
             }
 
             if (
-                pendingOrderDetail.trader !=
-                positionManagerInterface.getMarketMakerAddress()
+                pendingOrderDetail.trader != mmAddress
             ) {
                 uint256 filledSize_ = filledSize;
                 uint128 pip_ = _pip;
@@ -432,6 +431,8 @@ contract OrderTracker is
         uint256 _size,
         bool _isBuy
     ) private {
+
+        if ( _requestKey == bytes32(0x00)) return;
         uint256 basisPoint = _positionManagerInterface.getBasisPoint();
         uint256 entryPrice = (uint256(_pip) * (10**18)) / basisPoint;
 
@@ -453,6 +454,8 @@ contract OrderTracker is
         uint256 _size
     ) private {
         // TODO: Refactor this function later
+        if ( _requestKey == bytes32(0x00)) return;
+
         Position.Data memory positionData = IPositionHouse(positionHouse)
             .getPosition(_manager, _trader);
 
