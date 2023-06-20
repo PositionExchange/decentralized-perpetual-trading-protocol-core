@@ -24,7 +24,7 @@ const migrations: MigrationDefinition = {
         'deploy contract liquidator gateway': async () => {
             let myBlockchainId;
             let destBlockchainId;
-            if (context.stage == "production") {
+            if (context.stage == "prod-futurX") {
                 myBlockchainId = 900000;
                 destBlockchainId = 56
             } else if (context.stage == "test") {

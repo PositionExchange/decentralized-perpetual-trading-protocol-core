@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.8;
 
-import {ContextUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -39,6 +38,10 @@ contract ValidatorCore is
         address _positionHouseConfigurationProxyAddress,
         address _insuranceFundAddress
     ) public initializer {
+        __ReentrancyGuard_init();
+        __Ownable_init();
+        __Pausable_init();
+
         require(
             _positionHouseAddress != address(0) &&
                 _positionStrategyOrderAddress != address(0) &&
@@ -46,9 +49,7 @@ contract ValidatorCore is
                 _insuranceFundAddress != address(0),
             Errors.VL_INVALID_INPUT
         );
-        __ReentrancyGuard_init();
-        __Ownable_init();
-        __Pausable_init();
+
 
         positionHouseInterface = IPositionHouse(_positionHouseAddress);
         positionStrategyOrderInterface = IPositionStrategyOrder(
@@ -290,6 +291,8 @@ contract ValidatorCore is
         );
         revert(Errors.VL_PASS_ALL);
     }
+
+    function test() external {}
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new

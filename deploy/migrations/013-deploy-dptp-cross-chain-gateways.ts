@@ -3,7 +3,7 @@ import { MigrationContext, MigrationDefinition } from "../types";
 const migrations: MigrationDefinition = {
   getTasks: (context: MigrationContext) => ({
     'deploy dptp cross chain gateway': async () => {
-      const myBlockchainId = context.stage === "production" ? 900000 : 910000;
+      const myBlockchainId = context.stage === "prod-futurX" ? 900000 : 910000;
       const timeHorizon = 86400;
       const positionHouseAddress = await context.db.findAddressByKey(
         "PositionHouse"
