@@ -17,6 +17,7 @@ export const PRIV_GANACHE_ACCOUNT = process.env["PRIV_GANACHE_ACCOUNT"] || ""
 export const BUSD_ADDRESS = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"
 export const POSI_ADDRESS = "0x5ca42204cdaa70d5c773946e69de942b85ca6706"
 export const BUSD = 'BUSD'
+export const USD = 'USD'
 export const POSI = 'POSI'
 
 export const POSI_CHAIN_DEVNET_URL = process.env["POSI_CHAIN_DEVNET_URL"] || "https://api-a001.s0.d.int.posichain.org/"

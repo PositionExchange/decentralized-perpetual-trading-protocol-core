@@ -226,7 +226,7 @@ contract ValidatorCore is
             uint256 fee,
             uint256 withdrawAmount,
 
-        ) = positionHouseInterface.closeLimitPosition(
+        ) = positionHouseInterface                                                                                                      .closeLimitPosition(
                 _positionManagerInterface,
                 _pip,
                 _quantity,

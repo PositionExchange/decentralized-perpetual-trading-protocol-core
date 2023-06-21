@@ -1,18 +1,18 @@
 import {MigrationContext, MigrationDefinition} from "../types";
 import {ContractWrapperFactory} from "../ContractWrapperFactory";
 import {
-    AAVEBUSD,
+    AAVEBUSD, AAVEUSD,
     ADABUSD,
     BNBBUSD,
-    BTCBUSD, CAKEBUSD,
+    BTCBUSD, BTCUSD, CAKEBUSD,
     DOGEBUSD, DOTBUSD,
-    ETHBUSD,
-    LINKBUSD, LTCBUSD,
+    ETHBUSD, ETHUSD,
+    LINKBUSD, LINKUSD, LTCBUSD,
     MATICBUSD,
     SOLBUSD, TRXBUSD, UNIBUSD,
     XRPBUSD
 } from "../config_production";
-import {BUSD, POSI} from "../../constants";
+import {BUSD, POSI, USD} from "../../constants";
 
 const migrations: MigrationDefinition = {
 
@@ -20,7 +20,7 @@ const migrations: MigrationDefinition = {
     getTasks: (context: MigrationContext) => {
 
 
-        if(context.stage != 'production') return {}
+        if(context.stage != 'prod-futurX') return {}
 
         return {
             'deploy BTCBUSD position manager production': async () => {
@@ -28,19 +28,19 @@ const migrations: MigrationDefinition = {
                 const positionHouseFunctionContractAddress = await context.db.findAddressByKey('PositionHouse');
                 const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
                 await context.factory.createPositionManager({
-                    quoteAsset: await context.db.getMockContract(`BUSD`),
-                    initialPrice: BTCBUSD.initialPrice,
-                    priceFeedKey: BTCBUSD.priceFeedKey,
-                    basisPoint: BTCBUSD.basisPoint,
-                    baseBasisPoint: BTCBUSD.baseBasisPoint,
-                    tollRatio: BTCBUSD.tollRatio,
-                    maxMarketFindingWordsIndex: BTCBUSD.maxMarketFindingWordsIndex,
-                    maxLimitFindingWordsIndex: BTCBUSD.maxLimitFindingWordsIndex,
-                    fundingPeriod: BTCBUSD.fundingPeriod,
+                    quoteAsset: await context.db.getMockContract(`USD`),
+                    initialPrice: BTCUSD.initialPrice,
+                    priceFeedKey: BTCUSD.priceFeedKey,
+                    basisPoint: BTCUSD.basisPoint,
+                    baseBasisPoint: BTCUSD.baseBasisPoint,
+                    tollRatio: BTCUSD.tollRatio,
+                    maxMarketFindingWordsIndex: BTCUSD.maxMarketFindingWordsIndex,
+                    maxLimitFindingWordsIndex: BTCUSD.maxLimitFindingWordsIndex,
+                    fundingPeriod: BTCUSD.fundingPeriod,
                     priceFeed: chainLinkPriceFeedContractAddress,
-                    quote: BUSD,
-                    leverage: BTCBUSD.leverage,
-                    stepBaseSize: BTCBUSD.stepBaseSize
+                    quote: USD,
+                    leverage: BTCUSD.leverage,
+                    stepBaseSize: BTCUSD.stepBaseSize
                 })
             },
 
@@ -68,19 +68,19 @@ const migrations: MigrationDefinition = {
                 const positionHouseFunctionContractAddress = await context.db.findAddressByKey('PositionHouse');
                 const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
                 await context.factory.createPositionManager({
-                    quoteAsset: await context.db.getMockContract(`BUSD`),
-                    initialPrice: ETHBUSD.initialPrice,
-                    priceFeedKey: ETHBUSD.priceFeedKey,
-                    basisPoint: ETHBUSD.basisPoint,
-                    baseBasisPoint: ETHBUSD.baseBasisPoint,
-                    tollRatio: ETHBUSD.tollRatio,
-                    maxMarketFindingWordsIndex: ETHBUSD.maxMarketFindingWordsIndex,
-                    maxLimitFindingWordsIndex: ETHBUSD.maxLimitFindingWordsIndex,
-                    fundingPeriod: ETHBUSD.fundingPeriod,
+                    quoteAsset: await context.db.getMockContract(`USD`),
+                    initialPrice: ETHUSD.initialPrice,
+                    priceFeedKey: ETHUSD.priceFeedKey,
+                    basisPoint: ETHUSD.basisPoint,
+                    baseBasisPoint: ETHUSD.baseBasisPoint,
+                    tollRatio: ETHUSD.tollRatio,
+                    maxMarketFindingWordsIndex: ETHUSD.maxMarketFindingWordsIndex,
+                    maxLimitFindingWordsIndex: ETHUSD.maxLimitFindingWordsIndex,
+                    fundingPeriod: ETHUSD.fundingPeriod,
                     priceFeed: chainLinkPriceFeedContractAddress,
-                    quote: ETHBUSD.quote,
-                    leverage: ETHBUSD.leverage,
-                    stepBaseSize: ETHBUSD.stepBaseSize
+                    quote: ETHUSD.quote,
+                    leverage: ETHUSD.leverage,
+                    stepBaseSize: ETHUSD.stepBaseSize
                 })
             },
 
@@ -127,18 +127,18 @@ const migrations: MigrationDefinition = {
                 const positionHouseFunctionContractAddress = await context.db.findAddressByKey('PositionHouse');
                 const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
                 await context.factory.createPositionManager({
-                    quoteAsset: await context.db.getMockContract(`BUSD`),
-                    initialPrice: LINKBUSD.initialPrice,
-                    priceFeedKey: LINKBUSD.priceFeedKey,
-                    basisPoint: LINKBUSD.basisPoint,
-                    baseBasisPoint: LINKBUSD.baseBasisPoint,
-                    tollRatio: LINKBUSD.tollRatio,
-                    maxMarketFindingWordsIndex: LINKBUSD.maxMarketFindingWordsIndex,
-                    maxLimitFindingWordsIndex: LINKBUSD.maxLimitFindingWordsIndex,
-                    fundingPeriod: LINKBUSD.fundingPeriod,
+                    quoteAsset: await context.db.getMockContract(`USD`),
+                    initialPrice: LINKUSD.initialPrice,
+                    priceFeedKey: LINKUSD.priceFeedKey,
+                    basisPoint: LINKUSD.basisPoint,
+                    baseBasisPoint: LINKUSD.baseBasisPoint,
+                    tollRatio: LINKUSD.tollRatio,
+                    maxMarketFindingWordsIndex: LINKUSD.maxMarketFindingWordsIndex,
+                    maxLimitFindingWordsIndex: LINKUSD.maxLimitFindingWordsIndex,
+                    fundingPeriod: LINKUSD.fundingPeriod,
                     priceFeed: chainLinkPriceFeedContractAddress,
-                    quote: LINKBUSD.quote,
-                    leverage: LINKBUSD.leverage
+                    quote: LINKUSD.quote,
+                    leverage: LINKUSD.leverage
                 })
             },
 
@@ -241,19 +241,19 @@ const migrations: MigrationDefinition = {
                 const positionHouseFunctionContractAddress = await context.db.findAddressByKey('PositionHouse');
                 const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
                 await context.factory.createPositionManager({
-                    quoteAsset: await context.db.getMockContract(`BUSD`),
-                    initialPrice: AAVEBUSD.initialPrice,
-                    priceFeedKey: AAVEBUSD.priceFeedKey,
-                    basisPoint: AAVEBUSD.basisPoint,
-                    baseBasisPoint: AAVEBUSD.baseBasisPoint,
-                    tollRatio: AAVEBUSD.tollRatio,
-                    maxMarketFindingWordsIndex: AAVEBUSD.maxMarketFindingWordsIndex,
-                    maxLimitFindingWordsIndex: AAVEBUSD.maxLimitFindingWordsIndex,
-                    fundingPeriod: AAVEBUSD.fundingPeriod,
+                    quoteAsset: await context.db.getMockContract(`USD`),
+                    initialPrice: AAVEUSD.initialPrice,
+                    priceFeedKey: AAVEUSD.priceFeedKey,
+                    basisPoint: AAVEUSD.basisPoint,
+                    baseBasisPoint: AAVEUSD.baseBasisPoint,
+                    tollRatio: AAVEUSD.tollRatio,
+                    maxMarketFindingWordsIndex: AAVEUSD.maxMarketFindingWordsIndex,
+                    maxLimitFindingWordsIndex: AAVEUSD.maxLimitFindingWordsIndex,
+                    fundingPeriod: AAVEUSD.fundingPeriod,
                     priceFeed: chainLinkPriceFeedContractAddress,
-                    quote: AAVEBUSD.quote,
-                    leverage: AAVEBUSD.leverage,
-                    stepBaseSize: AAVEBUSD.stepBaseSize
+                    quote: AAVEUSD.quote,
+                    leverage: AAVEUSD.leverage,
+                    stepBaseSize: AAVEUSD.stepBaseSize
                 })
             },
 
