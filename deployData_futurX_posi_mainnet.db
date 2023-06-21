@@ -1,4 +1,6 @@
 {"address":"0xcb012139e5c5dde727d8f909491e49eae21a414d","key":"AccessControllerAdapter","_id":"0FgWe1o9PVQxxcRV"}
+{"address":"0x67dc34ebff8b692c30c6afcc8f66bc38a89298b5","key":"PositionManager:ETH_USD","_id":"4ILZXUDV4WJOHVno"}
+{"address":"0x45a4a372df0cdc0fd81ec084a920364263a4fcb9","key":"PositionManager:BTC_USD","_id":"8VCHWVpkUhgESZF0"}
 {"address":"0x9f3e25c02cfa242ee9b787634cc5578330608528","key":"InsuranceFundAdapter","_id":"DQjrPXKHc3S4WgHK"}
 {"address":"0x1b6064eda3d9302d6666f2eb986ac7f632f86014","key":"ValidatorGateway","_id":"Dn2UzkkPfuWo3MuJ"}
 {"address":"0x7c9cd29a88eacbc1303acee9d105d3a36c1e1777","key":"PositionMath","_id":"G8pNYPVfdq69UvK2"}
@@ -6,8 +8,10 @@
 {"address":"0xc3cb3b1935ba9136ec2ca0872b50f8399b8e2350","key":"PositionHouseAdapter","_id":"LblZu7Uodj5ujqp5"}
 {"address":"0xc672e50e3297987650ff5e968f66d3f4df047e4a","key":"OrderTracker","_id":"MSitWaPVn3K1ZsGv"}
 {"address":"0xcea84907fbc92a1c57cbd7678399a625fdd49695","key":"ValidatorCore","_id":"OkH8WiW3UbzEgTvQ"}
+{"address":"0x103c8cde4b777350986902f8cd8da7aa27635eea","key":"ChainLinkPriceFeed","_id":"SUHOtJtbxoYYQJps"}
 {"address":"0x3f49c6bcff2f71e847c81f5b6f6b9522e8ced3ba","key":"PositionHouse","_id":"UOfHdIT5KWA9JtIs"}
 {"address":"0x60b8f8080c473794f985b9f50d68eae788dd1407","key":"AccessController","_id":"VHMDYqHaJCsHNUu4"}
+{"address":"0x522aa15a4dfaf91d3e6da060569a57baf65bcedb","key":"PositionManager:LINK_USD","_id":"dOHw3EvHIdrZ6B0T"}
 {"address":"0x46229c0b4a83e4c39a4c2be4a5b3f63d48b8b843","key":"PositionManagerAdapter","_id":"dyJOHe1WNpPrfVXQ"}
 {"address":"0x149997974c22cb4017133cd21440f60704150239","key":"InsuranceFund","_id":"h1MvbCYkQtGNv35V"}
 {"address":"0x31facbb3c4a11f210e54c3641ad97e665e5e3729","key":"USDMargin","_id":"iO2wLV723rfwPCCI"}
@@ -19,4 +23,4 @@
 {"address":"0x20035aaabd0018923198ec5b91b841bfec40e2a8","key":"LiquidatorGateway","_id":"v4TS3LJFRMbuWvIU"}
 {"address":"0xd0487db7512e97175c499ec418d367a5b09f94b8","key":"PositionStrategyOrder","_id":"vkPvfLBzlfCNr3iK"}
 {"address":"0xe8a0add12f4a5df9eb98d62a7f600fc46cea26a3","key":"PositionNotionalConfigProxy","_id":"yq4xu99CUlazkKKS"}
-{"address":"0x103c8cde4b777350986902f8cd8da7aa27635eea","key":"ChainLinkPriceFeed","_id":"SUHOtJtbxoYYQJps"}
+{"address":"0x5e0387af92596c75febcd5ff6c54d6c68184b665","key":"PositionManager:AAVE_USD","_id":"3SPMetEewKvwoicd"}

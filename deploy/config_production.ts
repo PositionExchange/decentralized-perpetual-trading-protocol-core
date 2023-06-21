@@ -1,9 +1,9 @@
 import {ConfigPositionManagerInput, CreatePositionManagerInput} from "./types";
-import {BUSD} from "../constants";
+import {BUSD, USD} from "../constants";
 
 
 export const BTCBUSD : ConfigPositionManagerInput = {
-    initialPrice: 0,
+    initialPrice: 2800000,
     priceFeedKey: 'BTC',
     basisPoint: 100,
     baseBasisPoint: 10000,
@@ -12,8 +12,23 @@ export const BTCBUSD : ConfigPositionManagerInput = {
     maxLimitFindingWordsIndex: 3200, // find in big range ~ 8000 price (50% of current), word = price * basisPoint / 256
     maxMarketFindingWordsIndex: 650, // find in small range ~ 1600 price (10% of current), word = price * basisPoint / 256
     fundingPeriod: 3600,
-    quote: BUSD,
-    leverage: 125,
+    quote: USD,
+    leverage: 100,
+    stepBaseSize: '1000000000000000' // = 0.001
+}
+
+export const BTCUSD : ConfigPositionManagerInput = {
+    initialPrice: 2800000,
+    priceFeedKey: 'BTC',
+    basisPoint: 100,
+    baseBasisPoint: 10000,
+    // fee for maker: 0.01%, fee for taker: 0.02%
+    tollRatio: 5000,
+    maxLimitFindingWordsIndex: 3200, // find in big range ~ 8000 price (50% of current), word = price * basisPoint / 256
+    maxMarketFindingWordsIndex: 650, // find in small range ~ 1600 price (10% of current), word = price * basisPoint / 256
+    fundingPeriod: 3600,
+    quote: USD,
+    leverage: 100,
     stepBaseSize: '1000000000000000' // = 0.001
 }
 
@@ -43,6 +58,21 @@ export const ETHBUSD : ConfigPositionManagerInput = {
     maxMarketFindingWordsIndex: 50, // find in small range ~ 120 price (10% of current)
     fundingPeriod: 3600,
     quote: BUSD,
+    leverage: 50,
+    stepBaseSize: '1000000000000000' // = 0.001
+}
+
+export const ETHUSD : ConfigPositionManagerInput = {
+    initialPrice: 180000,
+    priceFeedKey: 'ETH',
+    basisPoint: 100,
+    baseBasisPoint: 10000,
+    // fee for maker: 0.01%, fee for taker: 0.02%
+    tollRatio: 5000,
+    maxLimitFindingWordsIndex: 250, // find in big range ~ 600 price (50% of current)
+    maxMarketFindingWordsIndex: 50, // find in small range ~ 120 price (10% of current)
+    fundingPeriod: 3600,
+    quote: USD,
     leverage: 50,
     stepBaseSize: '1000000000000000' // = 0.001
 }
@@ -87,7 +117,22 @@ export const LINKBUSD : ConfigPositionManagerInput = {
     maxLimitFindingWordsIndex: 12, // find in big range ~ 2.7 price (50% of current)
     maxMarketFindingWordsIndex: 3, // find in small range ~ 0.6 price (10% of current)
     fundingPeriod: 3600,
-    quote: BUSD,
+    quote: USD,
+    leverage: 20,
+    stepBaseSize: '100000000000000000' // = 0.1
+}
+
+export const LINKUSD : ConfigPositionManagerInput = {
+    initialPrice: 50000,
+    priceFeedKey: 'LINK',
+    basisPoint: 1000,
+    baseBasisPoint: 1000000,
+    // fee for maker: 0.01%, fee for taker: 0.02%
+    tollRatio: 10000,
+    maxLimitFindingWordsIndex: 12, // find in big range ~ 2.7 price (50% of current)
+    maxMarketFindingWordsIndex: 3, // find in small range ~ 0.6 price (10% of current)
+    fundingPeriod: 3600,
+    quote: USD,
     leverage: 20,
     stepBaseSize: '100000000000000000' // = 0.1
 }
@@ -178,6 +223,21 @@ export const AAVEBUSD : ConfigPositionManagerInput = {
     maxMarketFindingWordsIndex: 3, // find in small range ~ 5.2 price (10% of current)
     fundingPeriod: 3600,
     quote: BUSD,
+    leverage: 20,
+    stepBaseSize: '10000000000000000' // = 0.01
+}
+
+export const AAVEUSD : ConfigPositionManagerInput = {
+    initialPrice: 5378,
+    priceFeedKey: 'AAVE',
+    basisPoint: 100,
+    baseBasisPoint: 10000,
+    // fee for maker: 0.01%, fee for taker: 0.02%
+    tollRatio: 10000,
+    maxLimitFindingWordsIndex: 11, // find in big range ~ 26 price (50% of current)
+    maxMarketFindingWordsIndex: 3, // find in small range ~ 5.2 price (10% of current)
+    fundingPeriod: 3600,
+    quote: USD,
     leverage: 20,
     stepBaseSize: '10000000000000000' // = 0.01
 }
