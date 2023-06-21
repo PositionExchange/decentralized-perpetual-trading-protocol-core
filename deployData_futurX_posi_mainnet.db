@@ -1,6 +1,8 @@
 {"address":"0xcb012139e5c5dde727d8f909491e49eae21a414d","key":"AccessControllerAdapter","_id":"0FgWe1o9PVQxxcRV"}
+{"address":"0x5e0387af92596c75febcd5ff6c54d6c68184b665","key":"PositionManager:AAVE_USD","_id":"3SPMetEewKvwoicd"}
 {"address":"0x67dc34ebff8b692c30c6afcc8f66bc38a89298b5","key":"PositionManager:ETH_USD","_id":"4ILZXUDV4WJOHVno"}
 {"address":"0x45a4a372df0cdc0fd81ec084a920364263a4fcb9","key":"PositionManager:BTC_USD","_id":"8VCHWVpkUhgESZF0"}
+{"address":"0x42fad2e59a71a377991e27bef897934f893eaafa","key":"MarketMakerGateway","_id":"CtydQdTP3DyDC7LW"}
 {"address":"0x9f3e25c02cfa242ee9b787634cc5578330608528","key":"InsuranceFundAdapter","_id":"DQjrPXKHc3S4WgHK"}
 {"address":"0x1b6064eda3d9302d6666f2eb986ac7f632f86014","key":"ValidatorGateway","_id":"Dn2UzkkPfuWo3MuJ"}
 {"address":"0x7c9cd29a88eacbc1303acee9d105d3a36c1e1777","key":"PositionMath","_id":"G8pNYPVfdq69UvK2"}
@@ -23,4 +25,4 @@
 {"address":"0x20035aaabd0018923198ec5b91b841bfec40e2a8","key":"LiquidatorGateway","_id":"v4TS3LJFRMbuWvIU"}
 {"address":"0xd0487db7512e97175c499ec418d367a5b09f94b8","key":"PositionStrategyOrder","_id":"vkPvfLBzlfCNr3iK"}
 {"address":"0xe8a0add12f4a5df9eb98d62a7f600fc46cea26a3","key":"PositionNotionalConfigProxy","_id":"yq4xu99CUlazkKKS"}
-{"address":"0x5e0387af92596c75febcd5ff6c54d6c68184b665","key":"PositionManager:AAVE_USD","_id":"3SPMetEewKvwoicd"}
+{"address":"yes","key":"0xd8B7Dd97BE86A5E98Ab72d7880db0eEc396E7D37:verified","_id":"09JNsfF73tBmV1W6"}

@@ -122,6 +122,7 @@
 {"address":"yes","key":"0xb9Fb389Da3428ffb7F733c96A2D08ee1A1E21Dc5:verified","_id":"dfjWEeCEhoiTsM4B"}
 {"address":"yes","key":"0xc4f4Ad40326535833f3e33aF999d00333643aE70:verified","_id":"dvjUbB5v0bAKzlhf"}
 {"address":"yes","key":"0x57CC405f085D6a87FE625dD49319BD4C5b1213cB:verified","_id":"eKmbOVmbWOJdYkgf"}
+{"address":"yes","key":"0xa21689406BBeb20a99FbFD11ed0d4AeF54f0A8C5:verified","_id":"ebbVGAUELSsnkBaS"}
 {"address":"yes","key":"0x82ba09E3B4f007307F193cb4575d7f683B0968bE:verified","_id":"ewOUIuVZboKqcblW"}
 {"address":"yes","key":"0x8C2c6a8F4353E76BEC87FcFA9eb73284a9DBB86F:verified","_id":"ezv6vFluEE7AJ4Gg"}
 {"address":"yes","key":"0xb017C5b35d44745dBec92D7Ca7E5486D34D704D9:verified","_id":"f9SwNMp2qklqO5jj"}
@@ -160,7 +161,6 @@
 {"address":"yes","key":"0xb2dfc13D7102890440E6a724908a3f3fd8C13ad9:verified","_id":"m9j3Es3icDFYvsbq"}
 {"address":"yes","key":"0x0044681382e1B142013155A3Ca0218AF9d8177c7:verified","_id":"mPIXQFFiZiwWs5zQ"}
 {"address":"yes","key":"0x5cAE7d0b06bDe1FA9aa09a2fC6BF5Bbe5eDE5a30:verified","_id":"mUqZr0ohxcDid1OS"}
-{"address":"0xaeb2abf30e28e3c3130e3abe1d5ecc75ba969804","key":"MarketMakerGateway","_id":"mn3owfLcDjCdMJGr"}
 {"address":"yes","key":"0x2b1e02BaE6821A1e85424341549B9c22520C9E8d:verified","_id":"n7FgxWR1E7331VcJ"}
 {"address":"yes","key":"0x39E8F51Ad0F2c2FE04AA0b4Ad3Cd4e4AB60B1bae:verified","_id":"nEabMn7Ck607zZxI"}
 {"address":"yes","key":"0x0f58d74de8a7d73b92aE43f62e5a68346552F5E0:verified","_id":"nvNoEC0q7ibojp6l"}
@@ -196,7 +196,8 @@
 {"address":"yes","key":"0xb7555e3d140F9Ba895660B3Fda776FB286F8B270:verified","_id":"unxIMfptQzyI6o0j"}
 {"address":"yes","key":"0x656CecBbB04aB782dD6Aa95Fcbfa1d78258cF6b9:verified","_id":"vWQiQC64j9HZf99l"}
 {"address":"0x898b5760b0197cb4150cb61b579f3d078da48254","key":"DPTPValidator","_id":"vvaY0gmXAMK1qKtT"}
+{"address":"0x91152ae17208ad8f1a323f656f11504593cf85e2","key":"MarketMakerGateway","_id":"vwnmj1D7sH8JYsxH"}
 {"address":"yes","key":"0x1c9171c6045D92123081a39E5Dd3a94B0878129f:verified","_id":"w1F0LmEWZJYeaAiU"}
 {"address":"yes","key":"0x82E72D57b93E4A9Dd8733C28A5Eb80A5b85852A0:verified","_id":"w40en7pGqHAPkiCr"}
 {"address":"yes","key":"0xEb4A06960edC5BD5FBdF99d4615f0073D9A476c9:verified","_id":"xdCQCuY7RJfltHhy"}
-{"address":"yes","key":"0xa21689406BBeb20a99FbFD11ed0d4AeF54f0A8C5:verified","_id":"ebbVGAUELSsnkBaS"}
+{"address":"yes","key":"0x26BA299097bF167e8674F96fc8Bf2af57219B06d:verified","_id":"mvN1nqElepusHOwe"}

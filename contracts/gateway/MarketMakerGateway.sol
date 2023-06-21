@@ -79,7 +79,7 @@ contract MarketMakerGateway is
     function marketMakerFillToPip(
         IPositionManager _positionManagerInterface,
         uint128 _targetPip,
-        MarketMaker.MMOrder[] memory _cancelOrders,
+        MarketMaker.MMCancelOrder[] memory _cancelOrders,
         MarketMaker.MMOrder[] memory _openDepthOrders
     ) external onlyMMWhitelist {
         if (_cancelOrders.length > 0) {
