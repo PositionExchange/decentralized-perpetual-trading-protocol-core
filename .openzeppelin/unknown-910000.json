@@ -40385,6 +40385,2282 @@
           }
         }
       }
+    },
+    "d9e5aba4d7aaba2bb21dc1d0ed57038594198ff0b6e809c0b6d89a6acc224807": {
+      "address": "0xb506d0C4B6f814c2168d6cDEAf8ABDA15517e56b",
+      "txHash": "0x12e70525a7c791925f2932b3e474cb61d65effe2e575e345d3265eee8b14a7e1",
+      "layout": {
+        "solcVersion": "0.8.8",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:80"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "basisPoint",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_uint64",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:16"
+          },
+          {
+            "label": "BASE_BASIC_POINT",
+            "offset": 8,
+            "slot": "201",
+            "type": "t_uint64",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:17"
+          },
+          {
+            "label": "tollRatio",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:19"
+          },
+          {
+            "label": "fundingRate",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_int256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:21"
+          },
+          {
+            "label": "spotPriceTwapInterval",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:23"
+          },
+          {
+            "label": "fundingPeriod",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:24"
+          },
+          {
+            "label": "fundingBufferPeriod",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:25"
+          },
+          {
+            "label": "nextFundingTime",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:26"
+          },
+          {
+            "label": "priceFeedKey",
+            "offset": 0,
+            "slot": "208",
+            "type": "t_bytes32",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:27"
+          },
+          {
+            "label": "maxFindingWordsIndex",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:29"
+          },
+          {
+            "label": "leverage",
+            "offset": 16,
+            "slot": "209",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:31"
+          },
+          {
+            "label": "_isInitiatedPip",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_bool",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:33"
+          },
+          {
+            "label": "reserveSnapshots",
+            "offset": 0,
+            "slot": "211",
+            "type": "t_array(t_struct(ReserveSnapshot)33439_storage)dyn_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:89"
+          },
+          {
+            "label": "singleSlot",
+            "offset": 0,
+            "slot": "212",
+            "type": "t_struct(SingleSlot)33432_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:91"
+          },
+          {
+            "label": "tickPosition",
+            "offset": 0,
+            "slot": "213",
+            "type": "t_mapping(t_uint128,t_struct(Data)32626_storage)",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:92"
+          },
+          {
+            "label": "liquidityBitmap",
+            "offset": 0,
+            "slot": "214",
+            "type": "t_mapping(t_uint128,t_uint256)",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:94"
+          },
+          {
+            "label": "maxMarketMakerSlipage",
+            "offset": 0,
+            "slot": "215",
+            "type": "t_uint16",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:97"
+          },
+          {
+            "label": "maxWordRangeForLimitOrder",
+            "offset": 2,
+            "slot": "215",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:100"
+          },
+          {
+            "label": "maxWordRangeForMarketOrder",
+            "offset": 0,
+            "slot": "216",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:101"
+          },
+          {
+            "label": "quoteAsset",
+            "offset": 0,
+            "slot": "217",
+            "type": "t_contract(IERC20)1719",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:102"
+          },
+          {
+            "label": "priceFeed",
+            "offset": 0,
+            "slot": "218",
+            "type": "t_contract(IChainLinkPriceFeed)6036",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:103"
+          },
+          {
+            "label": "insuranceFundInterface",
+            "offset": 0,
+            "slot": "219",
+            "type": "t_contract(IInsuranceFund)6210",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:104"
+          },
+          {
+            "label": "accessControllerInterface",
+            "offset": 0,
+            "slot": "220",
+            "type": "t_contract(IAccessController)5992",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:105"
+          },
+          {
+            "label": "isRFIToken",
+            "offset": 20,
+            "slot": "220",
+            "type": "t_bool",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:106"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "221",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:113"
+          },
+          {
+            "label": "requestId",
+            "offset": 0,
+            "slot": "270",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:114"
+          },
+          {
+            "label": "tollsRatio",
+            "offset": 0,
+            "slot": "271",
+            "type": "t_struct(TollRatio)33427_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:115"
+          },
+          {
+            "label": "stepBaseSize",
+            "offset": 0,
+            "slot": "272",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:117"
+          },
+          {
+            "label": "validatedMarketMaker",
+            "offset": 0,
+            "slot": "273",
+            "type": "t_address",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:118"
+          },
+          {
+            "label": "orderTrackerInterface",
+            "offset": 0,
+            "slot": "274",
+            "type": "t_contract(IOrderTracker)6243",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:119"
+          },
+          {
+            "label": "maxMarketMakerSlippageWithLargePercent",
+            "offset": 20,
+            "slot": "274",
+            "type": "t_uint16",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:128"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(ReserveSnapshot)33439_storage)dyn_storage": {
+            "label": "struct PositionManagerStorage.ReserveSnapshot[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IAccessController)5992": {
+            "label": "contract IAccessController",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IChainLinkPriceFeed)6036": {
+            "label": "contract IChainLinkPriceFeed",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)1719": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IInsuranceFund)6210": {
+            "label": "contract IInsuranceFund",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IOrderTracker)6243": {
+            "label": "contract IOrderTracker",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint128,t_struct(Data)32626_storage)": {
+            "label": "mapping(uint128 => struct TickPosition.Data)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint128,t_uint256)": {
+            "label": "mapping(uint128 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint64,t_struct(Data)29683_storage)": {
+            "label": "mapping(uint64 => struct LimitOrder.Data)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Data)29683_storage": {
+            "label": "struct LimitOrder.Data",
+            "members": [
+              {
+                "label": "isBuy",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "size",
+                "type": "t_uint120",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "partialFilled",
+                "type": "t_uint120",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "trader",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "isReduce",
+                "type": "t_bool",
+                "offset": 20,
+                "slot": "1"
+              },
+              {
+                "label": "sourceChainRequestKey",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(Data)32626_storage": {
+            "label": "struct TickPosition.Data",
+            "members": [
+              {
+                "label": "liquidity",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "filledIndex",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "currentIndex",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              },
+              {
+                "label": "orderQueue",
+                "type": "t_mapping(t_uint64,t_struct(Data)29683_storage)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(ReserveSnapshot)33439_storage": {
+            "label": "struct PositionManagerStorage.ReserveSnapshot",
+            "members": [
+              {
+                "label": "pip",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "blockNumber",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(SingleSlot)33432_storage": {
+            "label": "struct PositionManagerStorage.SingleSlot",
+            "members": [
+              {
+                "label": "pip",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "isFullBuy",
+                "type": "t_uint128",
+                "offset": 16,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(TollRatio)33427_storage": {
+            "label": "struct PositionManagerStorage.TollRatio",
+            "members": [
+              {
+                "label": "makerOpenTollRatio",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "makerCloseTollRatio",
+                "type": "t_uint64",
+                "offset": 8,
+                "slot": "0"
+              },
+              {
+                "label": "takerOpenTollRatio",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "takerCloseTollRatio",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint120": {
+            "label": "uint120",
+            "numberOfBytes": "15"
+          },
+          "t_uint128": {
+            "label": "uint128",
+            "numberOfBytes": "16"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "a3e3a1152b12d50dd5d5e869ff1335bf3fda5c9f0fcd893d607b08fe58ab2061": {
+      "address": "0x4E07fd180E6Ba2D60E697457DB3f27A418e95890",
+      "txHash": "0x65c375df35b3d578bcb147a37ae56a763d00aa23e4e1361733a7fe13e42ac0c8",
+      "layout": {
+        "solcVersion": "0.8.8",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:80"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "basisPoint",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_uint64",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:16"
+          },
+          {
+            "label": "BASE_BASIC_POINT",
+            "offset": 8,
+            "slot": "201",
+            "type": "t_uint64",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:17"
+          },
+          {
+            "label": "tollRatio",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:19"
+          },
+          {
+            "label": "fundingRate",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_int256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:21"
+          },
+          {
+            "label": "spotPriceTwapInterval",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:23"
+          },
+          {
+            "label": "fundingPeriod",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:24"
+          },
+          {
+            "label": "fundingBufferPeriod",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:25"
+          },
+          {
+            "label": "nextFundingTime",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:26"
+          },
+          {
+            "label": "priceFeedKey",
+            "offset": 0,
+            "slot": "208",
+            "type": "t_bytes32",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:27"
+          },
+          {
+            "label": "maxFindingWordsIndex",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:29"
+          },
+          {
+            "label": "leverage",
+            "offset": 16,
+            "slot": "209",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:31"
+          },
+          {
+            "label": "_isInitiatedPip",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_bool",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:33"
+          },
+          {
+            "label": "reserveSnapshots",
+            "offset": 0,
+            "slot": "211",
+            "type": "t_array(t_struct(ReserveSnapshot)33439_storage)dyn_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:89"
+          },
+          {
+            "label": "singleSlot",
+            "offset": 0,
+            "slot": "212",
+            "type": "t_struct(SingleSlot)33432_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:91"
+          },
+          {
+            "label": "tickPosition",
+            "offset": 0,
+            "slot": "213",
+            "type": "t_mapping(t_uint128,t_struct(Data)32626_storage)",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:92"
+          },
+          {
+            "label": "liquidityBitmap",
+            "offset": 0,
+            "slot": "214",
+            "type": "t_mapping(t_uint128,t_uint256)",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:94"
+          },
+          {
+            "label": "maxMarketMakerSlipage",
+            "offset": 0,
+            "slot": "215",
+            "type": "t_uint16",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:97"
+          },
+          {
+            "label": "maxWordRangeForLimitOrder",
+            "offset": 2,
+            "slot": "215",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:100"
+          },
+          {
+            "label": "maxWordRangeForMarketOrder",
+            "offset": 0,
+            "slot": "216",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:101"
+          },
+          {
+            "label": "quoteAsset",
+            "offset": 0,
+            "slot": "217",
+            "type": "t_contract(IERC20)1719",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:102"
+          },
+          {
+            "label": "priceFeed",
+            "offset": 0,
+            "slot": "218",
+            "type": "t_contract(IChainLinkPriceFeed)6036",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:103"
+          },
+          {
+            "label": "insuranceFundInterface",
+            "offset": 0,
+            "slot": "219",
+            "type": "t_contract(IInsuranceFund)6210",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:104"
+          },
+          {
+            "label": "accessControllerInterface",
+            "offset": 0,
+            "slot": "220",
+            "type": "t_contract(IAccessController)5992",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:105"
+          },
+          {
+            "label": "isRFIToken",
+            "offset": 20,
+            "slot": "220",
+            "type": "t_bool",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:106"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "221",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:113"
+          },
+          {
+            "label": "requestId",
+            "offset": 0,
+            "slot": "270",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:114"
+          },
+          {
+            "label": "tollsRatio",
+            "offset": 0,
+            "slot": "271",
+            "type": "t_struct(TollRatio)33427_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:115"
+          },
+          {
+            "label": "stepBaseSize",
+            "offset": 0,
+            "slot": "272",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:117"
+          },
+          {
+            "label": "validatedMarketMaker",
+            "offset": 0,
+            "slot": "273",
+            "type": "t_address",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:118"
+          },
+          {
+            "label": "orderTrackerInterface",
+            "offset": 0,
+            "slot": "274",
+            "type": "t_contract(IOrderTracker)6243",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:119"
+          },
+          {
+            "label": "maxMarketMakerSlippageWithLargePercent",
+            "offset": 20,
+            "slot": "274",
+            "type": "t_uint16",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:129"
+          },
+          {
+            "label": "maxMarketMakerSlippageLargePercent",
+            "offset": 22,
+            "slot": "274",
+            "type": "t_uint32",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:130"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(ReserveSnapshot)33439_storage)dyn_storage": {
+            "label": "struct PositionManagerStorage.ReserveSnapshot[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IAccessController)5992": {
+            "label": "contract IAccessController",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IChainLinkPriceFeed)6036": {
+            "label": "contract IChainLinkPriceFeed",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)1719": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IInsuranceFund)6210": {
+            "label": "contract IInsuranceFund",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IOrderTracker)6243": {
+            "label": "contract IOrderTracker",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint128,t_struct(Data)32626_storage)": {
+            "label": "mapping(uint128 => struct TickPosition.Data)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint128,t_uint256)": {
+            "label": "mapping(uint128 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint64,t_struct(Data)29683_storage)": {
+            "label": "mapping(uint64 => struct LimitOrder.Data)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Data)29683_storage": {
+            "label": "struct LimitOrder.Data",
+            "members": [
+              {
+                "label": "isBuy",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "size",
+                "type": "t_uint120",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "partialFilled",
+                "type": "t_uint120",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "trader",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "isReduce",
+                "type": "t_bool",
+                "offset": 20,
+                "slot": "1"
+              },
+              {
+                "label": "sourceChainRequestKey",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(Data)32626_storage": {
+            "label": "struct TickPosition.Data",
+            "members": [
+              {
+                "label": "liquidity",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "filledIndex",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "currentIndex",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              },
+              {
+                "label": "orderQueue",
+                "type": "t_mapping(t_uint64,t_struct(Data)29683_storage)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(ReserveSnapshot)33439_storage": {
+            "label": "struct PositionManagerStorage.ReserveSnapshot",
+            "members": [
+              {
+                "label": "pip",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "blockNumber",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(SingleSlot)33432_storage": {
+            "label": "struct PositionManagerStorage.SingleSlot",
+            "members": [
+              {
+                "label": "pip",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "isFullBuy",
+                "type": "t_uint128",
+                "offset": 16,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(TollRatio)33427_storage": {
+            "label": "struct PositionManagerStorage.TollRatio",
+            "members": [
+              {
+                "label": "makerOpenTollRatio",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "makerCloseTollRatio",
+                "type": "t_uint64",
+                "offset": 8,
+                "slot": "0"
+              },
+              {
+                "label": "takerOpenTollRatio",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "takerCloseTollRatio",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint120": {
+            "label": "uint120",
+            "numberOfBytes": "15"
+          },
+          "t_uint128": {
+            "label": "uint128",
+            "numberOfBytes": "16"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "405a8e46e0fc1b83b3dd8c89fbc7a2080b2896a23630c5421eb09829739bdce5": {
+      "address": "0x305D748bD94E8eC9DB8C529fe6299F0dB743Ad35",
+      "txHash": "0x50a4dcfa9100930c41dcc7d30833f1d2bcf8e5938c083ad791a42b13ee713509",
+      "layout": {
+        "solcVersion": "0.8.8",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:80"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "basisPoint",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_uint64",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:16"
+          },
+          {
+            "label": "BASE_BASIC_POINT",
+            "offset": 8,
+            "slot": "201",
+            "type": "t_uint64",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:17"
+          },
+          {
+            "label": "tollRatio",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:19"
+          },
+          {
+            "label": "fundingRate",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_int256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:21"
+          },
+          {
+            "label": "spotPriceTwapInterval",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:23"
+          },
+          {
+            "label": "fundingPeriod",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:24"
+          },
+          {
+            "label": "fundingBufferPeriod",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:25"
+          },
+          {
+            "label": "nextFundingTime",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:26"
+          },
+          {
+            "label": "priceFeedKey",
+            "offset": 0,
+            "slot": "208",
+            "type": "t_bytes32",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:27"
+          },
+          {
+            "label": "maxFindingWordsIndex",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:29"
+          },
+          {
+            "label": "leverage",
+            "offset": 16,
+            "slot": "209",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:31"
+          },
+          {
+            "label": "_isInitiatedPip",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_bool",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:33"
+          },
+          {
+            "label": "reserveSnapshots",
+            "offset": 0,
+            "slot": "211",
+            "type": "t_array(t_struct(ReserveSnapshot)10400_storage)dyn_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:89"
+          },
+          {
+            "label": "singleSlot",
+            "offset": 0,
+            "slot": "212",
+            "type": "t_struct(SingleSlot)10393_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:91"
+          },
+          {
+            "label": "tickPosition",
+            "offset": 0,
+            "slot": "213",
+            "type": "t_mapping(t_uint128,t_struct(Data)9587_storage)",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:92"
+          },
+          {
+            "label": "liquidityBitmap",
+            "offset": 0,
+            "slot": "214",
+            "type": "t_mapping(t_uint128,t_uint256)",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:94"
+          },
+          {
+            "label": "maxMarketMakerSlipage",
+            "offset": 0,
+            "slot": "215",
+            "type": "t_uint16",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:97"
+          },
+          {
+            "label": "maxWordRangeForLimitOrder",
+            "offset": 2,
+            "slot": "215",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:100"
+          },
+          {
+            "label": "maxWordRangeForMarketOrder",
+            "offset": 0,
+            "slot": "216",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:101"
+          },
+          {
+            "label": "quoteAsset",
+            "offset": 0,
+            "slot": "217",
+            "type": "t_contract(IERC20)904",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:102"
+          },
+          {
+            "label": "priceFeed",
+            "offset": 0,
+            "slot": "218",
+            "type": "t_contract(IChainLinkPriceFeed)1385",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:103"
+          },
+          {
+            "label": "insuranceFundInterface",
+            "offset": 0,
+            "slot": "219",
+            "type": "t_contract(IInsuranceFund)1486",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:104"
+          },
+          {
+            "label": "accessControllerInterface",
+            "offset": 0,
+            "slot": "220",
+            "type": "t_contract(IAccessController)1341",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:105"
+          },
+          {
+            "label": "isRFIToken",
+            "offset": 20,
+            "slot": "220",
+            "type": "t_bool",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:106"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "221",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:113"
+          },
+          {
+            "label": "requestId",
+            "offset": 0,
+            "slot": "270",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:114"
+          },
+          {
+            "label": "tollsRatio",
+            "offset": 0,
+            "slot": "271",
+            "type": "t_struct(TollRatio)10388_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:115"
+          },
+          {
+            "label": "stepBaseSize",
+            "offset": 0,
+            "slot": "272",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:117"
+          },
+          {
+            "label": "validatedMarketMaker",
+            "offset": 0,
+            "slot": "273",
+            "type": "t_address",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:118"
+          },
+          {
+            "label": "orderTrackerInterface",
+            "offset": 0,
+            "slot": "274",
+            "type": "t_contract(IOrderTracker)1519",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:119"
+          },
+          {
+            "label": "maxMarketMakerSlippageWithLargePercent",
+            "offset": 20,
+            "slot": "274",
+            "type": "t_uint16",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:129"
+          },
+          {
+            "label": "maxMarketMakerSlippageLargePercent",
+            "offset": 22,
+            "slot": "274",
+            "type": "t_uint32",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:130"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(ReserveSnapshot)10400_storage)dyn_storage": {
+            "label": "struct PositionManagerStorage.ReserveSnapshot[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IAccessController)1341": {
+            "label": "contract IAccessController",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IChainLinkPriceFeed)1385": {
+            "label": "contract IChainLinkPriceFeed",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)904": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IInsuranceFund)1486": {
+            "label": "contract IInsuranceFund",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IOrderTracker)1519": {
+            "label": "contract IOrderTracker",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint128,t_struct(Data)9587_storage)": {
+            "label": "mapping(uint128 => struct TickPosition.Data)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint128,t_uint256)": {
+            "label": "mapping(uint128 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint64,t_struct(Data)6644_storage)": {
+            "label": "mapping(uint64 => struct LimitOrder.Data)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Data)6644_storage": {
+            "label": "struct LimitOrder.Data",
+            "members": [
+              {
+                "label": "isBuy",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "size",
+                "type": "t_uint120",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "partialFilled",
+                "type": "t_uint120",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "trader",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "isReduce",
+                "type": "t_bool",
+                "offset": 20,
+                "slot": "1"
+              },
+              {
+                "label": "sourceChainRequestKey",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(Data)9587_storage": {
+            "label": "struct TickPosition.Data",
+            "members": [
+              {
+                "label": "liquidity",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "filledIndex",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "currentIndex",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              },
+              {
+                "label": "orderQueue",
+                "type": "t_mapping(t_uint64,t_struct(Data)6644_storage)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(ReserveSnapshot)10400_storage": {
+            "label": "struct PositionManagerStorage.ReserveSnapshot",
+            "members": [
+              {
+                "label": "pip",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "blockNumber",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(SingleSlot)10393_storage": {
+            "label": "struct PositionManagerStorage.SingleSlot",
+            "members": [
+              {
+                "label": "pip",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "isFullBuy",
+                "type": "t_uint128",
+                "offset": 16,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(TollRatio)10388_storage": {
+            "label": "struct PositionManagerStorage.TollRatio",
+            "members": [
+              {
+                "label": "makerOpenTollRatio",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "makerCloseTollRatio",
+                "type": "t_uint64",
+                "offset": 8,
+                "slot": "0"
+              },
+              {
+                "label": "takerOpenTollRatio",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "takerCloseTollRatio",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint120": {
+            "label": "uint120",
+            "numberOfBytes": "15"
+          },
+          "t_uint128": {
+            "label": "uint128",
+            "numberOfBytes": "16"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "8f6222f4c84218d51421e72326742f8453187f861d36452a9263d54dfa05f74f": {
+      "address": "0x4C49EB680a97495a0DA0656190C603162af68569",
+      "txHash": "0x8b67bcff592d55397ef5fda4eb41c124a5c190613adcf2610239ac8fe650978d",
+      "layout": {
+        "solcVersion": "0.8.8",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:80"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "basisPoint",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_uint64",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:16"
+          },
+          {
+            "label": "BASE_BASIC_POINT",
+            "offset": 8,
+            "slot": "201",
+            "type": "t_uint64",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:17"
+          },
+          {
+            "label": "tollRatio",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:19"
+          },
+          {
+            "label": "fundingRate",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_int256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:21"
+          },
+          {
+            "label": "spotPriceTwapInterval",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:23"
+          },
+          {
+            "label": "fundingPeriod",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:24"
+          },
+          {
+            "label": "fundingBufferPeriod",
+            "offset": 0,
+            "slot": "206",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:25"
+          },
+          {
+            "label": "nextFundingTime",
+            "offset": 0,
+            "slot": "207",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:26"
+          },
+          {
+            "label": "priceFeedKey",
+            "offset": 0,
+            "slot": "208",
+            "type": "t_bytes32",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:27"
+          },
+          {
+            "label": "maxFindingWordsIndex",
+            "offset": 0,
+            "slot": "209",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:29"
+          },
+          {
+            "label": "leverage",
+            "offset": 16,
+            "slot": "209",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:31"
+          },
+          {
+            "label": "_isInitiatedPip",
+            "offset": 0,
+            "slot": "210",
+            "type": "t_bool",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:33"
+          },
+          {
+            "label": "reserveSnapshots",
+            "offset": 0,
+            "slot": "211",
+            "type": "t_array(t_struct(ReserveSnapshot)10395_storage)dyn_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:89"
+          },
+          {
+            "label": "singleSlot",
+            "offset": 0,
+            "slot": "212",
+            "type": "t_struct(SingleSlot)10388_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:91"
+          },
+          {
+            "label": "tickPosition",
+            "offset": 0,
+            "slot": "213",
+            "type": "t_mapping(t_uint128,t_struct(Data)9582_storage)",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:92"
+          },
+          {
+            "label": "liquidityBitmap",
+            "offset": 0,
+            "slot": "214",
+            "type": "t_mapping(t_uint128,t_uint256)",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:94"
+          },
+          {
+            "label": "maxMarketMakerSlipage",
+            "offset": 0,
+            "slot": "215",
+            "type": "t_uint16",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:97"
+          },
+          {
+            "label": "maxWordRangeForLimitOrder",
+            "offset": 2,
+            "slot": "215",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:100"
+          },
+          {
+            "label": "maxWordRangeForMarketOrder",
+            "offset": 0,
+            "slot": "216",
+            "type": "t_uint128",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:101"
+          },
+          {
+            "label": "quoteAsset",
+            "offset": 0,
+            "slot": "217",
+            "type": "t_contract(IERC20)904",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:102"
+          },
+          {
+            "label": "priceFeed",
+            "offset": 0,
+            "slot": "218",
+            "type": "t_contract(IChainLinkPriceFeed)1385",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:103"
+          },
+          {
+            "label": "insuranceFundInterface",
+            "offset": 0,
+            "slot": "219",
+            "type": "t_contract(IInsuranceFund)1486",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:104"
+          },
+          {
+            "label": "accessControllerInterface",
+            "offset": 0,
+            "slot": "220",
+            "type": "t_contract(IAccessController)1341",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:105"
+          },
+          {
+            "label": "isRFIToken",
+            "offset": 20,
+            "slot": "220",
+            "type": "t_bool",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:106"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "221",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:113"
+          },
+          {
+            "label": "requestId",
+            "offset": 0,
+            "slot": "270",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:114"
+          },
+          {
+            "label": "tollsRatio",
+            "offset": 0,
+            "slot": "271",
+            "type": "t_struct(TollRatio)10383_storage",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:115"
+          },
+          {
+            "label": "stepBaseSize",
+            "offset": 0,
+            "slot": "272",
+            "type": "t_uint256",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:117"
+          },
+          {
+            "label": "validatedMarketMaker",
+            "offset": 0,
+            "slot": "273",
+            "type": "t_address",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:118"
+          },
+          {
+            "label": "orderTrackerInterface",
+            "offset": 0,
+            "slot": "274",
+            "type": "t_contract(IOrderTracker)1519",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:119"
+          },
+          {
+            "label": "maxMarketMakerSlippageWithLargePercent",
+            "offset": 20,
+            "slot": "274",
+            "type": "t_uint16",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:129"
+          },
+          {
+            "label": "maxMarketMakerSlippageLargePercent",
+            "offset": 22,
+            "slot": "274",
+            "type": "t_uint32",
+            "contract": "PositionManagerStorage",
+            "src": "contracts/library/types/PositionManagerStorage.sol:130"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(ReserveSnapshot)10395_storage)dyn_storage": {
+            "label": "struct PositionManagerStorage.ReserveSnapshot[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IAccessController)1341": {
+            "label": "contract IAccessController",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IChainLinkPriceFeed)1385": {
+            "label": "contract IChainLinkPriceFeed",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IERC20)904": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IInsuranceFund)1486": {
+            "label": "contract IInsuranceFund",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IOrderTracker)1519": {
+            "label": "contract IOrderTracker",
+            "numberOfBytes": "20"
+          },
+          "t_int256": {
+            "label": "int256",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint128,t_struct(Data)9582_storage)": {
+            "label": "mapping(uint128 => struct TickPosition.Data)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint128,t_uint256)": {
+            "label": "mapping(uint128 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint64,t_struct(Data)6639_storage)": {
+            "label": "mapping(uint64 => struct LimitOrder.Data)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Data)6639_storage": {
+            "label": "struct LimitOrder.Data",
+            "members": [
+              {
+                "label": "isBuy",
+                "type": "t_uint8",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "size",
+                "type": "t_uint120",
+                "offset": 1,
+                "slot": "0"
+              },
+              {
+                "label": "partialFilled",
+                "type": "t_uint120",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "trader",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "isReduce",
+                "type": "t_bool",
+                "offset": 20,
+                "slot": "1"
+              },
+              {
+                "label": "sourceChainRequestKey",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(Data)9582_storage": {
+            "label": "struct TickPosition.Data",
+            "members": [
+              {
+                "label": "liquidity",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "filledIndex",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "currentIndex",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              },
+              {
+                "label": "orderQueue",
+                "type": "t_mapping(t_uint64,t_struct(Data)6639_storage)",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_struct(ReserveSnapshot)10395_storage": {
+            "label": "struct PositionManagerStorage.ReserveSnapshot",
+            "members": [
+              {
+                "label": "pip",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "timestamp",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "blockNumber",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(SingleSlot)10388_storage": {
+            "label": "struct PositionManagerStorage.SingleSlot",
+            "members": [
+              {
+                "label": "pip",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "isFullBuy",
+                "type": "t_uint128",
+                "offset": 16,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(TollRatio)10383_storage": {
+            "label": "struct PositionManagerStorage.TollRatio",
+            "members": [
+              {
+                "label": "makerOpenTollRatio",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "makerCloseTollRatio",
+                "type": "t_uint64",
+                "offset": 8,
+                "slot": "0"
+              },
+              {
+                "label": "takerOpenTollRatio",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              },
+              {
+                "label": "takerCloseTollRatio",
+                "type": "t_uint64",
+                "offset": 24,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint120": {
+            "label": "uint120",
+            "numberOfBytes": "15"
+          },
+          "t_uint128": {
+            "label": "uint128",
+            "numberOfBytes": "16"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
     }
   }
 }
