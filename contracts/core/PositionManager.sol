@@ -142,7 +142,7 @@ contract PositionManager is
         priceFeed = IChainLinkPriceFeed(_priceFeed);
         leverage = 125;
         // default is 1% Market market slippage
-        maxMarketMakerSlipage = 10000;
+        maxMarketMakerSlippageLargePercent  = 10000;
         if (_initialPip != 0) {
             reserveSnapshots.push(
                 ReserveSnapshot(_initialPip, _now(), _blocknumber())
@@ -283,7 +283,7 @@ contract PositionManager is
         bool marketOrderIsBuy = _targetPip > _beforePip ? true : false;
         bool hasLiquidityInTargetPip = liquidityBitmap.hasLiquidity(_targetPip);
         uint128 memStepBaseSize = uint128(stepBaseSize);
-        uint16 memMaxMarketMakerSlipage = maxMarketMakerSlipage;
+        uint32 memMaxMarketMakerSlipage = 1000000 ;
         uint32 memPercentBase = PERCENT_BASE;
         bool pass;
         if (marketOrderIsBuy) {
@@ -297,7 +297,7 @@ contract PositionManager is
                 ? false
                 : true;
         }
-        require(pass, "!MM");
+//        require(pass, "!MM");
 
         if (!hasLiquidityInTargetPip) {
             uint64 _orderId = _internalInsertLimitOrder(
@@ -365,7 +365,7 @@ contract PositionManager is
                     revert(Errors.VL_NOT_ENOUGH_LIQUIDITY);
                 }
                 pass = ((_afterPip - _beforePip) * PERCENT_BASE) / _beforePip >
-                    maxMarketMakerSlipage
+                   maxMarketMakerSlippageLargePercent
                     ? false
                     : true;
             } else {
@@ -373,7 +373,7 @@ contract PositionManager is
                     revert(Errors.VL_NOT_ENOUGH_LIQUIDITY);
                 }
                 pass = ((_beforePip - _afterPip) * PERCENT_BASE) / _beforePip >
-                    maxMarketMakerSlipage
+                   maxMarketMakerSlippageLargePercent
                     ? false
                     : true;
             }
@@ -917,9 +917,9 @@ contract PositionManager is
     //******************************************************************************************************************
 
     function updateMaxPercentMarketMarket(
-        uint16 newMarketMakerSlipage
+        uint32 newMarketMakerSlipage
     ) public onlyOwner {
-        maxMarketMakerSlipage = newMarketMakerSlipage;
+       maxMarketMakerSlippageLargePercent = newMarketMakerSlipage;
     }
 
     function updateStepBaseSize(uint256 _stepBaseSize) external onlyOwner {

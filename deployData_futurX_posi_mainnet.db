@@ -1,3 +1,4 @@
+{"address":"yes","key":"0xd8B7Dd97BE86A5E98Ab72d7880db0eEc396E7D37:verified","_id":"09JNsfF73tBmV1W6"}
 {"address":"0xcb012139e5c5dde727d8f909491e49eae21a414d","key":"AccessControllerAdapter","_id":"0FgWe1o9PVQxxcRV"}
 {"address":"0x5e0387af92596c75febcd5ff6c54d6c68184b665","key":"PositionManager:AAVE_USD","_id":"3SPMetEewKvwoicd"}
 {"address":"0x67dc34ebff8b692c30c6afcc8f66bc38a89298b5","key":"PositionManager:ETH_USD","_id":"4ILZXUDV4WJOHVno"}
@@ -13,6 +14,7 @@
 {"address":"0x103c8cde4b777350986902f8cd8da7aa27635eea","key":"ChainLinkPriceFeed","_id":"SUHOtJtbxoYYQJps"}
 {"address":"0x3f49c6bcff2f71e847c81f5b6f6b9522e8ced3ba","key":"PositionHouse","_id":"UOfHdIT5KWA9JtIs"}
 {"address":"0x60b8f8080c473794f985b9f50d68eae788dd1407","key":"AccessController","_id":"VHMDYqHaJCsHNUu4"}
+{"address":"yes","key":"0x2F55bEf9b7ceb5fEb1793a601fFF900c8926A45e:verified","_id":"arjuPwvHce6Zk8xE"}
 {"address":"0x522aa15a4dfaf91d3e6da060569a57baf65bcedb","key":"PositionManager:LINK_USD","_id":"dOHw3EvHIdrZ6B0T"}
 {"address":"0x46229c0b4a83e4c39a4c2be4a5b3f63d48b8b843","key":"PositionManagerAdapter","_id":"dyJOHe1WNpPrfVXQ"}
 {"address":"0x149997974c22cb4017133cd21440f60704150239","key":"InsuranceFund","_id":"h1MvbCYkQtGNv35V"}
@@ -22,7 +24,8 @@
 {"address":"yes","key":"0x91c6492E5DD96e0B9F33C62D5A53c8EfFe3Dc182:verified","_id":"mjCMRfNN2erWGIrH"}
 {"address":"0x6025a30ef29a6b6626a0c20cbd677c8d6361c930","key":"UserGateway","_id":"oIh147OfGtlHC3tx"}
 {"address":"0x17A45C07E2c4895c0b0311d4490Eb5e90c77EedF","key":"Mock:USD","_id":"q5aWkpQKYlIgdi0n"}
+{"address":"yes","key":"0xDD96Be999e2Aa5e34967C6315C1C67D88047C0af:verified","_id":"tWy2zx2gf1eipU5R"}
 {"address":"0x20035aaabd0018923198ec5b91b841bfec40e2a8","key":"LiquidatorGateway","_id":"v4TS3LJFRMbuWvIU"}
 {"address":"0xd0487db7512e97175c499ec418d367a5b09f94b8","key":"PositionStrategyOrder","_id":"vkPvfLBzlfCNr3iK"}
 {"address":"0xe8a0add12f4a5df9eb98d62a7f600fc46cea26a3","key":"PositionNotionalConfigProxy","_id":"yq4xu99CUlazkKKS"}
-{"address":"yes","key":"0xd8B7Dd97BE86A5E98Ab72d7880db0eEc396E7D37:verified","_id":"09JNsfF73tBmV1W6"}
+{"address":"yes","key":"0x68b05B4F2887D9B6f95063B953f868ab10b2CE8b:verified","_id":"ySQJRzWFDd8rl4Wg"}

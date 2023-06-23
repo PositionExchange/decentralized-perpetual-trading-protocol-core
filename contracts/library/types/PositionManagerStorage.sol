@@ -93,6 +93,7 @@ contract PositionManagerStorage {
     // a packed array of bit, where liquidity is filled or not
     mapping(uint128 => uint256) public liquidityBitmap;
 
+    // 10000/1000000
     uint16 public maxMarketMakerSlipage;
     uint32 internal constant PERCENT_BASE = 1000000;
 
@@ -124,4 +125,8 @@ contract PositionManagerStorage {
     function setOrderTracker(address _address) external {
         orderTrackerInterface = IOrderTracker(_address);
     }
+    /// NOT USE- BUT CAN NOT REMOVE :(
+    uint16 public maxMarketMakerSlippageWithLargePercent;
+    uint32 public maxMarketMakerSlippageLargePercent;
+
 }
