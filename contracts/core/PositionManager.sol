@@ -283,7 +283,7 @@ contract PositionManager is
         bool marketOrderIsBuy = _targetPip > _beforePip ? true : false;
         bool hasLiquidityInTargetPip = liquidityBitmap.hasLiquidity(_targetPip);
         uint128 memStepBaseSize = uint128(stepBaseSize);
-        uint32 memMaxMarketMakerSlipage = 1000000 ;
+        uint32 memMaxMarketMakerSlipage = maxMarketMakerSlippageLargePercent ;
         uint32 memPercentBase = PERCENT_BASE;
         bool pass;
         if (marketOrderIsBuy) {
@@ -297,7 +297,7 @@ contract PositionManager is
                 ? false
                 : true;
         }
-//        require(pass, "!MM");
+        require(pass, "!MM");
 
         if (!hasLiquidityInTargetPip) {
             uint64 _orderId = _internalInsertLimitOrder(

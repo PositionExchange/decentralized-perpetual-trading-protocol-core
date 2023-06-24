@@ -18,7 +18,7 @@ export const BTCBUSD : ConfigPositionManagerInput = {
 }
 
 export const BTCUSD : ConfigPositionManagerInput = {
-    initialPrice: 2800000,
+    initialPrice: 3000000,
     priceFeedKey: 'BTC',
     basisPoint: 100,
     baseBasisPoint: 10000,
