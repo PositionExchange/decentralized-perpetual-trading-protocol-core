@@ -31,6 +31,15 @@ const migrations: MigrationDefinition = {
         ],
       });
     },
+
+    "force import dptp cross chain gateway": async () => {
+      const dptpCrossChainGateway = await context.db.findAddressByKey("DptpCrossChainGateway");
+      const factory = await context.hre.ethers.getContractFactory("DptpCrossChainGateway");
+      if (dptpCrossChainGateway) {
+        await context.hre.upgrades.forceImport(dptpCrossChainGateway, factory);
+        return;
+      }
+    },
   }),
 };
 

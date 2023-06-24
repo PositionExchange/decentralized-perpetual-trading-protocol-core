@@ -158,6 +158,9 @@ const migrations: MigrationDefinition = {
             //         leverage: CAKEBUSD.leverage
             //     })
             // },
+
+
+
         }
     }
 }
