@@ -427,7 +427,7 @@ contract OrderTracker is
         uint256 entryPrice = (uint256(_pip) * (10 ** 18)) / basisPoint;
 
         ICrossChainGateway(crossChainGateway).executeIncreaseOrder(
-            421613, // TODO: Refactor later
+            42161, // TODO: Refactor later
             _requestKey,
             entryPrice,
             _size,
@@ -466,7 +466,7 @@ contract OrderTracker is
             ) * 10 ** 18) / baseBasisPoint;
 
         ICrossChainGateway(crossChainGateway).executeDecreaseOrder(
-            421613,
+            42161,
             _requestKey,
             0,
             0, // Temporary set fee to 0, will calculate later
@@ -497,7 +497,7 @@ contract OrderTracker is
 
             if (claimedAmount > 0) {
                 ICrossChainGateway(crossChainGateway).executeClaimFund(
-                    421613,
+                    42161,
                     data.manager,
                     data.trader,
                     data.isLong,
