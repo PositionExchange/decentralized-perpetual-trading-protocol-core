@@ -427,7 +427,7 @@ contract OrderTracker is
         uint256 entryPrice = (uint256(_pip) * (10 ** 18)) / basisPoint;
 
         ICrossChainGateway(crossChainGateway).executeIncreaseOrder(
-            42161, // TODO: Refactor later
+            chainId(), // TODO: Refactor later
             _requestKey,
             entryPrice,
             _size,
@@ -466,7 +466,7 @@ contract OrderTracker is
             ) * 10 ** 18) / baseBasisPoint;
 
         ICrossChainGateway(crossChainGateway).executeDecreaseOrder(
-            42161,
+            chainId(),
             _requestKey,
             0,
             0, // Temporary set fee to 0, will calculate later
@@ -497,7 +497,7 @@ contract OrderTracker is
 
             if (claimedAmount > 0) {
                 ICrossChainGateway(crossChainGateway).executeClaimFund(
-                    42161,
+                    chainId(),
                     data.manager,
                     data.trader,
                     data.isLong,
@@ -517,6 +517,23 @@ contract OrderTracker is
             return (_notional * _baseBasisPoint) / _quantity;
         }
         return 0;
+    }
+
+    function chainId() public view returns (uint256) {
+        if (getChainID() == 900000){
+            return 42161;
+        }else if (getChainID() == 910000){
+            return 421613;
+        }
+        return 0;
+    }
+
+    function getChainID() public view returns (uint256) {
+        uint256 id;
+        assembly {
+            id := chainid()
+        }
+        return id;
     }
 
     /**
