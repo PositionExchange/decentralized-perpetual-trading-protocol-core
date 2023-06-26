@@ -520,20 +520,16 @@ contract OrderTracker is
     }
 
     function chainId() public view returns (uint256) {
-        if (getChainID() == 900000){
+        if (getChainID() == 1){
             return 42161;
-        }else if (getChainID() == 910000){
+        }else if (getChainID() == 2){
             return 421613;
         }
         return 0;
     }
 
     function getChainID() public view returns (uint256) {
-        uint256 id;
-        assembly {
-            id := chainid()
-        }
-        return id;
+        return block.chainid;
     }
 
     /**
