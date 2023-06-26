@@ -431,6 +431,7 @@ contract DptpCrossChainGateway is
                 limitOverPricedFilled.isExecutedFully,
                 limitOverPricedFilled.leverage
             );
+            IOrderTracker(orderTracker).claimPendingFund();
         }
 
         // store key for callback execute
@@ -638,19 +639,8 @@ contract DptpCrossChainGateway is
                 limitOverPricedFilled.isExecutedFully
             );
 
-            //            _crossBlockchainCall(
-            //                _sourceBcId,
-            //                destChainFuturesGateways[_sourceBcId],
-            //                abi.encodeWithSelector(
-            //                    EXECUTE_DECREASE_POSITION_METHOD,
-            //                    requestKey,
-            //                    withdrawAmount,
-            //                    limitOverPricedFilled.closeFee,
-            //                    limitOverPricedFilled.entryPrice,
-            //                    limitOverPricedFilled.quantity,
-            //                    isLong
-            //                )
-            //            );
+            IOrderTracker(orderTracker).claimPendingFund();
+
         }
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
