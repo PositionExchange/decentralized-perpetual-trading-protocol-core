@@ -82,6 +82,7 @@ contract MarketMakerGateway is
         MarketMaker.MMCancelOrder[] memory _cancelOrders,
         MarketMaker.MMOrder[] memory _openDepthOrders
     ) external onlyMMWhitelist {
+        if (_targetPip == 0) return;
         if (_cancelOrders.length > 0) {
             _positionManagerInterface.marketMakerRemove(_cancelOrders);
         }
