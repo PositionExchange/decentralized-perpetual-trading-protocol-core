@@ -1,5 +1,6 @@
 {"address":"yes","key":"0x8Fc4d1e27a1C3d7977410c38dE75D13b30248145:verified","_id":"06CzruYGTVgkKaCw"}
 {"address":"yes","key":"0x5e051b19169DBc72Bd7e6C7868890a1420Fe54e0:verified","_id":"0CPHirJV4ZBQ3lhz"}
+{"address":"yes","key":"0x97bfDFdED95f01A4530AAc213ae138467eF4F74f:verified","_id":"0FNrLmKN824sp9Ga"}
 {"address":"0x846d142804AF172c9a7Da38D82f26607C3EA2347","key":"PositionManager:BTC_BUSD","_id":"0RTtrOWVzqdsrk7V"}
 {"address":"0xc4594df223a2c528956623c55ea7de32ac9da900","key":"InsuranceFundAdapter","_id":"1aHX8MymSn6K0Qf7"}
 {"address":"yes","key":"0xb9bb188F9507a91DE6aBc75BF368473EB5984a9b:verified","_id":"1s1JRzz6OLMcCvSW"}
@@ -88,6 +89,7 @@
 {"address":"yes","key":"0xdC9b517B0cA382a6BfFb061334d58BE0B1b51EeD:verified","_id":"P3nH9gkjy37s4Wbx"}
 {"address":"yes","key":"0x123889224a3a4F4647f1c4F4cA95317859B4666D:verified","_id":"P3rwHIVm4vNqJ2Uv"}
 {"address":"yes","key":"0x6402C543d6e175f13733D3Ad29C55Fb3dbD6C8bb:verified","_id":"P60pFn3gKou3rUA6"}
+{"address":"yes","key":"0x612a38EC3831324B2F650999EF0AA41EDa0DF245:verified","_id":"P9DYNXqS0FedcKVQ"}
 {"address":"yes","key":"0x5df2994A9A2A2fFDDB78E88b4CF958104e67c6E6:verified","_id":"PPRkA5BF6xBlNBPO"}
 {"address":"yes","key":"0xe1035E1EDec321EB85526125895aa6F787255C60:verified","_id":"PYPlFGUqfyxUsWQw"}
 {"address":"yes","key":"0x964e3d04170AF841dE2721c05B945ad0fD51eA8E:verified","_id":"PvAxSpyjiOhZ8vZC"}
@@ -102,6 +104,7 @@
 {"address":"yes","key":"0x69A938Bf33320FaCdDc991Ef246Bf9dd8a2b63E5:verified","_id":"T1YQtmalOuoZdJE0"}
 {"address":"yes","key":"0xF2A27E0D1b6C57E2CCA12AC50494912709250EA7:verified","_id":"TBddOogjBKeXUgmg"}
 {"address":"yes","key":"0x65fecA47946cB42784493163EcBfE3B4D3cBdeC5:verified","_id":"TKipbCvS6ExASkLp"}
+{"address":"yes","key":"0xD7F75995c734205Fac9b0C5D20601F90c76213Ea:verified","_id":"UOGW8ecNYKRx0WNy"}
 {"address":"yes","key":"0x56A05ccf79B0b4D66190faEca258ebb0532a46cF:verified","_id":"UT5xd7ZqSjOKJooy"}
 {"address":"yes","key":"0xAe89897C3C96ADF17a2C31ec2cade61120767582:verified","_id":"UVq85ZtS9dOEcBe7"}
 {"address":"yes","key":"0x4067dF1bb1eC0D308E6Ab742E813e68fc508B91E:verified","_id":"UrsL53mAO6R4zwps"}
@@ -204,6 +207,7 @@
 {"address":"yes","key":"0x0a22f8787d60e47931603e33820408e29f6c31cc:verified","_id":"ujZMHRBCmJXjOXnm"}
 {"address":"yes","key":"0x1e597c3947AA269ed3062f0E6fB331494bF15BB1:verified","_id":"ulQp7xeGes7MgUor"}
 {"address":"yes","key":"0xb7555e3d140F9Ba895660B3Fda776FB286F8B270:verified","_id":"unxIMfptQzyI6o0j"}
+{"address":"yes","key":"0xaf3d6584d3Ec6D2456B7dBAe2dB023E8B56419E0:verified","_id":"urSX9VRUX1LXh1Bd"}
 {"address":"yes","key":"0x656CecBbB04aB782dD6Aa95Fcbfa1d78258cF6b9:verified","_id":"vWQiQC64j9HZf99l"}
 {"address":"0x898b5760b0197cb4150cb61b579f3d078da48254","key":"DPTPValidator","_id":"vvaY0gmXAMK1qKtT"}
 {"address":"0x91152ae17208ad8f1a323f656f11504593cf85e2","key":"MarketMakerGateway","_id":"vwnmj1D7sH8JYsxH"}
@@ -211,4 +215,3 @@
 {"address":"yes","key":"0x82E72D57b93E4A9Dd8733C28A5Eb80A5b85852A0:verified","_id":"w40en7pGqHAPkiCr"}
 {"address":"yes","key":"0xEb4A06960edC5BD5FBdF99d4615f0073D9A476c9:verified","_id":"xdCQCuY7RJfltHhy"}
 {"address":"yes","key":"0xb506d0C4B6f814c2168d6cDEAf8ABDA15517e56b:verified","_id":"ye2OWWuPDoyPzBmu"}
-{"address":"yes","key":"0xaf3d6584d3Ec6D2456B7dBAe2dB023E8B56419E0:verified","_id":"urSX9VRUX1LXh1Bd"}
