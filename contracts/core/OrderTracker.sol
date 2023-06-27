@@ -469,7 +469,7 @@ contract OrderTracker is
             chainId(),
             _requestKey,
             0,
-            0, // Temporary set fee to 0, will calculate later
+            manager.calcMakerFee(entryPrice * _size, false), // Temporary set fee to 0, will calculate later
             entryPrice,
             _size,
             isLong,
