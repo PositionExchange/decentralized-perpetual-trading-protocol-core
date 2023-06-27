@@ -1,4 +1,6 @@
 import { MigrationContext, MigrationDefinition } from "../types";
+import {DptpCrossChainGateway, OrderTracker} from "../../typeChain";
+import {ContractTransaction} from "ethers";
 
 const migrations: MigrationDefinition = {
   getTasks: (context: MigrationContext) => ({
@@ -30,6 +32,20 @@ const migrations: MigrationDefinition = {
           },
         ],
       });
+    },
+
+    "re-config cross chain gateway" : async () => {
+
+      const dptpCrossChainGateway = await context.factory.getDeployedContract<DptpCrossChainGateway>(
+          "DptpCrossChainGateway"
+      );
+
+      const orderTracker = await context.db.findAddressByKey("OrderTracker")
+
+      let tx: Promise<ContractTransaction>
+
+      tx = dptpCrossChainGateway.setOrderTracker(orderTracker);
+      await context.factory.waitTx(tx, "dptpCrossChainGateway.setOrderTracker")
     },
 
     "force import dptp cross chain gateway": async () => {
