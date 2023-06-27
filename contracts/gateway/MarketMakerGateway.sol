@@ -76,17 +76,21 @@ contract MarketMakerGateway is
         );
     }
 
+    function test() public {}
+
     function marketMakerFillToPip(
         IPositionManager _positionManagerInterface,
         uint128 _targetPip,
         MarketMaker.MMCancelOrder[] memory _cancelOrders,
         MarketMaker.MMOrder[] memory _openDepthOrders
     ) external onlyMMWhitelist {
-        if (_targetPip == 0) return;
         if (_cancelOrders.length > 0) {
             _positionManagerInterface.marketMakerRemove(_cancelOrders);
         }
-        _positionManagerInterface.marketMakerFillToPip(tx.origin, _targetPip);
+
+        if (_targetPip != 0){
+            _positionManagerInterface.marketMakerFillToPip(tx.origin, _targetPip);
+        }
 
         _positionManagerInterface.marketMakerSupply(
             tx.origin,
