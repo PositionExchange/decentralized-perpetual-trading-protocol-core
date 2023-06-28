@@ -113,8 +113,8 @@ module.exports = {
                 network: "posi_mainnet",
                 chainId: 900000,
                 urls: {
-                    apiURL: "https://explorer.posichain.org/api",
-                    browserURL: "https://explorer.posichain.org"
+                    apiURL: "https://blockscout.posichain.org/api",
+                    browserURL: "https://blockscout.posichain.org"
                 }
             }
         ]
