@@ -11,6 +11,17 @@ const migrations: MigrationDefinition = {
 
       await context.factory.createOrderTracker();
     },
+
+    "import order tracker": async () => {
+      let contract = await context.db.findAddressByKey("OrderTracker")
+      let factory = await context.hre.ethers.getContractFactory("OrderTracker", {
+        libraries: {
+          AccessControllerAdapter: await context.db.findAddressByKey(`AccessControllerAdapter`)
+        }
+      })
+      await context.hre.upgrades.forceImport(contract, factory);
+    },
+
     "re-config order tracker": async () => {
 
       const orderTracker = await context.factory.getDeployedContract<OrderTracker>(
