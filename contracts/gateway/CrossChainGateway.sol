@@ -123,6 +123,7 @@ contract CrossChainGateway is
 
         ) = positionStrategyOrderInterface.triggerTPSL(_pmAddress, _trader);
         dptpValidator.updateTraderData(_trader, _pmAddress);
+        address destGatewayAddress = destChainTPSLGateways[_sourceBcId];
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -130,7 +131,8 @@ contract CrossChainGateway is
             _fee,
             _withdrawAmount,
             _busdBonusBalanceBeforeFunction,
-            _sourceBcId
+            _sourceBcId,
+            destGatewayAddress
         );
     }
 
@@ -331,6 +333,7 @@ contract CrossChainGateway is
                 uint256 _withdrawAmount,
 
             ) = positionHouse.openMarketPosition(param);
+            address destGatewayAddress = destChainFuturesGateways[_sourceBcId];
             _handleBalanceChangedEvent(
                 _pmAddress,
                 param.trader,
@@ -338,7 +341,8 @@ contract CrossChainGateway is
                 _fee,
                 _withdrawAmount,
                 _busdBonusBalanceBeforeFunction,
-                _sourceBcId
+                _sourceBcId,
+                destGatewayAddress
             );
         }
     }
@@ -393,6 +397,7 @@ contract CrossChainGateway is
             uint256 _withdrawAmount,
 
         ) = positionHouse.openLimitOrder(param);
+        address destGatewayAddress = destChainFuturesGateways[_sourceBcId];
         _handleBalanceChangedEvent(
             _pmAddress,
             param.trader,
@@ -400,7 +405,8 @@ contract CrossChainGateway is
             _fee,
             _withdrawAmount,
             _busdBonusBalanceBeforeFunction,
-            _sourceBcId
+            _sourceBcId,
+            destGatewayAddress
         );
     }
 
@@ -433,15 +439,20 @@ contract CrossChainGateway is
                 _trader
             );
         dptpValidator.updateTraderData(_trader, _pmAddress);
-        _handleBalanceChangedEvent(
-            _pmAddress,
-            _trader,
-            _depositAmount,
-            _fee,
-            _withdrawAmount,
-            _busdBonusBalanceBeforeFunction,
-            _sourceBcId
-        );
+        {
+            uint256 sourceBcId = _sourceBcId;
+            address destGatewayAddress = destChainFuturesGateways[sourceBcId];
+            _handleBalanceChangedEvent(
+                _pmAddress,
+                _trader,
+                _depositAmount,
+                _fee,
+                _withdrawAmount,
+                _busdBonusBalanceBeforeFunction,
+                sourceBcId,
+                destGatewayAddress
+            );
+        }
     }
 
     function addMargin(
@@ -477,15 +488,20 @@ contract CrossChainGateway is
                 _busdBonusAmount,
                 _trader
             );
-        _handleBalanceChangedEvent(
-            _pmAddress,
-            _trader,
-            _depositAmount,
-            _fee,
-            _withdrawAmount,
-            _busdBonusBalanceBeforeFunction,
-            _sourceBcId
-        );
+        {
+            uint256 sourceBcId = _sourceBcId;
+            address destGatewayAddress = destChainFuturesGateways[sourceBcId];
+            _handleBalanceChangedEvent(
+                _pmAddress,
+                _trader,
+                _depositAmount,
+                _fee,
+                _withdrawAmount,
+                _busdBonusBalanceBeforeFunction,
+                sourceBcId,
+                destGatewayAddress
+            );
+        }
     }
 
     function removeMargin(
@@ -511,6 +527,7 @@ contract CrossChainGateway is
                 _amount,
                 _trader
             );
+        address destGatewayAddress = destChainFuturesGateways[_sourceBcId];
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -518,7 +535,8 @@ contract CrossChainGateway is
             _fee,
             _withdrawAmount,
             _busdBonusBalanceBeforeFunction,
-            _sourceBcId
+            _sourceBcId,
+            destGatewayAddress
         );
     }
 
@@ -545,6 +563,7 @@ contract CrossChainGateway is
                 _trader
             );
         dptpValidator.updateTraderData(_trader, _pmAddress);
+        address destGatewayAddress = destChainFuturesGateways[_sourceBcId];
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -552,7 +571,8 @@ contract CrossChainGateway is
             _fee,
             _withdrawAmount,
             _busdBonusBalanceBeforeFunction,
-            _sourceBcId
+            _sourceBcId,
+            destGatewayAddress
         );
     }
 
@@ -580,6 +600,7 @@ contract CrossChainGateway is
                 _trader
             );
         dptpValidator.updateTraderData(_trader, _pmAddress);
+        address destGatewayAddress = destChainFuturesGateways[_sourceBcId];
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -587,7 +608,8 @@ contract CrossChainGateway is
             _fee,
             _withdrawAmount,
             _busdBonusBalanceBeforeFunction,
-            _sourceBcId
+            _sourceBcId,
+            destGatewayAddress
         );
     }
 
@@ -619,15 +641,20 @@ contract CrossChainGateway is
                 0
             );
         dptpValidator.updateTraderData(_trader, _pmAddress);
-        _handleBalanceChangedEvent(
-            _pmAddress,
-            _trader,
-            _depositAmount,
-            _fee,
-            _withdrawAmount,
-            _busdBonusBalanceBeforeFunction,
-            _sourceBcId
-        );
+        {
+            uint256 sourceBcId = _sourceBcId;
+            address destGatewayAddress = destChainFuturesGateways[sourceBcId];
+            _handleBalanceChangedEvent(
+                _pmAddress,
+                _trader,
+                _depositAmount,
+                _fee,
+                _withdrawAmount,
+                _busdBonusBalanceBeforeFunction,
+                sourceBcId,
+                destGatewayAddress
+            );
+        }
     }
 
     function claimFund(
@@ -646,6 +673,7 @@ contract CrossChainGateway is
             uint256 _withdrawAmount
         ) = positionHouse.claimFund(IPositionManager(_pmAddress), _trader);
         dptpValidator.updateTraderData(_trader, _pmAddress);
+        address destGatewayAddress = destChainFuturesGateways[_sourceBcId];
         _handleBalanceChangedEvent(
             _pmAddress,
             _trader,
@@ -653,7 +681,8 @@ contract CrossChainGateway is
             _fee,
             _withdrawAmount,
             _busdBonusBalanceBeforeFunction,
-            _sourceBcId
+            _sourceBcId,
+            destGatewayAddress
         );
     }
 
@@ -750,7 +779,8 @@ contract CrossChainGateway is
         uint256 _withdrawAmount,
         // blockchain Id that handle event balance changed
         uint256 _busdBonusBalances,
-        uint256 _destChainId
+        uint256 _destChainId,
+        address destGatewayAddress
     ) internal {
         address _tokenAddress = address(
             IPositionManager(_pmAddress).getQuoteAsset()
@@ -766,12 +796,10 @@ contract CrossChainGateway is
                 _withdrawAmount,
                 _busdBonusBalances
             );
-        address destFuturesGatewayAddress = destChainFuturesGateways[
-            _destChainId
-        ];
+
         crossBlockchainCall(
             _destChainId,
-            destFuturesGatewayAddress,
+            destGatewayAddress,
             abi.encodeWithSelector(
                 WITHDRAW_SELECTOR,
                 _pmAddress,
@@ -846,6 +874,13 @@ contract CrossChainGateway is
         destChainFuturesGateways[_destChainId] = _destFuturesGateway;
     }
 
+    function updateDestChainTPSLGateway(
+        uint256 _destChainId,
+        address _destTPSLGateway
+    ) external onlyOwner {
+        destChainTPSLGateways[_destChainId] = _destTPSLGateway;
+    }
+
     function updateRelayerStatus(address _relayer) external onlyOwner {
         whitelistRelayers[_relayer] = true;
     }
@@ -866,6 +901,7 @@ contract CrossChainGateway is
     uint256[49] private __gap;
     mapping(address => bool) internal whitelistRelayers;
     mapping(uint256 => address) public destChainFuturesGateways;
+    mapping(uint256 => address) public destChainTPSLGateways;
     IInsuranceFund public insuranceFundInterface;
     IDPTPValidator dptpValidator;
 }
