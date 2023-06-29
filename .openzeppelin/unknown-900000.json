@@ -3560,7 +3560,7 @@
             "label": "wallOrders",
             "offset": 0,
             "slot": "252",
-            "type": "t_array(t_struct(MMCancelOrder)4964_storage)dyn_storage",
+            "type": "t_array(t_struct(MMCancelOrder)36577_storage)dyn_storage",
             "contract": "MarketMakerGateway",
             "src": "contracts/gateway/MarketMakerGateway.sol:147"
           }
@@ -3570,7 +3570,7 @@
             "label": "address",
             "numberOfBytes": "20"
           },
-          "t_array(t_struct(MMCancelOrder)4964_storage)dyn_storage": {
+          "t_array(t_struct(MMCancelOrder)36577_storage)dyn_storage": {
             "label": "struct MarketMaker.MMCancelOrder[]",
             "numberOfBytes": "32"
           },
@@ -3590,7 +3590,7 @@
             "label": "mapping(address => bool)",
             "numberOfBytes": "32"
           },
-          "t_struct(MMCancelOrder)4964_storage": {
+          "t_struct(MMCancelOrder)36577_storage": {
             "label": "struct MarketMaker.MMCancelOrder",
             "members": [
               {
@@ -6113,6 +6113,180 @@
           "t_uint256": {
             "label": "uint256",
             "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "b0345b2cb1405ea602e89cbc2ded2ef253cfc763d2908e3e491e5d8d5fe2708c": {
+      "address": "0x6a6daF9bc3C66000fb84604e65d68323A1ae954E",
+      "txHash": "0x28d951aead2ad71975e08e99edd9e6422583d44b25c280968d378ea2bbceaa22",
+      "layout": {
+        "solcVersion": "0.8.8",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:80"
+          },
+          {
+            "label": "_whitelist",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "MarketMakerGateway",
+            "src": "contracts/gateway/MarketMakerGateway.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "MarketMakerGateway",
+            "src": "contracts/gateway/MarketMakerGateway.sol:150"
+          },
+          {
+            "label": "fillToPipGap",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_uint128",
+            "contract": "MarketMakerGateway",
+            "src": "contracts/gateway/MarketMakerGateway.sol:151"
+          },
+          {
+            "label": "wallOrders",
+            "offset": 0,
+            "slot": "252",
+            "type": "t_array(t_struct(MMCancelOrder)7055_storage)dyn_storage",
+            "contract": "MarketMakerGateway",
+            "src": "contracts/gateway/MarketMakerGateway.sol:152"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(MMCancelOrder)7055_storage)dyn_storage": {
+            "label": "struct MarketMaker.MMCancelOrder[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(MMCancelOrder)7055_storage": {
+            "label": "struct MarketMaker.MMCancelOrder",
+            "members": [
+              {
+                "label": "pip",
+                "type": "t_uint128",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "orderId",
+                "type": "t_uint64",
+                "offset": 16,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint128": {
+            "label": "uint128",
+            "numberOfBytes": "16"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
           },
           "t_uint8": {
             "label": "uint8",
