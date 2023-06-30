@@ -800,7 +800,7 @@ contract DptpCrossChainGateway is
 
         _crossBlockchainCall(
             _sourceBcId,
-            destChainFuturesGateways[_sourceBcId],
+            destChainTPSLGateways[_sourceBcId],
             abi.encodeWithSelector(
                 TRIGGER_TPSL_METHOD,
                 _trader,
@@ -884,6 +884,19 @@ contract DptpCrossChainGateway is
         uint256 _destChainId
     ) external onlyOwner {
         delete destChainFuturesGateways[_destChainId];
+    }
+
+    function addDestChainTPSLGateway(
+        uint256 _destChainId,
+        address _destDPTPGateway
+    ) external onlyOwner {
+        destChainTPSLGateways[_destChainId] = _destDPTPGateway;
+    }
+
+    function removeDestChainTPSLGateway(
+        uint256 _destChainId
+    ) external onlyOwner {
+        delete destChainTPSLGateways[_destChainId];
     }
 
     function setRelayer(
@@ -1013,4 +1026,5 @@ contract DptpCrossChainGateway is
      */
     uint256[49] private __gap;
     address public orderTracker;
+    mapping(uint256 => address) public destChainTPSLGateways;
 }

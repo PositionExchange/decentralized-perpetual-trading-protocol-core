@@ -39,6 +39,8 @@ const migrations: MigrationDefinition = {
       const dptpCrossChainGateway = await context.factory.getDeployedContract<DptpCrossChainGateway>(
           "DptpCrossChainGateway"
       );
+      const destChainId = 421613;
+      const destChainTPSLGateway = "0x1A85FF339e798b743AE7439e4A23e2C8f486cBb8"
 
       const orderTracker = await context.db.findAddressByKey("OrderTracker")
 
@@ -46,6 +48,9 @@ const migrations: MigrationDefinition = {
 
       tx = dptpCrossChainGateway.setOrderTracker(orderTracker);
       await context.factory.waitTx(tx, "dptpCrossChainGateway.setOrderTracker")
+
+      tx = dptpCrossChainGateway.addDestChainTPSLGateway(destChainId, destChainTPSLGateway);
+      await context.factory.waitTx(tx, "dptpCrossChainGateway.addDestChainTPSLGateway")
     },
 
     "force import dptp cross chain gateway": async () => {
