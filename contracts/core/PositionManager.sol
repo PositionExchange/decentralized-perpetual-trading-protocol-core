@@ -46,7 +46,9 @@ contract PositionManager is
         uint256 amount,
         uint128 toPip,
         uint256 passedPipCount,
-        uint128 remainingLiquidity
+        uint128 remainingLiquidity,
+        uint256 averagePip,
+        uint256 timestamp
     );
 
     event LimitOrderCreated(
@@ -1234,12 +1236,19 @@ contract PositionManager is
         sizeOut = _size - state.remainingSize;
         _addReserveSnapshot();
         if (sizeOut != 0) {
+            uint256 averagePip = PositionMath.calculateEntryPrice(
+                openNotional,
+                sizeOut,
+                getBasisPoint()
+            );
             emit MarketFilled(
                 _isBuy,
                 sizeOut,
                 _maxPip != 0 ? state.lastMatchedPip : state.pip,
                 passedPipCount,
-                state.remainingLiquidity
+                state.remainingLiquidity,
+                averagePip,
+                block.timestamp
             );
         }
     }
