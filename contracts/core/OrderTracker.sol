@@ -229,7 +229,7 @@ contract OrderTracker is
                 isFullFilled = false;
             }
 
-            if (pendingOrderDetail.trader != mmAddress) {
+            if (pendingOrderDetail.trader != mmAddress && filledSize > 0) {
                 uint256 filledSize_ = filledSize;
                 uint128 pip_ = _pip;
 
