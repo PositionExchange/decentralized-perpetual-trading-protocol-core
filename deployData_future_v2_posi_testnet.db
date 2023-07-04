@@ -39,6 +39,7 @@
 {"address":"yes","key":"0x65742975a2f07d9d5abBF78148Bee24aa5d336ea:verified","_id":"Aj2wuBTpiS7AfTBv"}
 {"address":"yes","key":"0xD943f678DD1ffb47E7291B0EeB599F029dD018c9:verified","_id":"AxHYvy9sqKQKxgFG"}
 {"address":"0x3ae59afd99b1a79becb2a76463af211613016602","key":"PositionManager:BNB_BUSD","_id":"AzVHGnM4t0mUoz42"}
+{"address":"yes","key":"0x5623cE7A39B4B963A565053E0f9565A6074F4c33:verified","_id":"B1c4EWtmUBtY191n"}
 {"address":"yes","key":"0x7884624Da0a1f40eD866fD0DEdA6958bb7CAa8D0:verified","_id":"B2IwMifsPxhPQInV"}
 {"address":"yes","key":"0x48C958016c4DE35ddd3527435bf4C11dDdF35B24:verified","_id":"BDCT1mf0Y4ybMxx2"}
 {"address":"0xb637bad1b29d12bf4a5ae92bccb5ebee0db58b57","key":"PositionManagerAdapter","_id":"C3SHpxiQx0CZmeLC"}
@@ -65,6 +66,7 @@
 {"address":"yes","key":"0x7909981a9A7fC7F1485d28EB1Ce6d1de63961420:verified","_id":"Hblgw2YyZogUt4cI"}
 {"address":"yes","key":"0xc8FbdEeF9623d916aC0181eBbeCcB6071F06d0e7:verified","_id":"Hlmok1X86AipfR3V"}
 {"address":"0xbe3ba841bb306e8b17b1ad7d76568deb3d7520ea","key":"AccessControllerAdapter","_id":"IACxRjJQHFDjw5rE"}
+{"address":"yes","key":"0xE711c5613fEb5c01EA5169D58a8F05Ef7b7fbF3F:verified","_id":"IComgzGiDFypfhFd"}
 {"address":"yes","key":"0xACAf0D43288Ae98547c805a4e9Ba25beB7730Fa7:verified","_id":"IF7vEhCqFoRf45qu"}
 {"address":"yes","key":"0xe9c7288bf9104018926210773Dd514593B0Ae1e7:verified","_id":"IjOHQ2uprQotdMKe"}
 {"address":"yes","key":"0xfdF0e5AE168F1735872a85913601132CF7ADbe25:verified","_id":"IkMp6ugurmPAZdCl"}

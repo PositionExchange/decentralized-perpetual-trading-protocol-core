@@ -1,6 +1,6 @@
 import {MigrationContext, MigrationDefinition} from "../types";
 import {ContractWrapperFactory} from "../ContractWrapperFactory";
-import {BNBBUSD, BTCBUSD, CAKEBUSD, LINKBUSD, ETHBUSD} from "../config_production";
+import {BNBBUSD, BTCBUSD, CAKEBUSD, LINKBUSD, ETHBUSD, BTCUSD} from "../config_production";
 import {BUSD} from "../../constants";
 
 const migrations: MigrationDefinition = {
@@ -9,6 +9,30 @@ const migrations: MigrationDefinition = {
         if(context.stage != 'test' && context.stage != 'dev') return {}
 
         return {
+            'force import position manager testnet': async () => {
+
+                const positionMathContractAddress = await context.db.findAddressByKey(`PositionMath`);
+                console.log(`positionHouseMathContractAddress ${positionMathContractAddress}`);
+
+                const accessControllerAdapterContractAddress = await context.db.findAddressByKey(`AccessControllerAdapter`);
+                console.log(`accessControllerAdapterContractAddress ${accessControllerAdapterContractAddress}`);
+
+
+                const symbol = `${BTCUSD.priceFeedKey}_${BTCUSD.quote}`;
+
+                const positionManager = await context.db.findAddressByKey(`PositionManager:${symbol}`);
+                const positionManagerFactory = await context.hre.ethers.getContractFactory("PositionManager", {
+                    libraries: {
+                        // InsuranceFundAdapter: insuranceFundAdapterContractAddress,
+                        AccessControllerAdapter: accessControllerAdapterContractAddress,
+                        PositionMath: positionMathContractAddress
+                    }
+                })
+                if (positionManager) {
+                    await context.hre.upgrades.forceImport(positionManager, positionManagerFactory);
+                    return;
+                }
+            },
             'deploy BTCBUSD position manager': async () => {
                 /**
                  quoteAsset: string;
@@ -35,7 +59,8 @@ const migrations: MigrationDefinition = {
                     fundingPeriod: BTCBUSD.fundingPeriod,
                     priceFeed: chainLinkPriceFeedContractAddress,
                     quote: BUSD,
-                    leverage: BTCBUSD.leverage
+                    leverage: BTCBUSD.leverage,
+                    marketMaker: '0x8a9E355B33A4eD0FD724801377a017805430c7cE'
                 })
             },
 
@@ -95,7 +120,8 @@ const migrations: MigrationDefinition = {
                     fundingPeriod: ETHBUSD.fundingPeriod,
                     priceFeed: chainLinkPriceFeedContractAddress,
                     quote: ETHBUSD.quote,
-                    leverage: ETHBUSD.leverage
+                    leverage: ETHBUSD.leverage,
+                    marketMaker: '0xdC31aD0f4799B6A23edb6C08E626De446b47539A'
                 })
             },
 
@@ -125,7 +151,8 @@ const migrations: MigrationDefinition = {
                     fundingPeriod: LINKBUSD.fundingPeriod,
                     priceFeed: chainLinkPriceFeedContractAddress,
                     quote: LINKBUSD.quote,
-                    leverage: LINKBUSD.leverage
+                    leverage: LINKBUSD.leverage,
+                    marketMaker: '0x21Fc59bFfA14785d2BAB7e6Cf4E67FffB93238a6'
                 })
             },
 
