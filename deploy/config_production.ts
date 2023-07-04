@@ -29,7 +29,8 @@ export const BTCUSD : ConfigPositionManagerInput = {
     fundingPeriod: 3600,
     quote: USD,
     leverage: 100,
-    stepBaseSize: '1000000000000000' // = 0.001
+    stepBaseSize: '1000000000000000', // = 0.001
+    marketMaker: '0xb204a62830a4657aa02C581b41527E525D793083'
 }
 
 export const BNBBUSD : ConfigPositionManagerInput = {
@@ -59,7 +60,7 @@ export const ETHBUSD : ConfigPositionManagerInput = {
     fundingPeriod: 3600,
     quote: BUSD,
     leverage: 50,
-    stepBaseSize: '1000000000000000' // = 0.001
+    stepBaseSize: '1000000000000000', // = 0.001
 }
 
 export const ETHUSD : ConfigPositionManagerInput = {
@@ -74,7 +75,8 @@ export const ETHUSD : ConfigPositionManagerInput = {
     fundingPeriod: 3600,
     quote: USD,
     leverage: 50,
-    stepBaseSize: '1000000000000000' // = 0.001
+    stepBaseSize: '1000000000000000', // = 0.001
+    marketMaker: '0x4C5892FF1931504f45bf97e89A3751c7857dB46c'
 }
 
 export const SOLBUSD : ConfigPositionManagerInput = {
@@ -134,7 +136,8 @@ export const LINKUSD : ConfigPositionManagerInput = {
     fundingPeriod: 3600,
     quote: USD,
     leverage: 20,
-    stepBaseSize: '100000000000000000' // = 0.1
+    stepBaseSize: '100000000000000000', // = 0.1
+    marketMaker: '0x9EC1B7E47E26eb9a375B448C7B6ac5Ee21B8fAe8'
 }
 
 export const MATICBUSD : ConfigPositionManagerInput = {
@@ -239,7 +242,9 @@ export const AAVEUSD : ConfigPositionManagerInput = {
     fundingPeriod: 3600,
     quote: USD,
     leverage: 20,
-    stepBaseSize: '10000000000000000' // = 0.01
+    stepBaseSize: '10000000000000000', // = 0.01
+    marketMaker: '0x60d639d533cC84bc8bA9E1491171C3349be86673'
+
 }
 
 export const DOTBUSD : ConfigPositionManagerInput = {

@@ -23,7 +23,33 @@ const migrations: MigrationDefinition = {
         if(context.stage != 'prod-futurX') return {}
 
         return {
+            'force import position manager': async () => {
+
+                const positionMathContractAddress = await context.db.findAddressByKey(`PositionMath`);
+                console.log(`positionHouseMathContractAddress ${positionMathContractAddress}`);
+
+                const accessControllerAdapterContractAddress = await context.db.findAddressByKey(`AccessControllerAdapter`);
+                console.log(`accessControllerAdapterContractAddress ${accessControllerAdapterContractAddress}`);
+
+
+                const symbol = `${BTCUSD.priceFeedKey}_${BTCUSD.quote}`;
+
+                const positionManager = await context.db.findAddressByKey(`PositionManager:${symbol}`);
+                const positionManagerFactory = await context.hre.ethers.getContractFactory("PositionManager", {
+                    libraries: {
+                        // InsuranceFundAdapter: insuranceFundAdapterContractAddress,
+                        AccessControllerAdapter: accessControllerAdapterContractAddress,
+                        PositionMath: positionMathContractAddress
+                    }
+                })
+                if (positionManager) {
+                    await context.hre.upgrades.forceImport(positionManager, positionManagerFactory);
+                    return;
+                }
+            },
             'deploy BTCBUSD position manager production': async () => {
+
+
 
                 const positionHouseFunctionContractAddress = await context.db.findAddressByKey('PositionHouse');
                 const chainLinkPriceFeedContractAddress = await context.db.findAddressByKey('ChainLinkPriceFeed')
@@ -40,7 +66,8 @@ const migrations: MigrationDefinition = {
                     priceFeed: chainLinkPriceFeedContractAddress,
                     quote: USD,
                     leverage: BTCUSD.leverage,
-                    stepBaseSize: BTCUSD.stepBaseSize
+                    stepBaseSize: BTCUSD.stepBaseSize,
+                    marketMaker: BTCUSD.marketMaker,
                 })
             },
 
@@ -80,7 +107,8 @@ const migrations: MigrationDefinition = {
                     priceFeed: chainLinkPriceFeedContractAddress,
                     quote: ETHUSD.quote,
                     leverage: ETHUSD.leverage,
-                    stepBaseSize: ETHUSD.stepBaseSize
+                    stepBaseSize: ETHUSD.stepBaseSize,
+                    marketMaker: ETHUSD.marketMaker,
                 })
             },
 
@@ -138,7 +166,8 @@ const migrations: MigrationDefinition = {
                     fundingPeriod: LINKUSD.fundingPeriod,
                     priceFeed: chainLinkPriceFeedContractAddress,
                     quote: LINKUSD.quote,
-                    leverage: LINKUSD.leverage
+                    leverage: LINKUSD.leverage,
+                    marketMaker: LINKUSD.marketMaker,
                 })
             },
 
@@ -253,7 +282,8 @@ const migrations: MigrationDefinition = {
                     priceFeed: chainLinkPriceFeedContractAddress,
                     quote: AAVEUSD.quote,
                     leverage: AAVEUSD.leverage,
-                    stepBaseSize: AAVEUSD.stepBaseSize
+                    stepBaseSize: AAVEUSD.stepBaseSize,
+                    marketMaker: AAVEUSD.marketMaker,
                 })
             },
 

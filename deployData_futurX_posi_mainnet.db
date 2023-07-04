@@ -8,6 +8,7 @@
 {"address":"0x9f3e25c02cfa242ee9b787634cc5578330608528","key":"InsuranceFundAdapter","_id":"DQjrPXKHc3S4WgHK"}
 {"address":"0x1b6064eda3d9302d6666f2eb986ac7f632f86014","key":"ValidatorGateway","_id":"Dn2UzkkPfuWo3MuJ"}
 {"address":"0x7c9cd29a88eacbc1303acee9d105d3a36c1e1777","key":"PositionMath","_id":"G8pNYPVfdq69UvK2"}
+{"address":"yes","key":"0x916e32df6bAd6FBc4FF662487Ec762f7406aD539:verified","_id":"Jx0mVPk5zgvjbxxl"}
 {"address":"0x3e86585d606015dbabb4d1943c844d7d144526c2","key":"PositionHouseConfigurationProxy","_id":"K6x3sPHda7Gc7ab2"}
 {"address":"0xc3cb3b1935ba9136ec2ca0872b50f8399b8e2350","key":"PositionHouseAdapter","_id":"LblZu7Uodj5ujqp5"}
 {"address":"0xc672e50e3297987650ff5e968f66d3f4df047e4a","key":"OrderTracker","_id":"MSitWaPVn3K1ZsGv"}

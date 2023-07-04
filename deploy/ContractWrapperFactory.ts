@@ -144,6 +144,9 @@ export class ContractWrapperFactory {
             tx = positionManager.setOrderTracker(orderTrackerContractAddress)
             await this.waitTx(tx, "positionManager.setOrderTracker")
 
+            tx = positionManager.setValidatedMarketMaker(args.marketMaker)
+            await this.waitTx(tx, "positionManager.setValidatedMarketMaker")
+
         } else {
             const contractArgs = [
                 args.initialPrice,

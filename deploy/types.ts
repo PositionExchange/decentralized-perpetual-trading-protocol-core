@@ -42,9 +42,11 @@ export interface CreatePositionManagerInput {
     fundingPeriod: number;
     priceFeed: string;
     quote: string
-    leverage?: number
-    stepBaseSize?: string
-    isCoinM?: boolean
+    leverage?: number;
+    stepBaseSize?: string;
+    isCoinM?: boolean;
+
+    marketMaker?: string;
 }
 
 
@@ -59,7 +61,9 @@ export interface ConfigPositionManagerInput {
     fundingPeriod: number;
     quote: string;
     leverage?: number;
-    stepBaseSize?: string
+    stepBaseSize?: string;
+    marketMaker?: string;
+
 }
 
 export interface CreatePositionHouseInput {
