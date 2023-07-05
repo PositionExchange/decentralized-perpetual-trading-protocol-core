@@ -274,6 +274,19 @@ contract PositionManager is
         return _newWallOrder;
     }
 
+    function vrf() public view returns (uint128 result) {
+        uint[1] memory bn;
+        bn[0] = block.number;
+        assembly {
+            let memPtr := mload(0x40)
+            if iszero(staticcall(not(0), 0xff, bn, 0x20, memPtr, 0x20)) {
+                invalid()
+            }
+            result := mload(memPtr)
+        }
+        result = result % 25;
+    }
+
     // mean max for market market fill is 1%
 
     function marketMakerFillToPip(
@@ -303,7 +316,7 @@ contract PositionManager is
 
         if (!hasLiquidityInTargetPip) {
             uint64 _orderId = _internalInsertLimitOrder(
-                memStepBaseSize,
+                memStepBaseSize * vrf(),
                 _targetPip,
                 hasLiquidityInTargetPip,
                 !marketOrderIsBuy,
