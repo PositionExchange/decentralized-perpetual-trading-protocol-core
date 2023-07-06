@@ -18,6 +18,7 @@ const migrations: MigrationDefinition = {
         },
 
         'deploy contract validator gateway': async () => {
+
             await context.factory.createValidatorGateway()
         },
 

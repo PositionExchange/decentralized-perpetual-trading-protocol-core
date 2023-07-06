@@ -6,6 +6,7 @@
 {"address":"yes","key":"0xb9bb188F9507a91DE6aBc75BF368473EB5984a9b:verified","_id":"1s1JRzz6OLMcCvSW"}
 {"address":"yes","key":"0xf36dfdb274Ddc8F483C41375905887A4730F6982:verified","_id":"20Ln7irYAwwQNfOT"}
 {"address":"0x8d2b230dc3b66292bc60b5ff5444991c1535d637","key":"PositionStrategyOrder","_id":"2aMYsGzK974xkTrU"}
+{"address":"0x69b9f86c26c3c06079a34b035ff6acf3785c7a5f","key":"ValidatorCore","_id":"2duKU3wp7mDfhhQn"}
 {"address":"yes","key":"0x72177543E900d1bD74353f32989C8BE40402d289:verified","_id":"2ilJdZU9w6LiKc9r"}
 {"address":"yes","key":"0x27E6129EC179301a9e1Ece7Fa491D96882e83251:verified","_id":"2rvmlTHffGtL2pSj"}
 {"address":"yes","key":"0x305D748bD94E8eC9DB8C529fe6299F0dB743Ad35:verified","_id":"3Gyi5tTX8ifVD3J8"}
@@ -78,13 +79,13 @@
 {"address":"yes","key":"0x9F0f330a0e239a99987B2De14DAf597c55A15f62:verified","_id":"Jw8kl6exMNFsy9x2"}
 {"address":"yes","key":"0xc765402503d844B34045d37B7c2343EB110e39B3:verified","_id":"KAnbKimv4zg7zoz9"}
 {"address":"yes","key":"0x4Dd6E192992bB29ED469d16430c6B9077ad70DC0:verified","_id":"KDX7bOQdyyQkMnj2"}
+{"address":"yes","key":"0xbD8EEB1CF2f63170BA6052435EA429AbFD0Cd11e:verified","_id":"KNQe4q6Af7K4W62W"}
 {"address":"yes","key":"0xb544C95f4E9542e0B98A6b9bEF953F0F52Fd7381:verified","_id":"KvpaNVgdVBfagqLU"}
 {"address":"0xf4c1e49b346e736ea12c8d3f1aecf57ba9620845","key":"UserGateway","_id":"KxyjuzUGl0oET9uA"}
 {"address":"yes","key":"0xB906101414F96Cc89fA6849576c83E3F3d84FfF5:verified","_id":"Ky07Mlh4a6krtZsH"}
 {"address":"yes","key":"0x50dA1E9a84816cD5e79D4381E1d4f9Cb10c0d650:verified","_id":"LBap3YnrwwfBBqEC"}
 {"address":"yes","key":"0xE3E8Ed2eBcF86e5Df3c6396715c9dBB61D5461e8:verified","_id":"Lp8aV6U0OYNnL0is"}
 {"address":"yes","key":"0x7f2DA5e445F06f9957906800Ab6F7ad20ea51547:verified","_id":"MPGstCytCk1d7FZO"}
-{"address":"0x1ace3af014bc452ad0fd51d982b15a0aff1e1a4c","key":"ValidatorCore","_id":"MeEPYGQd8RdFO0FL"}
 {"address":"yes","key":"0x33833a7dCC1efb63cCaEdCE7E2A9c4765D64DFa2:verified","_id":"NagNh3uIK3Y36Fj1"}
 {"address":"yes","key":"0x5F7E448dD7D48E94DC9c6fC54476FE2645a70703:verified","_id":"NkT47Ba3QIiRLpLC"}
 {"address":"yes","key":"0x94e20AE6f301A8357EcC337793445A38f2b96803:verified","_id":"NxZ4fjCRSBuWx9Lf"}

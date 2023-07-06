@@ -297,7 +297,27 @@ contract ValidatorCore is
         revert(Errors.VL_PASS_ALL);
     }
 
-    function test() external {}
+    function setPositionHouse(address _positionHouse) external onlyOwner {
+        positionHouseInterface = IPositionHouse(_positionHouse);
+    }
+
+    function setPositionStrategyOrder(address _positionStrategyOrder) external onlyOwner {
+        positionStrategyOrderInterface = IPositionStrategyOrder(
+            _positionStrategyOrder
+        );
+    }
+
+    function setPositionHouseConfigurationProxy(address _positionConfigurationProxy) external onlyOwner {
+        positionHouseConfigurationProxyInterface = IPositionHouseConfigurationProxy(
+            _positionConfigurationProxy
+        );
+
+    }
+
+    function setInsuranceFund(address _insuranceFund) external onlyOwner {
+        insuranceFundInterface = IInsuranceFund(_insuranceFund);
+
+    }
 
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
