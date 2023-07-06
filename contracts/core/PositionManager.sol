@@ -48,7 +48,8 @@ contract PositionManager is
         uint256 passedPipCount,
         uint128 remainingLiquidity,
         uint256 averagePip,
-        uint256 timestamp
+        uint256 timestamp,
+        uint128[] passedPips
     );
 
     event LimitOrderCreated(
@@ -1088,6 +1089,7 @@ contract PositionManager is
             isSkipFirstPip: false
         });
         uint256 passedPipCount = 0;
+        uint128[] memory passedPips = new uint128[](maxFindingWordsIndex);
         {
             CurrentLiquiditySide currentLiquiditySide = CurrentLiquiditySide(
                 _initialSingleSlot.isFullBuy
@@ -1184,6 +1186,7 @@ contract PositionManager is
                         state.pip = state.remainingSize > 0
                             ? (_isBuy ? step.pipNext + 1 : step.pipNext - 1)
                             : step.pipNext;
+                        passedPips[passedPipCount] = step.pipNext;
                         passedPipCount++;
                     } else {
                         // remaining size = liquidity
@@ -1254,6 +1257,12 @@ contract PositionManager is
                 sizeOut,
                 getBasisPoint()
             );
+
+            uint128[] memory _passedPips = new uint128[](passedPipCount);
+            for (uint32 i = 0; i < passedPipCount; i++ ) {
+                _passedPips[i] = passedPips[i];
+            }
+
             emit MarketFilled(
                 _isBuy,
                 sizeOut,
@@ -1261,7 +1270,8 @@ contract PositionManager is
                 passedPipCount,
                 state.remainingLiquidity,
                 averagePip,
-                block.timestamp
+                block.timestamp,
+                _passedPips
             );
         }
     }
