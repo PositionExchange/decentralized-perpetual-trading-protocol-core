@@ -17,6 +17,7 @@
 {"address":"0x103c8cde4b777350986902f8cd8da7aa27635eea","key":"ChainLinkPriceFeed","_id":"SUHOtJtbxoYYQJps"}
 {"address":"0x3f49c6bcff2f71e847c81f5b6f6b9522e8ced3ba","key":"PositionHouse","_id":"UOfHdIT5KWA9JtIs"}
 {"address":"0x60b8f8080c473794f985b9f50d68eae788dd1407","key":"AccessController","_id":"VHMDYqHaJCsHNUu4"}
+{"address":"yes","key":"0x45bc4a99b62417847685F63c40d035Bc03495bf0:verified","_id":"XebCwesGs8tPiQbX"}
 {"address":"yes","key":"0x4a6daa4f1f6cdfC7CFeEe56194603F775f8Ac498:verified","_id":"aJ3sL5f4SF1R03Av"}
 {"address":"yes","key":"0x2F55bEf9b7ceb5fEb1793a601fFF900c8926A45e:verified","_id":"arjuPwvHce6Zk8xE"}
 {"address":"0x522aa15a4dfaf91d3e6da060569a57baf65bcedb","key":"PositionManager:LINK_USD","_id":"dOHw3EvHIdrZ6B0T"}
@@ -24,6 +25,7 @@
 {"address":"0x149997974c22cb4017133cd21440f60704150239","key":"InsuranceFund","_id":"h1MvbCYkQtGNv35V"}
 {"address":"0x31facbb3c4a11f210e54c3641ad97e665e5e3729","key":"USDMargin","_id":"iO2wLV723rfwPCCI"}
 {"address":"0xdc247a0eb43aff7a2884d10801138f5a78617ad5","key":"DPTPValidator","_id":"jKUIyHolAh8PKLMR"}
+{"address":"yes","key":"0x753C968E4088D918accEF844962dc8eeEa847A73:verified","_id":"jOMuHFKckrjoqviJ"}
 {"address":"0x4b1573bc33a5d556C050D6F674B0924991ef0cdC","key":"DptpCrossChainGateway","_id":"lMlTO26uQLm3JCEk"}
 {"address":"yes","key":"0x91c6492E5DD96e0B9F33C62D5A53c8EfFe3Dc182:verified","_id":"mjCMRfNN2erWGIrH"}
 {"address":"0x6025a30ef29a6b6626a0c20cbd677c8d6361c930","key":"UserGateway","_id":"oIh147OfGtlHC3tx"}
