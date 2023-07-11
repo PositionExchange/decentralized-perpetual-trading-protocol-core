@@ -40,16 +40,17 @@ contract PositionManager is
     int256 private constant PREMIUM_FRACTION_DENOMINATOR = 10 ** 10;
     // EVENT
 
+    struct PassedPip {
+        uint128 pip;
+        uint128 size;
+    }
+
     // Events that supports building order book
     event MarketFilled(
         bool isBuy,
-        uint256 amount,
-        uint128 toPip,
-        uint256 passedPipCount,
         uint128 remainingLiquidity,
-        uint256 averagePip,
-        uint256 timestamp,
-        uint128[] passedPips
+        PassedPip[] passedPips,
+        uint256 timestamp
     );
 
     event LimitOrderCreated(
@@ -1089,7 +1090,10 @@ contract PositionManager is
             isSkipFirstPip: false
         });
         uint256 passedPipCount = 0;
+        uint128 toPipFilled = 0; // To pip's matched liquidity
         uint128[] memory passedPips = new uint128[](maxFindingWordsIndex);
+        uint128[] memory passedLiquidity = new uint128[](maxFindingWordsIndex);
+
         {
             CurrentLiquiditySide currentLiquiditySide = CurrentLiquiditySide(
                 _initialSingleSlot.isFullBuy
@@ -1143,6 +1147,7 @@ contract PositionManager is
                     }
                     uint256 orderNotional;
                     if (liquidity > state.remainingSize) {
+                        toPipFilled = state.remainingSize;
                         // pip position will partially filled and stop here
                         orderNotional = PositionMath.calculateNotional(
                             pipToPrice(step.pipNext),
@@ -1187,8 +1192,10 @@ contract PositionManager is
                             ? (_isBuy ? step.pipNext + 1 : step.pipNext - 1)
                             : step.pipNext;
                         passedPips[passedPipCount] = step.pipNext;
+                        passedLiquidity[passedPipCount] = liquidity;
                         passedPipCount++;
                     } else {
+                        toPipFilled = liquidity;
                         // remaining size = liquidity
                         // only 1 pip should be toggled, so we call it directly here
                         orderNotional = PositionMath.calculateNotional(
@@ -1252,26 +1259,22 @@ contract PositionManager is
         sizeOut = _size - state.remainingSize;
         _addReserveSnapshot();
         if (sizeOut != 0) {
-            uint256 averagePip = PositionMath.calculateEntryPrice(
-                openNotional,
-                sizeOut,
-                getBasisPoint()
-            );
 
-            uint128[] memory _passedPips = new uint128[](passedPipCount);
+            PassedPip[] memory _passedPips = new PassedPip[](passedPipCount + 1);
             for (uint32 i = 0; i < passedPipCount; i++ ) {
-                _passedPips[i] = passedPips[i];
+                uint128 pip = passedPips[i];
+                uint128 liquidity = passedLiquidity[i];
+                _passedPips[i] = PassedPip(pip, liquidity);
             }
+
+            uint128 toPip = _maxPip != 0 ? state.lastMatchedPip : state.pip;
+            _passedPips[passedPipCount] = PassedPip(toPip, toPipFilled);
 
             emit MarketFilled(
                 _isBuy,
-                sizeOut,
-                _maxPip != 0 ? state.lastMatchedPip : state.pip,
-                passedPipCount,
                 state.remainingLiquidity,
-                averagePip,
-                block.timestamp,
-                _passedPips
+                _passedPips,
+                block.timestamp
             );
         }
     }
