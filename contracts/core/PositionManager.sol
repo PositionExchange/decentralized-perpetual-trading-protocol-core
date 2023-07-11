@@ -316,9 +316,11 @@ contract PositionManager is
         }
         require(pass, "!MM");
 
+        uint128 amount = memStepBaseSize *  vrf();
+
         if (!hasLiquidityInTargetPip) {
             uint64 _orderId = _internalInsertLimitOrder(
-                memStepBaseSize * vrf(),
+                amount,
                 _targetPip,
                 hasLiquidityInTargetPip,
                 !marketOrderIsBuy,
@@ -333,7 +335,7 @@ contract PositionManager is
                 _marketMakerAddress,
                 _targetPip,
                 !marketOrderIsBuy,
-                memStepBaseSize,
+                amount,
                 requestId
             );
         }
@@ -1191,6 +1193,7 @@ contract PositionManager is
                         state.pip = state.remainingSize > 0
                             ? (_isBuy ? step.pipNext + 1 : step.pipNext - 1)
                             : step.pipNext;
+                        toPipFilled = liquidity;
                         passedPips[passedPipCount] = step.pipNext;
                         passedLiquidity[passedPipCount] = liquidity;
                         passedPipCount++;

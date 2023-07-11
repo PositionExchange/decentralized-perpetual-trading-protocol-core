@@ -656,6 +656,10 @@ contract InsuranceFund is
         maxLeverageAcceptBonus[_pmAddress] = _leverage;
     }
 
+    function setBusd(address _busd) external onlyOwner {
+        busd = IERC20Upgradeable(_busd);
+    }
+
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
      * variables without shifting down storage in the inheritance chain.

@@ -20,6 +20,9 @@ const migrations: MigrationDefinition = {
             // },
             'deploy mock USD': async () => {
                 return deployMockBep20('USD Mock Token', 'USD')
+            },
+            'deploy mock USDP': async () => {
+                return deployMockBep20('USD Posichain Mock Token', 'USDP')
             }
         }
     }
