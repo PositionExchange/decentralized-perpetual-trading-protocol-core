@@ -1370,7 +1370,7 @@
             "label": "positionHouseInterface",
             "offset": 0,
             "slot": "201",
-            "type": "t_contract(IPositionHouse)1755",
+            "type": "t_contract(IPositionHouse)6587",
             "contract": "ValidatorCore",
             "src": "contracts/core/ValidatorCore.sol:29"
           },
@@ -1378,7 +1378,7 @@
             "label": "positionStrategyOrderInterface",
             "offset": 0,
             "slot": "202",
-            "type": "t_contract(IPositionStrategyOrder)2276",
+            "type": "t_contract(IPositionStrategyOrder)7160",
             "contract": "ValidatorCore",
             "src": "contracts/core/ValidatorCore.sol:30"
           },
@@ -1386,7 +1386,7 @@
             "label": "positionHouseConfigurationProxyInterface",
             "offset": 0,
             "slot": "203",
-            "type": "t_contract(IPositionHouseConfigurationProxy)1790",
+            "type": "t_contract(IPositionHouseConfigurationProxy)6622",
             "contract": "ValidatorCore",
             "src": "contracts/core/ValidatorCore.sol:31"
           },
@@ -1394,7 +1394,7 @@
             "label": "insuranceFundInterface",
             "offset": 0,
             "slot": "204",
-            "type": "t_contract(IInsuranceFund)1378",
+            "type": "t_contract(IInsuranceFund)6210",
             "contract": "ValidatorCore",
             "src": "contracts/core/ValidatorCore.sol:33"
           },
@@ -1404,7 +1404,7 @@
             "slot": "205",
             "type": "t_array(t_uint256)49_storage",
             "contract": "ValidatorCore",
-            "src": "contracts/core/ValidatorCore.sol:302"
+            "src": "contracts/core/ValidatorCore.sol:307"
           }
         ],
         "types": {
@@ -1424,19 +1424,19 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(IInsuranceFund)1378": {
+          "t_contract(IInsuranceFund)6210": {
             "label": "contract IInsuranceFund",
             "numberOfBytes": "20"
           },
-          "t_contract(IPositionHouse)1755": {
+          "t_contract(IPositionHouse)6587": {
             "label": "contract IPositionHouse",
             "numberOfBytes": "20"
           },
-          "t_contract(IPositionHouseConfigurationProxy)1790": {
+          "t_contract(IPositionHouseConfigurationProxy)6622": {
             "label": "contract IPositionHouseConfigurationProxy",
             "numberOfBytes": "20"
           },
-          "t_contract(IPositionStrategyOrder)2276": {
+          "t_contract(IPositionStrategyOrder)7160": {
             "label": "contract IPositionStrategyOrder",
             "numberOfBytes": "20"
           },
@@ -10213,6 +10213,170 @@
           "t_mapping(t_address,t_uint256)": {
             "label": "mapping(address => uint256)",
             "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "70f915572c6e0b22bcd5617385ac2b5bf461c7b10df7c7ac9cbb1392368727e3": {
+      "address": "0x5025E4aa4E4cc3187c03048dbCD6F21FB4428002",
+      "txHash": "0x2a4af8769daa23b91ee3bc2842b8b3ca654cd4a7c7ac5751c2d8415629734fa4",
+      "layout": {
+        "solcVersion": "0.8.8",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "_status",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:80"
+          },
+          {
+            "label": "positionHouseInterface",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_contract(IPositionHouse)1822",
+            "contract": "ValidatorCore",
+            "src": "contracts/core/ValidatorCore.sol:30"
+          },
+          {
+            "label": "positionStrategyOrderInterface",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_contract(IPositionStrategyOrder)2343",
+            "contract": "ValidatorCore",
+            "src": "contracts/core/ValidatorCore.sol:31"
+          },
+          {
+            "label": "positionHouseConfigurationProxyInterface",
+            "offset": 0,
+            "slot": "203",
+            "type": "t_contract(IPositionHouseConfigurationProxy)1857",
+            "contract": "ValidatorCore",
+            "src": "contracts/core/ValidatorCore.sol:32"
+          },
+          {
+            "label": "insuranceFundInterface",
+            "offset": 0,
+            "slot": "204",
+            "type": "t_contract(IInsuranceFund)1378",
+            "contract": "ValidatorCore",
+            "src": "contracts/core/ValidatorCore.sol:34"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ValidatorCore",
+            "src": "contracts/core/ValidatorCore.sol:280"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IInsuranceFund)1378": {
+            "label": "contract IInsuranceFund",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPositionHouse)1822": {
+            "label": "contract IPositionHouse",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPositionHouseConfigurationProxy)1857": {
+            "label": "contract IPositionHouseConfigurationProxy",
+            "numberOfBytes": "20"
+          },
+          "t_contract(IPositionStrategyOrder)2343": {
+            "label": "contract IPositionStrategyOrder",
+            "numberOfBytes": "20"
           },
           "t_uint256": {
             "label": "uint256",

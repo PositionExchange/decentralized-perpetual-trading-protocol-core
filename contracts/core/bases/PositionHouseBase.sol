@@ -24,11 +24,13 @@ import {LimitOrderManager} from "../modules/LimitOrder.sol";
 import {MarketOrder} from "../modules/MarketOrder.sol";
 import {Base} from "../modules/Base.sol";
 import "../../library/positions/HouseBaseParam.sol";
+import "../../adapter/interfaces/ILimitOrder.sol";
 
 abstract contract PositionHouseBase is
     CumulativePremiumFractions,
     LimitOrderManager,
-    MarketOrder
+    MarketOrder,
+    ILimitOrder
 {
     using PositionLimitOrder for mapping(address => mapping(address => PositionLimitOrder.Data[]));
     using Quantity for int256;
@@ -158,6 +160,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
+        override(ILimitOrder)
         returns (uint256, uint256, uint256, LimitOverPricedFilled memory)
     {
         onlyCounterParty();
@@ -239,6 +242,7 @@ abstract contract PositionHouseBase is
     )
         external
         virtual
+        override(ILimitOrder)
         returns (uint256, uint256, uint256, uint256, uint128, uint8)
     {
         onlyCounterParty();
@@ -385,6 +389,7 @@ abstract contract PositionHouseBase is
     )
         public
         virtual
+        override(ILimitOrder)
         returns (uint256, uint256, uint256, LimitOverPricedFilled memory)
     {
         onlyCounterParty();

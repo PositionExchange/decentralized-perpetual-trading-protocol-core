@@ -10,6 +10,7 @@ import "../adapter/interfaces/IPositionStrategyOrder.sol";
 import "../adapter/interfaces/IPositionManager.sol";
 import "../adapter/interfaces/IPositionHouseConfigurationProxy.sol";
 import "../adapter/interfaces/IInsuranceFund.sol";
+import "../adapter/interfaces/ILimitOrder.sol";
 import "../library/types/PositionStrategyOrderStorage.sol";
 import "../library/types/PositionHouseStorage.sol";
 import "../library/positions/Position.sol";
@@ -81,12 +82,7 @@ contract ValidatorCore is
                 busdBonusAmount: _busdBonusAmount
             });
         }
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount,
-
-        ) = positionHouseInterface.openMarketPosition(param);
+        positionHouseInterface.openMarketPosition(param);
         revert(Errors.VL_PASS_ALL);
     }
 
@@ -114,12 +110,7 @@ contract ValidatorCore is
                 sourceChainRequestKey: 0
             });
         }
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount,
-
-        ) = positionHouseInterface.openLimitOrder(param);
+        ILimitOrder(address(positionHouseInterface)).openLimitOrder(param);
         revert(Errors.VL_PASS_ALL);
     }
 
@@ -129,14 +120,7 @@ contract ValidatorCore is
         uint8 _isReduce,
         address _trader
     ) public {
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount,
-            ,
-            ,
-
-        ) = positionHouseInterface.cancelLimitOrder(
+         ILimitOrder(address(positionHouseInterface)).cancelLimitOrder(
                 _positionManagerInterface,
                 _orderIdx,
                 _isReduce,
@@ -151,11 +135,7 @@ contract ValidatorCore is
         uint256 _busdBonusAmount,
         address _trader
     ) external {
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount
-        ) = positionHouseInterface.addMargin(
+        positionHouseInterface.addMargin(
                 _positionManagerInterface,
                 _amount,
                 _busdBonusAmount,
@@ -169,11 +149,7 @@ contract ValidatorCore is
         uint256 _amount,
         address _trader
     ) external {
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount
-        ) = positionHouseInterface.removeMargin(
+        positionHouseInterface.removeMargin(
                 _positionManagerInterface,
                 _amount,
                 _trader
@@ -186,11 +162,7 @@ contract ValidatorCore is
         uint256 _quantity,
         address _trader
     ) public {
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount
-        ) = positionHouseInterface.closePosition(
+        positionHouseInterface.closePosition(
                 _positionManagerInterface,
                 _quantity,
                 _trader
@@ -203,11 +175,7 @@ contract ValidatorCore is
         uint256 _quantity,
         address _trader
     ) public {
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount
-        ) = positionHouseInterface.closePosition(
+        positionHouseInterface.closePosition(
                 _positionManagerInterface,
                 _quantity,
                 _trader
@@ -221,12 +189,7 @@ contract ValidatorCore is
         uint256 _quantity,
         address _trader
     ) public {
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount,
-
-        ) = positionHouseInterface                                                                                                      .closeLimitPosition(
+        ILimitOrder(address(positionHouseInterface)).closeLimitPosition(
                 _positionManagerInterface,
                 _pip,
                 _quantity,
@@ -240,11 +203,7 @@ contract ValidatorCore is
         IPositionManager _positionManagerInterface,
         address _trader
     ) public {
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount
-        ) = positionHouseInterface.claimFund(
+        positionHouseInterface.claimFund(
                 _positionManagerInterface,
                 _trader
             );
@@ -252,12 +211,7 @@ contract ValidatorCore is
     }
 
     function triggerTPSL(address _pmAddress, address _trader) external {
-        (
-            uint256 depositAmount,
-            uint256 fee,
-            uint256 withdrawAmount,
-
-        ) = positionStrategyOrderInterface.triggerTPSL(_pmAddress, _trader);
+        positionStrategyOrderInterface.triggerTPSL(_pmAddress, _trader);
         revert(Errors.VL_PASS_ALL);
     }
 
@@ -316,7 +270,6 @@ contract ValidatorCore is
 
     function setInsuranceFund(address _insuranceFund) external onlyOwner {
         insuranceFundInterface = IInsuranceFund(_insuranceFund);
-
     }
 
     /**

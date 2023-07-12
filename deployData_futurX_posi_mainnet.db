@@ -16,11 +16,13 @@
 {"address":"0xcea84907fbc92a1c57cbd7678399a625fdd49695","key":"ValidatorCore","_id":"OkH8WiW3UbzEgTvQ"}
 {"address":"yes","key":"0xE1d66d219C484B26d169C60295441cDeE0768f7A:verified","_id":"PA6oae7CZmzQXl9k"}
 {"address":"yes","key":"0x6a6daF9bc3C66000fb84604e65d68323A1ae954E:verified","_id":"Qwj2owXIFku1ainA"}
+{"address":"yes","key":"0xE1a8913AA7be57A8159C055F399348a4db176B50:verified","_id":"RSKTSkqB7MaEKygA"}
 {"address":"0x103c8cde4b777350986902f8cd8da7aa27635eea","key":"ChainLinkPriceFeed","_id":"SUHOtJtbxoYYQJps"}
 {"address":"0x3f49c6bcff2f71e847c81f5b6f6b9522e8ced3ba","key":"PositionHouse","_id":"UOfHdIT5KWA9JtIs"}
 {"address":"yes","key":"0xc9413A1C9CAFAdbA04ee97fB1f6cd94121624eC2:verified","_id":"UrLYf5qBj86H86Rf"}
 {"address":"0x60b8f8080c473794f985b9f50d68eae788dd1407","key":"AccessController","_id":"VHMDYqHaJCsHNUu4"}
 {"address":"yes","key":"0x45bc4a99b62417847685F63c40d035Bc03495bf0:verified","_id":"XebCwesGs8tPiQbX"}
+{"address":"yes","key":"0x5025E4aa4E4cc3187c03048dbCD6F21FB4428002:verified","_id":"XvNt1nSjDYgzJquZ"}
 {"address":"yes","key":"0x4a6daa4f1f6cdfC7CFeEe56194603F775f8Ac498:verified","_id":"aJ3sL5f4SF1R03Av"}
 {"address":"yes","key":"0x2F55bEf9b7ceb5fEb1793a601fFF900c8926A45e:verified","_id":"arjuPwvHce6Zk8xE"}
 {"address":"0x522aa15a4dfaf91d3e6da060569a57baf65bcedb","key":"PositionManager:LINK_USD","_id":"dOHw3EvHIdrZ6B0T"}
@@ -44,4 +46,3 @@
 {"address":"yes","key":"0x916e32df6bAd6FBc4FF662487Ec762f7406aD539:verified","_id":"xlEomhSdCDxpbUQT"}
 {"address":"yes","key":"0x68b05B4F2887D9B6f95063B953f868ab10b2CE8b:verified","_id":"ySQJRzWFDd8rl4Wg"}
 {"address":"0xe8a0add12f4a5df9eb98d62a7f600fc46cea26a3","key":"PositionNotionalConfigProxy","_id":"yq4xu99CUlazkKKS"}
-{"address":"yes","key":"0xE1a8913AA7be57A8159C055F399348a4db176B50:verified","_id":"RSKTSkqB7MaEKygA"}
