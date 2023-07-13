@@ -286,7 +286,7 @@ contract PositionManager is
             }
             result := mload(memPtr)
         }
-        result = result % 25;
+        result = (result % 25) + 1;
     }
 
     // mean max for market market fill is 1%
@@ -316,7 +316,7 @@ contract PositionManager is
         }
         require(pass, "!MM");
 
-        uint128 amount = memStepBaseSize *  vrf();
+        uint128 amount = memStepBaseSize * vrf();
 
         if (!hasLiquidityInTargetPip) {
             uint64 _orderId = _internalInsertLimitOrder(
