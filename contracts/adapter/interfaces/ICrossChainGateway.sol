@@ -30,4 +30,13 @@ interface ICrossChainGateway {
         bool _isLong,
         uint256 _withdrawAmount
     ) external;
+
+    function handleLiquidatedEvent(
+        uint256 _sourceBcId,
+        address _trader,
+        address _pmAddress,
+        uint256 _positionSize,
+        uint256 _positionMargin,
+        bool _isLong
+    ) external;
 }
