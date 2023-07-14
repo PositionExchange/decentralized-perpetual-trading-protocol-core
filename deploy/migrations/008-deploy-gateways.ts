@@ -55,8 +55,17 @@ const migrations: MigrationDefinition = {
             const liquidatorGateway = await context.factory.getDeployedContract<LiquidatorGateway>(
                 "LiquidatorGateway"
             );
-            const tx = liquidatorGateway.setCrossChainGateway(dptpCrossChainGateway);
+            
+            let tx;
+
+            tx = liquidatorGateway.setCrossChainGateway(dptpCrossChainGateway);
             await context.factory.waitTx(tx, `liquidatorGateway.setCrossChainGateway(${dptpCrossChainGateway})`)
+
+            tx = liquidatorGateway.setDestinationChainID(421613);
+            await context.factory.waitTx(tx, `liquidatorGateway.setDestinationChainID(421613)`)
+
+            tx = liquidatorGateway.setDestinationFuturesGateway("0xEC03E9563A26ba0D27b43b3269b0c364D2CDfb3a");
+            await context.factory.waitTx(tx, `liquidatorGateway.setDestinationFuturesGateway("0xEC03E9563A26ba0D27b43b3269b0c364D2CDfb3a")`)
         },
 
         'deploy contract market maker gateway': async () => {
