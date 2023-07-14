@@ -89,6 +89,13 @@ contract DptpCrossChainGateway is
             )
         );
 
+    bytes4 private constant LIQUIDATE_METHOD =
+        bytes4(
+            keccak256(
+                "liquidatePosition(address,address,uint256,uint256,bool)"
+            )
+        );
+
     uint256 private constant WEI_DECIMAL = 10 ** 18;
 
     struct RequestKeyData {
@@ -973,6 +980,28 @@ contract DptpCrossChainGateway is
                 _trader,
                 _isLong,
                 _withdrawAmount
+            )
+        );
+    }
+
+    function handleLiquidatedEvent(
+        uint256 _sourceBcId,
+        address _trader,
+        address _pmAddress,
+        uint256 _positionSize,
+        uint256 _positionMargin,
+        bool _isLong
+    ) external override {
+        _crossBlockchainCall(
+            _sourceBcId,
+            destChainFuturesGateways[_sourceBcId],
+            abi.encodeWithSelector(
+                LIQUIDATE_METHOD,
+                _trader,
+                _pmAddress,
+                _positionSize,
+                _positionMargin,
+                _isLong
             )
         );
     }

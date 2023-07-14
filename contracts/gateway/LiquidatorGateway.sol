@@ -19,6 +19,7 @@ import "../library/positions/Position.sol";
 import {PositionMath} from "../library/positions/PositionMath.sol";
 import {Int256Math} from "../library/helpers/Int256Math.sol";
 import {Errors} from "../library/helpers/Errors.sol";
+import {ICrossChainGateway} from "../adapter/interfaces/ICrossChainGateway.sol";
 
 contract LiquidatorGateway is
     PausableUpgradeable,
@@ -274,12 +275,13 @@ contract LiquidatorGateway is
                 emit FullyLiquidated(_pmAddress, _trader);
             }
             address _liquidator = msg.sender;
-            handleLiquidatedEvent(
-                _pmAddress,
-                _liquidator,
+            ICrossChainGateway(crossChainGateway).handleLiquidatedEvent(
+                destinationChainID,
                 _trader,
-                liquidationPenalty,
-                feeToLiquidator
+                _pmAddress,
+                positionDataWithManualMargin.quantity.abs(),
+                positionDataWithManualMargin.margin.abs(),
+                positionDataWithManualMargin.quantity > 0 ? true : false
             );
             dptpValidator.updateTraderData(_trader, _pmAddress);
             insuranceFundInterface.withdraw(
@@ -400,53 +402,6 @@ contract LiquidatorGateway is
         return positionResp;
     }
 
-    function handleLiquidatedEvent(
-        address _pmAddress,
-        address _liquidator,
-        address _trader,
-        uint256 _liquidatedBusdBonus,
-        uint256 _liquidatorReward
-    ) internal {
-        crossBlockchainCall(
-            destinationChainID,
-            destinationFuturesGateway,
-            abi.encodeWithSelector(
-                LIQUIDATE_SELECTOR,
-                _pmAddress,
-                _liquidator,
-                _trader,
-                _liquidatedBusdBonus,
-                _liquidatorReward
-            )
-        );
-    }
-
-    function crossBlockchainCall(
-        uint256 _destBcId,
-        address _destContract,
-        bytes memory _destData
-    ) internal {
-        txIndex++;
-        bytes32 txId = keccak256(
-            abi.encodePacked(
-                block.timestamp,
-                myChainID,
-                _destBcId,
-                _destContract,
-                _destData,
-                txIndex
-            )
-        );
-        emit CrossCall(
-            txId,
-            block.timestamp,
-            msg.sender,
-            _destBcId,
-            _destContract,
-            _destData
-        );
-    }
-
     function _getAddedMargin(
         address _pmAddress,
         address _trader
@@ -511,10 +466,15 @@ contract LiquidatorGateway is
         insuranceFundInterface = IInsuranceFund(_address);
     }
 
-    bytes4 private constant WITHDRAW_SELECTOR =
-        bytes4(
-            keccak256(
-                "receiveFromOtherBlockchain(address,address,uint256,uint256)"
-            )
-        );
+    function setCrossChainGateway(address _address) external onlyOwner {
+        crossChainGateway = _address;
+    }
+
+    /**
+    * @dev This empty reserved space is put in place to allow future versions to add new
+     * variables without shifting down storage in the inheritance chain.
+     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
+     */
+    uint256[49] private __gap;
+    address public crossChainGateway;
 }
