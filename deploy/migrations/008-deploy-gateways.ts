@@ -1,5 +1,6 @@
 import {MigrationContext, MigrationDefinition} from "../types";
 import {ContractWrapperFactory} from "../ContractWrapperFactory";
+import {DptpCrossChainGateway, LiquidatorGateway} from "../../typeChain";
 
 
 const migrations: MigrationDefinition = {
@@ -47,6 +48,15 @@ const migrations: MigrationDefinition = {
                 myBlockchainId: myBlockchainId,
                 destBlockchainId: destBlockchainId
             })
+        },
+
+        're-config liquidator gateway': async () => {
+            const dptpCrossChainGateway = await context.db.findAddressByKey('DptpCrossChainGateway');
+            const liquidatorGateway = await context.factory.getDeployedContract<LiquidatorGateway>(
+                "LiquidatorGateway"
+            );
+            const tx = liquidatorGateway.setCrossChainGateway(dptpCrossChainGateway);
+            await context.factory.waitTx(tx, `liquidatorGateway.setCrossChainGateway(${dptpCrossChainGateway})`)
         },
 
         'deploy contract market maker gateway': async () => {
