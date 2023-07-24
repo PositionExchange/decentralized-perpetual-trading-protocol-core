@@ -57,22 +57,23 @@ abstract contract PositionHouseBase is
 
     //    event InstantlyClosed(address pmAddress, address trader);
 
-    function initialize(
-        address _insuranceFund,
-        IPositionHouseConfigurationProxy _positionHouseConfigurationProxy,
-        IPositionNotionalConfigProxy _positionNotionalConfigProxy,
-        IAccessController _accessControllerInterface
-    ) public {
-        _require(!_initialized, "initialized");
-        owner = msg.sender;
-        _initialized = true;
-        //        __ReentrancyGuard_init();
-        //        __Ownable_init();
-        //        insuranceFundInterface = IInsuranceFund(_insuranceFund);
-        //        positionHouseConfigurationProxy = _positionHouseConfigurationProxy;
-        //        positionNotionalConfigProxy = _positionNotionalConfigProxy;
-        //        accessControllerInterface = _accessControllerInterface;
-    }
+//    // Comment for save size
+//    function initialize(
+//        address _insuranceFund,
+//        IPositionHouseConfigurationProxy _positionHouseConfigurationProxy,
+//        IPositionNotionalConfigProxy _positionNotionalConfigProxy,
+//        IAccessController _accessControllerInterface
+//    ) public {
+//        _require(!_initialized, "initialized");
+//        owner = msg.sender;
+//        _initialized = true;
+//        //        __ReentrancyGuard_init();
+//        //        __Ownable_init();
+//        //        insuranceFundInterface = IInsuranceFund(_insuranceFund);
+//        //        positionHouseConfigurationProxy = _positionHouseConfigurationProxy;
+//        //        positionNotionalConfigProxy = _positionNotionalConfigProxy;
+//        //        accessControllerInterface = _accessControllerInterface;
+//    }
 
     /**
      * @notice open position with price market
@@ -985,6 +986,7 @@ abstract contract PositionHouseBase is
     //        return manualMargin[_pmAddress][_trader];
     //    }
 
+
     function getDebtPosition(
         address _pmAddress,
         address _trader
@@ -992,10 +994,11 @@ abstract contract PositionHouseBase is
         return debtPosition[_pmAddress][_trader];
     }
 
-    function transferOwnership(address _newOwner) public {
-        onlyOwner();
-        owner = _newOwner;
-    }
+//    // Comment Save size
+//    function transferOwnership(address _newOwner) public {
+//        onlyOwner();
+//        owner = _newOwner;
+//    }
 
     function onlyOwner() public view {
         if (owner != msg.sender) {
