@@ -10,6 +10,7 @@
 {"address":"0x1b6064eda3d9302d6666f2eb986ac7f632f86014","key":"ValidatorGateway","_id":"Dn2UzkkPfuWo3MuJ"}
 {"address":"yes","key":"0xe8F2344d0129F2581E075aaf147bdF7cC2BF4d90:verified","_id":"Do2HY25BCvys9HUQ"}
 {"address":"0x7c9cd29a88eacbc1303acee9d105d3a36c1e1777","key":"PositionMath","_id":"G8pNYPVfdq69UvK2"}
+{"address":"yes","key":"0xD9A481b96325c1F9069EA425A1C85b96AD0959c9:verified","_id":"JVgZrNKJKRrxTixS"}
 {"address":"yes","key":"0x916e32df6bAd6FBc4FF662487Ec762f7406aD539:verified","_id":"Jx0mVPk5zgvjbxxl"}
 {"address":"0x3e86585d606015dbabb4d1943c844d7d144526c2","key":"PositionHouseConfigurationProxy","_id":"K6x3sPHda7Gc7ab2"}
 {"address":"0xc3cb3b1935ba9136ec2ca0872b50f8399b8e2350","key":"PositionHouseAdapter","_id":"LblZu7Uodj5ujqp5"}
@@ -29,6 +30,7 @@
 {"address":"yes","key":"0x2F55bEf9b7ceb5fEb1793a601fFF900c8926A45e:verified","_id":"arjuPwvHce6Zk8xE"}
 {"address":"0x522aa15a4dfaf91d3e6da060569a57baf65bcedb","key":"PositionManager:LINK_USD","_id":"dOHw3EvHIdrZ6B0T"}
 {"address":"0x46229c0b4a83e4c39a4c2be4a5b3f63d48b8b843","key":"PositionManagerAdapter","_id":"dyJOHe1WNpPrfVXQ"}
+{"address":"yes","key":"0x41A80fCD9Bd7511aCCEe0D9A2a8ff02B1eFd44fA:verified","_id":"epNNmm95YG3uEuIg"}
 {"address":"0x2591b9ab67C40E9cDf8Ce5036325E93e3Db1cD52","key":"Mock:USDP","_id":"gy0lNiwd86PjoeTl"}
 {"address":"0x149997974c22cb4017133cd21440f60704150239","key":"InsuranceFund","_id":"h1MvbCYkQtGNv35V"}
 {"address":"yes","key":"0xB86C9293e7910B155a853edb9F35F05189E719f1:verified","_id":"haVmtNrZnin6uw73"}
@@ -48,4 +50,3 @@
 {"address":"yes","key":"0x916e32df6bAd6FBc4FF662487Ec762f7406aD539:verified","_id":"xlEomhSdCDxpbUQT"}
 {"address":"yes","key":"0x68b05B4F2887D9B6f95063B953f868ab10b2CE8b:verified","_id":"ySQJRzWFDd8rl4Wg"}
 {"address":"0xe8a0add12f4a5df9eb98d62a7f600fc46cea26a3","key":"PositionNotionalConfigProxy","_id":"yq4xu99CUlazkKKS"}
-{"address":"yes","key":"0x41A80fCD9Bd7511aCCEe0D9A2a8ff02B1eFd44fA:verified","_id":"epNNmm95YG3uEuIg"}
