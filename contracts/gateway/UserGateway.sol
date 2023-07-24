@@ -71,6 +71,12 @@ contract UserGateway is
         positionHouseInterface.payFunding(_positionManagerInterface);
     }
 
+    function payFundingMultiplePair(IPositionManager[] memory _positionManagerInterfaces) public nonReentrant {
+        for (uint256 i = 0; i < _positionManagerInterfaces.length; i++) {
+            positionHouseInterface.payFunding(_positionManagerInterfaces[i]);
+        }
+    }
+
     function getTPSLDetail(
         address _pmAddress,
         address _trader
