@@ -35,7 +35,7 @@
 {"address":"0x149997974c22cb4017133cd21440f60704150239","key":"InsuranceFund","_id":"h1MvbCYkQtGNv35V"}
 {"address":"yes","key":"0xB86C9293e7910B155a853edb9F35F05189E719f1:verified","_id":"haVmtNrZnin6uw73"}
 {"address":"0x31facbb3c4a11f210e54c3641ad97e665e5e3729","key":"USDMargin","_id":"iO2wLV723rfwPCCI"}
-{"address":"0xdc247a0eb43aff7a2884d10801138f5a78617ad5","key":"DPTPValidator","_id":"jKUIyHolAh8PKLMR"}
+{"address":"0xdc247a0eb43aff7a2884d10801138f5a78617ad5","key"1690245302:"DPTPValidator","_id":"jKUIyHolAh8PKLMR"}
 {"address":"yes","key":"0x753C968E4088D918accEF844962dc8eeEa847A73:verified","_id":"jOMuHFKckrjoqviJ"}
 {"address":"0x4b1573bc33a5d556C050D6F674B0924991ef0cdC","key":"DptpCrossChainGateway","_id":"lMlTO26uQLm3JCEk"}
 {"address":"yes","key":"0x91c6492E5DD96e0B9F33C62D5A53c8EfFe3Dc182:verified","_id":"mjCMRfNN2erWGIrH"}
@@ -50,3 +50,4 @@
 {"address":"yes","key":"0x916e32df6bAd6FBc4FF662487Ec762f7406aD539:verified","_id":"xlEomhSdCDxpbUQT"}
 {"address":"yes","key":"0x68b05B4F2887D9B6f95063B953f868ab10b2CE8b:verified","_id":"ySQJRzWFDd8rl4Wg"}
 {"address":"0xe8a0add12f4a5df9eb98d62a7f600fc46cea26a3","key":"PositionNotionalConfigProxy","_id":"yq4xu99CUlazkKKS"}
+{"address":"yes","key":"0x4eDDCe8a14093776b0D3f341F305BBA1D29E7a6E:verified","_id":"6fP6aJPe838O9VRf"}
