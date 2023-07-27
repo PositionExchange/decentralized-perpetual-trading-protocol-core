@@ -564,16 +564,17 @@ contract PositionManager is
         _updateFundingRate(premiumFraction, underlyingPrice);
 
         // in order to prevent multiple funding settlement during very short time after network congestion
-        uint256 minNextValidFundingTime = _now() + fundingBufferPeriod;
+        // uint256 minNextValidFundingTime = _now() + fundingBufferPeriod;
 
         // floor((nextFundingTime + fundingPeriod) / 3600) * 3600
-        uint256 nextFundingTimeOnHourStart = ((nextFundingTime +
+        uint256 nextFundingTimeOnHourStart = ((_now() +
             fundingPeriod) / (1 hours)) * (1 hours);
 
         // max(nextFundingTimeOnHourStart, minNextValidFundingTime)
-        nextFundingTime = nextFundingTimeOnHourStart > minNextValidFundingTime
-            ? nextFundingTimeOnHourStart
-            : minNextValidFundingTime;
+        nextFundingTime = nextFundingTimeOnHourStart;
+//            nextFundingTimeOnHourStart > minNextValidFundingTime
+//            ? nextFundingTimeOnHourStart
+//            : minNextValidFundingTime;
 
         return premiumFraction;
     }

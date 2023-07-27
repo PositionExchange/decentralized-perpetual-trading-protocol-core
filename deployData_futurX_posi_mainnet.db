@@ -2,6 +2,7 @@
 {"address":"0xcb012139e5c5dde727d8f909491e49eae21a414d","key":"AccessControllerAdapter","_id":"0FgWe1o9PVQxxcRV"}
 {"address":"0x5e0387af92596c75febcd5ff6c54d6c68184b665","key":"PositionManager:AAVE_USD","_id":"3SPMetEewKvwoicd"}
 {"address":"0x67dc34ebff8b692c30c6afcc8f66bc38a89298b5","key":"PositionManager:ETH_USD","_id":"4ILZXUDV4WJOHVno"}
+{"address":"yes","key":"0x4eDDCe8a14093776b0D3f341F305BBA1D29E7a6E:verified","_id":"6fP6aJPe838O9VRf"}
 {"address":"yes","key":"0x8722fa52FfD30A7e1C15b12421a1157588D36DDE:verified","_id":"8Fn81Cbr9jvTj8NP"}
 {"address":"0x45a4a372df0cdc0fd81ec084a920364263a4fcb9","key":"PositionManager:BTC_USD","_id":"8VCHWVpkUhgESZF0"}
 {"address":"yes","key":"0x973a3b1c735dBe0B16d5475FDD84A53C77142E33:verified","_id":"B4VN9J245ZKByCZI"}
@@ -21,6 +22,7 @@
 {"address":"yes","key":"0x6a6daF9bc3C66000fb84604e65d68323A1ae954E:verified","_id":"Qwj2owXIFku1ainA"}
 {"address":"yes","key":"0xE1a8913AA7be57A8159C055F399348a4db176B50:verified","_id":"RSKTSkqB7MaEKygA"}
 {"address":"0x103c8cde4b777350986902f8cd8da7aa27635eea","key":"ChainLinkPriceFeed","_id":"SUHOtJtbxoYYQJps"}
+{"address":"yes","key":"0xbB33f60f13a2a68a27FdC17117b7D4056Dd81b88:verified","_id":"TjY04ekPbOVBVUDF"}
 {"address":"0x3f49c6bcff2f71e847c81f5b6f6b9522e8ced3ba","key":"PositionHouse","_id":"UOfHdIT5KWA9JtIs"}
 {"address":"yes","key":"0xc9413A1C9CAFAdbA04ee97fB1f6cd94121624eC2:verified","_id":"UrLYf5qBj86H86Rf"}
 {"address":"0x60b8f8080c473794f985b9f50d68eae788dd1407","key":"AccessController","_id":"VHMDYqHaJCsHNUu4"}
@@ -31,11 +33,11 @@
 {"address":"0x522aa15a4dfaf91d3e6da060569a57baf65bcedb","key":"PositionManager:LINK_USD","_id":"dOHw3EvHIdrZ6B0T"}
 {"address":"0x46229c0b4a83e4c39a4c2be4a5b3f63d48b8b843","key":"PositionManagerAdapter","_id":"dyJOHe1WNpPrfVXQ"}
 {"address":"yes","key":"0x41A80fCD9Bd7511aCCEe0D9A2a8ff02B1eFd44fA:verified","_id":"epNNmm95YG3uEuIg"}
+{"address":"yes","key":"0xB51adFF65eE956F523B2f394e46061a398a0e066:verified","_id":"gUSLBUT4eugQTuGQ"}
 {"address":"0x2591b9ab67C40E9cDf8Ce5036325E93e3Db1cD52","key":"Mock:USDP","_id":"gy0lNiwd86PjoeTl"}
 {"address":"0x149997974c22cb4017133cd21440f60704150239","key":"InsuranceFund","_id":"h1MvbCYkQtGNv35V"}
 {"address":"yes","key":"0xB86C9293e7910B155a853edb9F35F05189E719f1:verified","_id":"haVmtNrZnin6uw73"}
 {"address":"0x31facbb3c4a11f210e54c3641ad97e665e5e3729","key":"USDMargin","_id":"iO2wLV723rfwPCCI"}
-{"address":"0xdc247a0eb43aff7a2884d10801138f5a78617ad5","key"1690245302:"DPTPValidator","_id":"jKUIyHolAh8PKLMR"}
 {"address":"yes","key":"0x753C968E4088D918accEF844962dc8eeEa847A73:verified","_id":"jOMuHFKckrjoqviJ"}
 {"address":"0x4b1573bc33a5d556C050D6F674B0924991ef0cdC","key":"DptpCrossChainGateway","_id":"lMlTO26uQLm3JCEk"}
 {"address":"yes","key":"0x91c6492E5DD96e0B9F33C62D5A53c8EfFe3Dc182:verified","_id":"mjCMRfNN2erWGIrH"}
@@ -50,4 +52,3 @@
 {"address":"yes","key":"0x916e32df6bAd6FBc4FF662487Ec762f7406aD539:verified","_id":"xlEomhSdCDxpbUQT"}
 {"address":"yes","key":"0x68b05B4F2887D9B6f95063B953f868ab10b2CE8b:verified","_id":"ySQJRzWFDd8rl4Wg"}
 {"address":"0xe8a0add12f4a5df9eb98d62a7f600fc46cea26a3","key":"PositionNotionalConfigProxy","_id":"yq4xu99CUlazkKKS"}
-{"address":"yes","key":"0x4eDDCe8a14093776b0D3f341F305BBA1D29E7a6E:verified","_id":"6fP6aJPe838O9VRf"}
