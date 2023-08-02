@@ -567,7 +567,7 @@ contract PositionManager is
         // uint256 minNextValidFundingTime = _now() + fundingBufferPeriod;
 
         // floor((nextFundingTime + fundingPeriod) / 3600) * 3600
-        uint256 nextFundingTimeOnHourStart = ((_now() +
+        uint256 nextFundingTimeOnHourStart = ((nextFundingTime +
             fundingPeriod) / (1 hours)) * (1 hours);
 
         // max(nextFundingTimeOnHourStart, minNextValidFundingTime)

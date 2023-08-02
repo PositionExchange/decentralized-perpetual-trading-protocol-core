@@ -96,6 +96,13 @@ contract DptpCrossChainGateway is
             )
         );
 
+    bytes4 private constant EXECUTE_CLOSE_POSITION_WITHOUT_SOURCE =
+        bytes4(
+            keccak256(
+                "executeDecreasePositionWithoutSource(uint256,uint256,uint256,uint256,bool,bool,address,bytes)"
+            )
+        );
+
     uint256 private constant WEI_DECIMAL = 10 ** 18;
 
     struct RequestKeyData {
@@ -120,7 +127,8 @@ contract DptpCrossChainGateway is
         UNSET_TP_AND_SL,
         UNSET_TP_OR_SL,
         OPEN_MARKET_BY_QUOTE,
-        EXECUTE_STORE_POSITION
+        EXECUTE_STORE_POSITION,
+        CLOSE_POSITION_WITHOUT_SOURCE
     }
 
     event Deposit(
@@ -293,6 +301,13 @@ contract DptpCrossChainGateway is
         ) {
             _executeStorePosition(_sourceBcId, functionCall);
             return;
+        }else if (
+            Method(decodedEventData.functionMethodID) ==
+            Method.CLOSE_POSITION_WITHOUT_SOURCE
+        ) {
+            closePositionWithoutSource(_sourceBcId, functionCall);
+            return;
+
         }
         revert("CGW-01");
     }
@@ -571,21 +586,63 @@ contract DptpCrossChainGateway is
             isLong,
             true
         );
-        //        _crossBlockchainCall(
-        //            sourceBcId,
-        //            destChainFuturesGateways[sourceBcId],
-        //            abi.encodeWithSelector(
-        //                EXECUTE_DECREASE_POSITION_METHOD,
-        //                requestKey,
-        //                withdrawAmount,
-        //                fee,
-        //                entryPrice,
-        //                quantity,
-        //                isLong,
-        //                true
-        //            )
-        //        );
+        IOrderTracker(orderTracker).claimPendingFund();
+    }
 
+    function closePositionWithoutSource(
+        uint256 _sourceBcId,
+        bytes memory _functionCall
+    ) internal {
+        address pmAddress;
+        uint256 quantity;
+        address trader;
+        bytes memory pathAndIndexToken;
+
+        (pmAddress, quantity, trader, pathAndIndexToken) = abi.decode(
+            _functionCall,
+            (address, uint256, address, bytes)
+        );
+
+        uint256 entryPrice;
+        bool isLong;
+        {
+            Position.Data memory positionData = IPositionHouse(positionHouse)
+                .getPosition(pmAddress, trader);
+
+            uint256 quantityAbs = positionData.quantity.abs();
+            if (quantity >= quantityAbs) {
+                entryPrice = 0;
+            } else {
+                entryPrice = positionData.openNotional.mul(WEI_DECIMAL).div(
+                    quantityAbs
+                );
+            }
+            isLong = positionData.quantity > 0 ? true : false;
+            emit EntryPrice(entryPrice);
+        }
+
+        ( , uint256 fee, uint256 withdrawAmount) = IPositionHouse(positionHouse)
+            .closePosition(IPositionManager(pmAddress), quantity, trader);
+
+
+        IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
+        {
+            _crossBlockchainCall(
+                _sourceBcId,
+                destChainFuturesGateways[_sourceBcId],
+                abi.encodeWithSelector(
+                    EXECUTE_CLOSE_POSITION_WITHOUT_SOURCE,
+                    withdrawAmount,
+                    fee,
+                    entryPrice,
+                    quantity,
+                    isLong,
+                    true,
+                    trader, // user
+                    pathAndIndexToken // index token
+                )
+            );
+        }
         IOrderTracker(orderTracker).claimPendingFund();
     }
 
