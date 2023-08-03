@@ -21,7 +21,7 @@ export const USD = 'USD'
 export const POSI = 'POSI'
 
 export const POSI_CHAIN_DEVNET_URL = process.env["POSI_CHAIN_DEVNET_URL"] || "https://api-a001.s0.d.int.posichain.org/"
-export const POSI_CHAIN_TESTNET_URL = process.env["POSI_CHAIN_TESTNET_URL"] || "https://api.t.posichain.org"
+    export const POSI_CHAIN_TESTNET_URL = process.env["POSI_CHAIN_TESTNET_URL"] || "https://api.t.posichain.org"
 export const POSI_CHAIN_MAINNET_URL = process.env["POSI_CHAIN_MAINNET_URL"] || "https://api.posichain.org"
 export const PRIV_POSI_CHAIN_DEVNET_ACCOUNT = process.env["PRIV_POSI_CHAIN_DEVNET_ACCOUNT"] || ""
 export const PRIV_POSI_CHAIN_TESTNET_ACCOUNT = process.env["PSC_TESTNET_ACCOUNT"] || ""
