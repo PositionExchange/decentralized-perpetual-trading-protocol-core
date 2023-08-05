@@ -103,6 +103,13 @@ contract DptpCrossChainGateway is
             )
         );
 
+    bytes4 private constant EXECUTE_CLOSE_LIMIT_POSITION_WITHOUT_SOURCE =
+    bytes4(
+        keccak256(
+            "executeDecreasePositionWithoutSource(uint256,uint256,uint256,uint256,bool,bool,address,bytes)"
+        )
+    );
+
     uint256 private constant WEI_DECIMAL = 10 ** 18;
 
     struct RequestKeyData {
@@ -128,7 +135,8 @@ contract DptpCrossChainGateway is
         UNSET_TP_OR_SL,
         OPEN_MARKET_BY_QUOTE,
         EXECUTE_STORE_POSITION,
-        CLOSE_POSITION_WITHOUT_SOURCE
+        CLOSE_POSITION_WITHOUT_SOURCE,
+        CLOSE_LIMIT_POSITION_WITHOUT_SOURCE
     }
 
     event Deposit(
