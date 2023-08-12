@@ -955,11 +955,14 @@ abstract contract PositionHouseBase is
     ) internal override(Base) {
         Position.Data memory newData = pendingPositionMap[_pmAddress][_trader];
         // No pending position exists
-        require(newData.quantity != 0, "!p");
-        positionMap[_pmAddress][_trader].update(newData);
-        // delete pending position
-        pendingPositionMap[_pmAddress][_trader].clear();
-        _affectOpenMarketEvent(_pmAddress, _trader, true);
+//        require(newData.quantity != 0, "!p");
+        if (newData.quantity != 0) {
+            positionMap[_pmAddress][_trader].update(newData);
+            // delete pending position
+            pendingPositionMap[_pmAddress][_trader].clear();
+            _affectOpenMarketEvent(_pmAddress, _trader, true);
+        }
+
     }
 
     function _updateManualMargin(
