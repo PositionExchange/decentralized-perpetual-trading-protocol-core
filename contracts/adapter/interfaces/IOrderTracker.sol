@@ -20,5 +20,5 @@ interface IOrderTracker {
         uint256 _orderNotional
     ) external;
 
-    function claimPendingFund() external;
+    function claimPendingFund(uint256 chainId) external;
 }

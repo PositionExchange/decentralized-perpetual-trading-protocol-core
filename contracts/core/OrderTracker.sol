@@ -14,6 +14,7 @@ import {IAccessController} from "../adapter/interfaces/IAccessController.sol";
 import {ICrossChainGateway} from "../adapter/interfaces/ICrossChainGateway.sol";
 import {IPositionHouse} from "../adapter/interfaces/IPositionHouse.sol";
 import "hardhat/console.sol";
+import "./CurrentTradingChain.sol";
 
 contract OrderTracker is
     IOrderTracker,
@@ -427,7 +428,7 @@ contract OrderTracker is
         uint256 entryPrice = (uint256(_pip) * (10 ** 18)) / basisPoint;
 
         ICrossChainGateway(crossChainGateway).executeIncreaseOrder(
-            chainId(), // TODO: Refactor later
+            chainId(_requestKey),
             _requestKey,
             entryPrice,
             _size,
@@ -465,8 +466,9 @@ contract OrderTracker is
                 baseBasisPoint
             ) * 10 ** 18) / baseBasisPoint;
 
+        uint256 chainID = chainId(_requestKey);
         ICrossChainGateway(crossChainGateway).executeDecreaseOrder(
-            chainId(),
+            chainID,
             _requestKey,
             0,
             manager.calcMakerFee(positionData.openNotional, false), // Temporary set fee to 0, will calculate later
@@ -482,13 +484,13 @@ contract OrderTracker is
                 _trader,
                 isLong
             );
-            pendingClaimFunds.push(data);
+            chainIdToPendingClaimFund[chainID].push(data);
         }
     }
 
-    function claimPendingFund() external {
-        for (uint64 i = 0; i < pendingClaimFunds.length; i++) {
-            PendingClaimFund memory data = pendingClaimFunds[i];
+    function claimPendingFund(uint256 chainID) external {
+        for (uint64 i = 0; i < chainIdToPendingClaimFund[chainID].length; i++) {
+            PendingClaimFund memory data = chainIdToPendingClaimFund[chainID][i];
 
             (, , uint256 claimedAmount) = IPositionHouse(positionHouse)
                 .claimFund(IPositionManager(data.manager), data.trader);
@@ -497,7 +499,7 @@ contract OrderTracker is
 
             if (claimedAmount > 0) {
                 ICrossChainGateway(crossChainGateway).executeClaimFund(
-                    chainId(),
+                    chainID,
                     data.manager,
                     data.trader,
                     data.isLong,
@@ -505,7 +507,7 @@ contract OrderTracker is
                 );
             }
         }
-        delete pendingClaimFunds;
+        delete chainIdToPendingClaimFund[chainID];
     }
 
     function _calculateEntryPrice(
@@ -519,17 +521,28 @@ contract OrderTracker is
         return 0;
     }
 
-    function chainId() public view returns (uint256) {
-        if (getChainID() == 1){
-            return 42161;
-        }else if (getChainID() == 2){
-            return 421613;
+    function chainId(bytes32 requestKey) public view returns (uint256) {
+
+        uint256 chainId = currentTradingChain.getChainIdByRequestKey(requestKey);
+
+        if (chainId == 0) {
+            if (getChainID() == 1){
+                return 42161;
+            }else if (getChainID() == 2){
+                return 421613;
+            }
+            return 0;
         }
-        return 0;
+        return chainId;
     }
 
     function getChainID() public view returns (uint256) {
         return block.chainid;
+    }
+
+
+    function setCurrentTradingChain(ICurrentTradingChain _currentTradingChain) external onlyOwner {
+        currentTradingChain = _currentTradingChain;
     }
 
     /**
@@ -541,4 +554,7 @@ contract OrderTracker is
     PendingClaimFund[] public pendingClaimFunds;
     mapping(uint256 => PendingClaimFund) public pendingClaimFunds2; // TODO: Remove later
     uint256 public endIndex; // TODO: Remove later
+    ICurrentTradingChain public currentTradingChain;
+    mapping(uint256 => PendingClaimFund[]) public chainIdToPendingClaimFund;
+
 }

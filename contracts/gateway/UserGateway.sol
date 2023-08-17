@@ -20,6 +20,7 @@ import "../library/positions/HouseBaseParam.sol";
 import {PositionMath} from "../library/positions/PositionMath.sol";
 import {Int256Math} from "../library/helpers/Int256Math.sol";
 import {Errors} from "../library/helpers/Errors.sol";
+import "../core/CurrentTradingChain.sol";
 
 contract UserGateway is
     PausableUpgradeable,
@@ -85,41 +86,45 @@ contract UserGateway is
             positionStrategyOrderInterface.getTPSLDetail(_pmAddress, _trader);
     }
 
-    function getClaimAmount(
-        address _pmAddress,
-        address _trader
-    ) public view returns (int256 totalClaimableAmount) {
-        return
-            PositionManagerAdapter.getClaimAmount(
-                _pmAddress,
-                positionHouseInterface.getAddedMargin(_pmAddress, _trader),
-                positionHouseInterface.getDebtPosition(_pmAddress, _trader),
-                positionHouseInterface.positionMap(_pmAddress, _trader),
-                positionHouseInterface.getLimitOrders(_pmAddress, _trader),
-                positionHouseInterface.getReduceLimitOrders(
-                    _pmAddress,
-                    _trader
-                ),
-                positionHouseInterface.getLimitOrderPremiumFraction(
-                    _pmAddress,
-                    _trader
-                ),
-                positionHouseInterface.getLatestCumulativePremiumFraction(
-                    _pmAddress
-                )
-            );
-    }
+//    function getClaimAmount(
+//        address _pmAddress,
+//        address _trader
+//    ) public view returns (int256 totalClaimableAmount) {
+//        return
+//            PositionManagerAdapter.getClaimAmount(
+//                _pmAddress,
+//                positionHouseInterface.getAddedMargin(_pmAddress, _trader),
+//                positionHouseInterface.getDebtPosition(_pmAddress, _trader),
+//                positionHouseInterface.positionMap(_pmAddress, _trader),
+//                positionHouseInterface.getLimitOrders(_pmAddress, _trader),
+//                positionHouseInterface.getReduceLimitOrders(
+//                    _pmAddress,
+//                    _trader
+//                ),
+//                positionHouseInterface.getLimitOrderPremiumFraction(
+//                    _pmAddress,
+//                    _trader
+//                ),
+//                positionHouseInterface.getLatestCumulativePremiumFraction(
+//                    _pmAddress
+//                )
+//            );
+//    }
 
     function getListOrderPending(
         address _pmAddress,
         address _trader
-    ) public view returns (PositionHouseStorage.LimitOrderPending[] memory) {
+    ) public view returns (PositionHouseStorage.LimitOrderPending[] memory, uint256 activeChain) {
         return
-            PositionManagerAdapter.getListOrderPending(
+            (
+                PositionManagerAdapter.getListOrderPending(
                 _pmAddress,
                 _trader,
                 positionHouseInterface.getLimitOrders(_pmAddress, _trader),
                 positionHouseInterface.getReduceLimitOrders(_pmAddress, _trader)
+            ),
+            getActiveChain(_pmAddress, _trader)
+
             );
     }
 
@@ -145,7 +150,7 @@ contract UserGateway is
     function getRemovableMargin(
         IPositionManager _positionManagerInterface,
         address _trader
-    ) public view returns (uint256) {
+    ) public view returns (uint256, uint256 activeChain) {
         int256 _marginAdded = positionHouseInterface.getAddedMargin(
             address(_positionManagerInterface),
             _trader
@@ -154,19 +159,23 @@ contract UserGateway is
             uint256 maintenanceMargin,
             int256 marginBalance,
             ,
-
+            ,
+            uint256 _activeChain
         ) = getMaintenanceDetail(
                 _positionManagerInterface,
                 _trader,
                 PositionHouseStorage.PnlCalcOption.TWAP
             );
+        activeChain =  _activeChain;
         int256 _remainingMargin = marginBalance - int256(maintenanceMargin);
-        return
+        return (
             uint256(
                 _marginAdded <= _remainingMargin
                     ? _marginAdded
                     : _remainingMargin.kPositive()
-            );
+            ),
+            activeChain)
+        ;
     }
 
     function getMaintenanceDetail(
@@ -180,20 +189,23 @@ contract UserGateway is
             uint256 maintenanceMargin,
             int256 marginBalance,
             uint256 marginRatio,
-            uint256 liquidationPip
+            uint256 liquidationPip,
+            uint256 activeChain
         )
     {
         address _pmAddress = address(_positionManagerInterface);
-        Position.Data memory _positionDataWithManualMargin = getPosition(
+
+        (Position.Data memory _positionDataWithManualMargin, ) = getPosition(
             _pmAddress,
             _trader
         );
-        (, int256 unrealizedPnl) = getPositionNotionalAndUnrealizedPnl(
+        (, int256 unrealizedPnl, uint256 _activeChain) = getPositionNotionalAndUnrealizedPnl(
             _positionManagerInterface,
             _trader,
             _calcOption,
             _positionDataWithManualMargin
         );
+        activeChain = _activeChain;
         PositionHouseAdapter.GetMaintenanceDetailParam
             memory param = PositionHouseAdapter.GetMaintenanceDetailParam({
                 positionDataWithManualMargin: _positionDataWithManualMargin,
@@ -206,7 +218,22 @@ contract UserGateway is
                 basisPoint: uint64(_positionManagerInterface.getBasisPoint())
             });
 
-        return PositionHouseAdapter.getMaintenanceDetail(param);
+
+        (
+            uint256 maintenanceMargin,
+            int256 marginBalance,
+            uint256 marginRatio,
+            uint256 liquidationPip
+        ) = PositionHouseAdapter.getMaintenanceDetail(param);
+
+
+        return (
+            maintenanceMargin,
+            marginBalance,
+            marginRatio,
+            liquidationPip,
+            activeChain
+        );
     }
 
     function getPositionNotionalAndUnrealizedPnl(
@@ -214,7 +241,7 @@ contract UserGateway is
         address _trader,
         PositionHouseStorage.PnlCalcOption _pnlCalcOption,
         Position.Data memory _positionData
-    ) public view returns (uint256 positionNotional, int256 unrealizedPnl) {
+    ) public view returns (uint256 positionNotional, int256 unrealizedPnl, uint256 activeChain) {
         (positionNotional, unrealizedPnl) = PositionManagerAdapter
             .getPositionNotionalAndUnrealizedPnl(
                 address(_positionManagerInterface),
@@ -222,6 +249,8 @@ contract UserGateway is
                 _pnlCalcOption,
                 _positionData
             );
+
+        activeChain = getActiveChain(address(_positionManagerInterface), _trader);
     }
 
     function getPositionAndUnreliablePnl(
@@ -234,11 +263,12 @@ contract UserGateway is
         returns (
             Position.Data memory position,
             uint256 positionNotional,
-            int256 unrealizedPnl
+            int256 unrealizedPnl,
+            uint256 activeChain
         )
     {
-        position = getPosition(address(_positionManagerInterface), _trader);
-        (positionNotional, unrealizedPnl) = getPositionNotionalAndUnrealizedPnl(
+        (position, activeChain) = getPosition(address(_positionManagerInterface), _trader);
+        (positionNotional, unrealizedPnl,) = getPositionNotionalAndUnrealizedPnl(
             _positionManagerInterface,
             _trader,
             _pnlCalcOption,
@@ -249,12 +279,13 @@ contract UserGateway is
     function getFundingPaymentAmount(
         IPositionManager _positionManagerInterface,
         address _trader
-    ) public view returns (int256 fundingPayment) {
+    ) public view returns (int256 fundingPayment, uint256 activeChain){
         address _pmAddress = address(_positionManagerInterface);
-        Position.Data memory _positionData = getPositionWithoutManualMargin(
+        (Position.Data memory _positionData, uint256 _activeChain) = getPositionWithoutManualMargin(
             _pmAddress,
             _trader
         );
+        activeChain = _activeChain;
         int256 manualAddedMargin = getAddedMargin(_pmAddress, _trader);
         (, , fundingPayment) = PositionMath.calcRemainMarginWithFundingPayment(
             _positionData,
@@ -277,20 +308,24 @@ contract UserGateway is
     function getPosition(
         address _pmAddress,
         address _trader
-    ) public view returns (Position.Data memory positionData) {
+    ) public view returns (Position.Data memory positionData, uint256 activeChain) {
         positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
         positionData.margin =
             positionData.margin.absInt() +
             positionHouseInterface.getAddedMargin(_pmAddress, _trader);
+
+        activeChain = getActiveChain(_pmAddress, _trader);
     }
 
     // only for client use, return margin is unsigned
     function getPositionWithoutManualMargin(
         address _pmAddress,
         address _trader
-    ) public view returns (Position.Data memory positionData) {
+    ) public view returns (Position.Data memory positionData, uint256 activeChain) {
         positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
         positionData.margin = positionData.margin.absInt();
+        activeChain = getActiveChain(_pmAddress, _trader);
+
     }
 
     function getRemainingBusdBonusAccepted(
@@ -303,6 +338,11 @@ contract UserGateway is
                 _trader
             );
     }
+
+    function getActiveChain(address _pmAddress, address _trader) public view returns (uint256) {
+        return currentTradingChain.getCurrentTradingChain(_pmAddress, _trader);
+    }
+
 
     /// @notice Get mark price (twap of last price in selected pair)
     /// @param _positionManagerInterface position manager interface address
@@ -435,10 +475,18 @@ contract UserGateway is
         positionHouseInterface = IPositionHouse(_address);
     }
 
+
+    function setCurrentTradingChain(ICurrentTradingChain _currentTradingChain) external onlyOwner {
+        currentTradingChain = _currentTradingChain;
+    }
+
+
     /**
      * @dev This empty reserved space is put in place to allow future versions to add new
      * variables without shifting down storage in the inheritance chain.
      * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps
      */
     uint256[49] private __gap;
+    ICurrentTradingChain public currentTradingChain;
+
 }

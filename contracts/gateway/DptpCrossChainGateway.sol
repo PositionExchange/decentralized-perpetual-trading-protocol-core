@@ -19,6 +19,7 @@ import {Errors} from "../library/helpers/Errors.sol";
 import "../adapter/interfaces/IDPTPValidator.sol";
 import "../library/positions/Position.sol";
 import "../library/types/PositionHouseStorage.sol";
+import "../core/CurrentTradingChain.sol";
 
 contract DptpCrossChainGateway is
     PausableUpgradeable,
@@ -353,6 +354,8 @@ contract DptpCrossChainGateway is
         uint256 _sourceBcId,
         bytes memory _functionCall
     ) internal {
+
+
         bytes32 requestKey;
         address pmAddress;
         bool isLong;
@@ -370,6 +373,8 @@ contract DptpCrossChainGateway is
             _functionCall,
             (bytes32, address, bool, uint256, uint16, address, uint256)
         );
+        currentTradingChain.setCurrentTradingChain(pmAddress, param.trader, _sourceBcId);
+
         param.positionManager = IPositionManager(pmAddress);
         param.side = isLong ? Position.Side.LONG : Position.Side.SHORT;
 
@@ -398,7 +403,7 @@ contract DptpCrossChainGateway is
             param.leverage
         );
 
-        IOrderTracker(orderTracker).claimPendingFund();
+        IOrderTracker(orderTracker).claimPendingFund(_sourceBcId);
     }
 
     function openLimitOrder(
@@ -422,6 +427,9 @@ contract DptpCrossChainGateway is
             _functionCall,
             (bytes32, address, bool, uint256, uint128, uint16, address, uint256)
         );
+        currentTradingChain.setCurrentTradingChain(pmAddress, param.trader, _sourceBcId);
+        currentTradingChain.setChainIdByRequestKey(param.sourceChainRequestKey, _sourceBcId);
+
         param.positionManager = IPositionManager(pmAddress);
         param.side = isLong ? Position.Side.LONG : Position.Side.SHORT;
 
@@ -461,7 +469,7 @@ contract DptpCrossChainGateway is
                 limitOverPricedFilled.isExecutedFully,
                 limitOverPricedFilled.leverage
             );
-            IOrderTracker(orderTracker).claimPendingFund();
+            IOrderTracker(orderTracker).claimPendingFund(_sourceBcId);
         }
 
         // store key for callback execute
@@ -485,6 +493,11 @@ contract DptpCrossChainGateway is
                 _functionCall,
                 (bytes32, address, uint64, uint8, address)
             );
+
+        currentTradingChain.setCurrentTradingChain(pmAddress, account, _sourceBcId);
+        currentTradingChain.setChainIdByRequestKey(requestKey, 0);
+
+
 
         IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
             account,
@@ -560,6 +573,9 @@ contract DptpCrossChainGateway is
             (bytes32, address, uint256, address)
         );
 
+        currentTradingChain.setCurrentTradingChain(pmAddress, trader, _sourceBcId);
+
+
         uint256 entryPrice;
         bool isLong;
         {
@@ -582,10 +598,9 @@ contract DptpCrossChainGateway is
 
         IDPTPValidator(dptpValidator).updateTraderData(trader, pmAddress);
 
-        uint256 sourceBcId = _sourceBcId;
 
         executeDecreaseOrder(
-            sourceBcId,
+            _sourceBcId,
             requestKey,
             withdrawAmount,
             fee,
@@ -594,7 +609,7 @@ contract DptpCrossChainGateway is
             isLong,
             true
         );
-        IOrderTracker(orderTracker).claimPendingFund();
+        IOrderTracker(orderTracker).claimPendingFund(_sourceBcId);
     }
 
     function closePositionWithoutSource(
@@ -610,6 +625,9 @@ contract DptpCrossChainGateway is
             _functionCall,
             (address, uint256, address, bytes)
         );
+
+        currentTradingChain.setCurrentTradingChain(pmAddress, trader, _sourceBcId);
+
 
         uint256 entryPrice;
         bool isLong;
@@ -651,7 +669,7 @@ contract DptpCrossChainGateway is
                 )
             );
         }
-        IOrderTracker(orderTracker).claimPendingFund();
+        IOrderTracker(orderTracker).claimPendingFund(_sourceBcId);
     }
 
     function closeLimitPosition(
@@ -667,6 +685,9 @@ contract DptpCrossChainGateway is
             _functionCall,
             (bytes32, address, uint256, uint256, address)
         );
+
+        currentTradingChain.setCurrentTradingChain(pmAddress, trader, _sourceBcId);
+
 
         bool isLong;
         uint256 entryPrice;
@@ -711,7 +732,7 @@ contract DptpCrossChainGateway is
                 limitOverPricedFilled.isExecutedFully
             );
 
-            IOrderTracker(orderTracker).claimPendingFund();
+            IOrderTracker(orderTracker).claimPendingFund(_sourceBcId);
 
         }
 
@@ -728,6 +749,9 @@ contract DptpCrossChainGateway is
             uint256 amountUsd,
             address account
         ) = abi.decode(_functionCall, (bytes32, address, uint256, address));
+
+        currentTradingChain.setCurrentTradingChain(pmAddress, account, _sourceBcId);
+
 
         IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
             account,
@@ -776,6 +800,9 @@ contract DptpCrossChainGateway is
             address trader
         ) = abi.decode(_functionCall, (bytes32, address, uint256, address));
 
+        currentTradingChain.setCurrentTradingChain(pmAddress, trader, _sourceBcId);
+
+
         IDPTPValidator(dptpValidator).validateChainIDAndManualMargin(
             trader,
             pmAddress,
@@ -808,6 +835,8 @@ contract DptpCrossChainGateway is
             (address, address, uint128, uint128, uint8)
         );
 
+        currentTradingChain.setCurrentTradingChain(_pmAddress, _trader, _sourceBcId);
+
         IPositionStrategyOrder(positionStrategyOrder).setTPSL(
             _pmAddress,
             _trader,
@@ -825,6 +854,8 @@ contract DptpCrossChainGateway is
         address _pmAddress;
         address _trader;
         (_pmAddress, _trader) = abi.decode(_functionCall, (address, address));
+        currentTradingChain.setCurrentTradingChain(_pmAddress, _trader, _sourceBcId);
+
 
         IPositionStrategyOrder(positionStrategyOrder).unsetTPAndSL(
             _pmAddress,
@@ -843,6 +874,8 @@ contract DptpCrossChainGateway is
             _functionCall,
             (address, address, bool)
         );
+        currentTradingChain.setCurrentTradingChain(_pmAddress, _trader, _sourceBcId);
+
 
         IPositionStrategyOrder(positionStrategyOrder).unsetTPOrSL(
             _pmAddress,
@@ -869,6 +902,7 @@ contract DptpCrossChainGateway is
                 _pmAddress,
                 _trader
             );
+        currentTradingChain.setCurrentTradingChain(_pmAddress, _trader, _sourceBcId);
 
         _crossBlockchainCall(
             _sourceBcId,
@@ -919,6 +953,11 @@ contract DptpCrossChainGateway is
             );
         }
         delete requestKeyData[_requestKey];
+    }
+
+
+    function setCurrentTradingChain(ICurrentTradingChain _currentTradingChain) external onlyOwner {
+        currentTradingChain = _currentTradingChain;
     }
 
     function setMyChainID(uint256 _chainID) external onlyOwner {
@@ -1121,4 +1160,5 @@ contract DptpCrossChainGateway is
     uint256[49] private __gap;
     address public orderTracker;
     mapping(uint256 => address) public destChainTPSLGateways;
+    ICurrentTradingChain public currentTradingChain;
 }

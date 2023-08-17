@@ -612,6 +612,50 @@ export class ContractWrapperFactory {
         await this.updateValidatedStatusInAccessController(validatorCoreContractAddress)
     }
 
+    async createCurrentTradingChain(positionHouse : string,  accessController : string){
+        const positionManagerAdapterContractAddress = await this.db.findAddressByKey(`PositionManagerAdapter`);
+        console.log(`positionManagerAdapterContractAddress ${positionManagerAdapterContractAddress}`);
+
+        const accessControllerAdapterContractAddress = await this.db.findAddressByKey(`AccessControllerAdapter`);
+        console.log(`accessControllerAdapterContractAddress ${accessControllerAdapterContractAddress}`);
+
+        const positionHouseAdapterContractAddress = await this.db.findAddressByKey(`PositionHouseAdapter`);
+        console.log(`positionHouseAdapterContractAddress ${positionHouseAdapterContractAddress}`);
+
+
+        const contractName = "CurrentTradingChain"
+        let currentTradingChainAddress = await this.db.findAddressByKey(contractName)
+
+        let currentTradingChainFactory = await this.hre.ethers.getContractFactory(contractName, {
+            libraries: {
+                PositionManagerAdapter: positionManagerAdapterContractAddress,
+                AccessControllerAdapter: accessControllerAdapterContractAddress,
+                PositionHouseAdapter: positionHouseAdapterContractAddress
+            }
+        })
+
+        if (currentTradingChainAddress) {
+            const upgraded = await this.hre.upgrades.upgradeProxy(currentTradingChainAddress, currentTradingChainFactory, {unsafeAllowLinkedLibraries: true})
+            console.log(`Starting verify upgrade ${contractName}`)
+            await this.verifyImplContract(upgraded.deployTransaction)
+            console.log(`Upgrade ${contractName}`)
+        } else {
+            const contractArgs = [
+                positionHouse,
+                accessController
+            ];
+
+            const instance = await this.hre.upgrades.deployProxy(currentTradingChainFactory, contractArgs, {unsafeAllowLinkedLibraries: true})
+            console.log("wait for deploy")
+            await instance.deployed()
+
+            const address = instance.address.toString().toLowerCase()
+            console.log(`${contractName} : ${address}`)
+            await this.db.saveAddressByKey(contractName, address)
+            await this.verifyProxy(address)
+        }
+    }
+
     async createValidatorGateway(){
         const ValidatorGateway = await this.hre.ethers.getContractFactory("ValidatorGateway");
         let validatorGatewayAddress = await this.db.findAddressByKey('ValidatorGateway')
@@ -723,7 +767,6 @@ export class ContractWrapperFactory {
             await this.verifyProxy(address)
         }
         await this.updateValidatedStatusInAccessController(orderTrackerAddress)
-
     }
 
     async createChainlinkPriceFeed( args: CreateChainLinkPriceFeed){
