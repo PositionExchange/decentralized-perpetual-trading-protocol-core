@@ -476,8 +476,8 @@ contract UserGateway is
     }
 
 
-    function setCurrentTradingChain(ICurrentTradingChain _currentTradingChain) external onlyOwner {
-        currentTradingChain = _currentTradingChain;
+    function setCurrentTradingChain(address _currentTradingChain) external onlyOwner {
+        currentTradingChain = ICurrentTradingChain(_currentTradingChain);
     }
 
 
