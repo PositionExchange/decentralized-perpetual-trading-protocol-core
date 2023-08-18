@@ -20,6 +20,7 @@ import {PositionMath} from "../library/positions/PositionMath.sol";
 import {Int256Math} from "../library/helpers/Int256Math.sol";
 import {Errors} from "../library/helpers/Errors.sol";
 import {ICrossChainGateway} from "../adapter/interfaces/ICrossChainGateway.sol";
+import "../core/CurrentTradingChain.sol";
 
 contract LiquidatorGateway is
     PausableUpgradeable,
@@ -91,61 +92,6 @@ contract LiquidatorGateway is
         myChainID = _myBlockchainId;
     }
 
-    function getPositionNotionalAndUnrealizedPnl(
-        IPositionManager _positionManagerInterface,
-        address _trader,
-        PositionHouseStorage.PnlCalcOption _pnlCalcOption,
-        Position.Data memory _positionData
-    ) public view returns (uint256 positionNotional, int256 unrealizedPnl) {
-        (positionNotional, unrealizedPnl) = PositionManagerAdapter
-            .getPositionNotionalAndUnrealizedPnl(
-                address(_positionManagerInterface),
-                _trader,
-                _pnlCalcOption,
-                _positionData
-            );
-    }
-
-    function getMaintenanceDetail(
-        IPositionManager _positionManagerInterface,
-        address _trader,
-        PositionHouseStorage.PnlCalcOption _calcOption
-    )
-        public
-        view
-        returns (
-            uint256 maintenanceMargin,
-            int256 marginBalance,
-            uint256 marginRatio,
-            uint256 liquidationPip
-        )
-    {
-        address _pmAddress = address(_positionManagerInterface);
-        Position.Data memory _positionDataWithManualMargin = getPosition(
-            _pmAddress,
-            _trader
-        );
-        (, int256 unrealizedPnl) = getPositionNotionalAndUnrealizedPnl(
-            _positionManagerInterface,
-            _trader,
-            _calcOption,
-            _positionDataWithManualMargin
-        );
-        PositionHouseAdapter.GetMaintenanceDetailParam
-            memory param = PositionHouseAdapter.GetMaintenanceDetailParam({
-                positionDataWithManualMargin: _positionDataWithManualMargin,
-                positionHouseInterface: positionHouseInterface,
-                pmAddress: _pmAddress,
-                trader: _trader,
-                unrealizedPnl: unrealizedPnl,
-                maintenanceMarginRatio: positionHouseConfigurationProxyInterface
-                    .maintenanceMarginRatio(),
-                basisPoint: uint64(_positionManagerInterface.getBasisPoint())
-            });
-
-        return PositionHouseAdapter.getMaintenanceDetail(param);
-    }
-
     function setMyChainID(uint256 _chainID) external onlyOwner {
         myChainID = _chainID;
     }
@@ -167,6 +113,7 @@ contract LiquidatorGateway is
         address _trader
     ) public {
         address _pmAddress = address(_positionManagerInterface);
+        uint256 activeChain = currentTradingChain.getCurrentTradingChain(address(_positionManagerInterface), _trader);
         {
             uint256 liquidationPenalty;
             (, , uint256 marginRatio, ) = getMaintenanceDetail(
@@ -276,7 +223,7 @@ contract LiquidatorGateway is
             }
             address _liquidator = msg.sender;
             ICrossChainGateway(crossChainGateway).handleLiquidatedEvent(
-                destinationChainID,
+                activeChain,
                 _trader,
                 _pmAddress,
                 positionDataWithManualMargin.quantity.abs(),
@@ -409,21 +356,78 @@ contract LiquidatorGateway is
         return positionHouseInterface.getAddedMargin(_pmAddress, _trader);
     }
 
-    function getPositionWithIntMargin(
-        address _pmAddress,
-        address _trader
-    ) internal view returns (Position.Data memory positionData) {
-        positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
-        int256 manualAddedMargin = positionHouseInterface.getAddedMargin(
+
+    function getPositionNotionalAndUnrealizedPnl(
+        IPositionManager _positionManagerInterface,
+        address _trader,
+        PositionHouseStorage.PnlCalcOption _pnlCalcOption,
+        Position.Data memory _positionData
+    ) public view returns (uint256 positionNotional, int256 unrealizedPnl) {
+        (positionNotional, unrealizedPnl) = PositionManagerAdapter
+        .getPositionNotionalAndUnrealizedPnl(
+            address(_positionManagerInterface),
+            _trader,
+            _pnlCalcOption,
+            _positionData
+        );
+    }
+
+    function getMaintenanceDetail(
+        IPositionManager _positionManagerInterface,
+        address _trader,
+        PositionHouseStorage.PnlCalcOption _calcOption
+    )
+    public
+    view
+    returns (
+        uint256 maintenanceMargin,
+        int256 marginBalance,
+        uint256 marginRatio,
+        uint256 liquidationPip
+    )
+    {
+        address _pmAddress = address(_positionManagerInterface);
+        Position.Data memory _positionDataWithManualMargin = getPosition(
             _pmAddress,
             _trader
         );
-        positionData.margin = PositionMath.calculateMarginWithoutManual(
-            positionData.quantity,
-            positionData.margin,
-            manualAddedMargin
+        (, int256 unrealizedPnl) = getPositionNotionalAndUnrealizedPnl(
+            _positionManagerInterface,
+            _trader,
+            _calcOption,
+            _positionDataWithManualMargin
         );
+        PositionHouseAdapter.GetMaintenanceDetailParam
+        memory param = PositionHouseAdapter.GetMaintenanceDetailParam({
+            positionDataWithManualMargin: _positionDataWithManualMargin,
+            positionHouseInterface: positionHouseInterface,
+            pmAddress: _pmAddress,
+            trader: _trader,
+            unrealizedPnl: unrealizedPnl,
+            maintenanceMarginRatio: positionHouseConfigurationProxyInterface
+        .maintenanceMarginRatio(),
+            basisPoint: uint64(_positionManagerInterface.getBasisPoint())
+        });
+
+        return PositionHouseAdapter.getMaintenanceDetail(param);
     }
+
+
+    //    function getPositionWithIntMargin(
+//        address _pmAddress,
+//        address _trader
+//    ) internal view returns (Position.Data memory positionData) {
+//        positionData = positionHouseInterface.getPosition(_pmAddress, _trader);
+//        int256 manualAddedMargin = positionHouseInterface.getAddedMargin(
+//            _pmAddress,
+//            _trader
+//        );
+//        positionData.margin = PositionMath.calculateMarginWithoutManual(
+//            positionData.quantity,
+//            positionData.margin,
+//            manualAddedMargin
+//        );
+//    }
 
     function getPosition(
         address _pmAddress,
@@ -470,6 +474,11 @@ contract LiquidatorGateway is
         crossChainGateway = _address;
     }
 
+
+    function setCurrentTradingChain(ICurrentTradingChain _currentTradingChain) external onlyOwner {
+        currentTradingChain = _currentTradingChain;
+    }
+
     /**
     * @dev This empty reserved space is put in place to allow future versions to add new
      * variables without shifting down storage in the inheritance chain.
@@ -477,4 +486,6 @@ contract LiquidatorGateway is
      */
     uint256[49] private __gap;
     address public crossChainGateway;
+    ICurrentTradingChain public currentTradingChain;
+
 }

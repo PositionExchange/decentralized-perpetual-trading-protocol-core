@@ -53,6 +53,7 @@ library Errors {
     string public constant VL_INVALID_CONDITION = "32";
     string public constant VL_MUST_BE_INTEGER = "33";
     string public constant VL_INVALID_BUSD_BONUS_AMOUNT = "34";
+    string public constant VL_INVALID_CURRENT_TRADING_CHAIN = "PSC: Invalid current trading chain";
 
     enum CollateralManagerErrors {
         NO_ERROR
